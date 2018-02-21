@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/save_meme_fave"
+        android:orderInCategory="200"
+        android:title="@string/faves_save_pic"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_fave_save"/>
+
+    <item
+        android:id="@+id/unfave_meme"
+        android:orderInCategory="100"
+        android:title="@string/remove_fave"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_fave_unsave"/>
+
+</menu>

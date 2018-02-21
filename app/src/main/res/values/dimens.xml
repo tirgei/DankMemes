@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="date_stamp_size">20sp</dimen>
+    <dimen name="date_textview_leftright">10dp</dimen>
+    <dimen name="date_textview_topbottom">2dp</dimen>
+    <dimen name="date_textviewMargin_bottom">10dp</dimen>
+    <dimen name="date_card_margin_leftright">1dp</dimen>
+    <dimen name="date_card_margin_bottom">5dp</dimen>
+    <dimen name="date_card_padding">1.5dp</dimen>
+    <dimen name="image_card_padding">0.5dp</dimen>
+    <dimen name="faves_button_size">40dp</dimen>
+    <dimen name="faves_button_margin">10dp</dimen>
+    <dimen name="card_options">40dp</dimen>
+
+</resources>

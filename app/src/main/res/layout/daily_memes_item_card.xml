@@ -1,0 +1,64 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.gelostech.dankmemes.fragments.FavesItemFragment">
+
+    <com.github.captain_miao.optroundcardview.OptRoundCardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/date_card_margin_bottom"
+        android:padding="@dimen/date_card_margin_bottom"
+        app:optRoundCardCornerRadius="10dp"
+        app:optRoundCardElevation="4dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/daily_image_item"
+                android:layout_alignParentTop="true"
+                android:layout_above="@+id/divider"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:id="@+id/divider"
+                android:background="@color/dividerColor"
+                android:layout_above="@+id/daily_memes_card_options" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/card_options"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/daily_memes_card_options">
+
+                <Button
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:id="@+id/daily_memes_comment"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/ic_chat"/>
+
+                <Button
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginRight="5dp"
+                    android:id="@+id/daily_memes_more_options"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_more_vert"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </com.github.captain_miao.optroundcardview.OptRoundCardView>
+
+</FrameLayout>

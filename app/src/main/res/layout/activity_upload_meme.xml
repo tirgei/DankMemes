@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    tools:context="com.gelostech.dankmemes.activities.MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/upload_meme_activity_toolbar"
+        style="?android:actionBarStyle"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentTop="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="@string/new_meme"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upload_meme_activity_toolbar"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        android:id="@+id/date"
+        android:weightSum="7">
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6.9"
+            android:hint="date stamp..."
+            android:id="@+id/upload_date"/>
+
+        <Button
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_margin="0.5dp"
+            android:id="@+id/select_upload_date"
+            android:background="@drawable/ic_pick_date"
+            android:backgroundTint="@color/colorPrimary" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/date"
+        android:layout_margin="5dp"
+        android:padding="1dp"
+        android:id="@+id/display_image"
+        android:layout_above="@+id/button_select_image"
+        android:src="@drawable/ic_image"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="50dp"
+        android:id="@+id/button_select_image"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        android:background="@color/colorPrimary"
+        android:text="select image"
+        android:textColor="@color/primaryText"
+        android:textSize="17sp"/>
+
+
+</RelativeLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/select_option_faves"
+        android:orderInCategory="200"
+        android:title="@string/faves"
+        app:showAsAction="never"
+        android:icon="@drawable/goto_faves"/>
+
+    <item
+        android:id="@+id/select_memes_date"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:title="@string/date_picker"
+        android:icon="@drawable/date_ranger"/>
+
+    <item
+        android:id="@+id/select_settings"
+        app:showAsAction="never"
+        android:title="Settings"
+        android:orderInCategory="300"/>
+
+    <item
+        android:id="@+id/more_apps"
+        app:showAsAction="never"
+        android:title="More Apps"
+        android:orderInCategory="400"/>
+
+</menu>

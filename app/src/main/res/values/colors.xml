@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#009688</color>
+    <color name="colorPrimaryLight">#FFE0B2</color>
+    <color name="primaryText">#FFFFFF</color>
+    <color name="secondaryText">#757575</color>
+    <color name="dividerColor">#BDBDBD</color>
+    <color name="windowBackground">#000000</color>
+    <color name="gold">#b2497d</color>
+
+    <color name="darkWindowBackground">#33343B</color>
+    <color name="lightWindowBackground">#F4F4F6</color>
+</resources>

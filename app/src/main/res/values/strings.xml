@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Dank Memes</string>
+    <string name="faves">Favorites</string>
+    <string name="date_picker">Date</string>
+    <string name="settings">Settings</string>
+    <string name="app_motto">Making life memeingful!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="faves_save_pic">Save</string>
+    <string name="faves_share_pic">Share</string>
+    <string name="faves_copy_link">Copy Link</string>
+    <string name="app_faves_report">Report</string>
+    <string name="more_options">Options...</string>
+    <string name="enter_comment">Write a comment...</string>
+    <string name="send_message">SEND</string>
+    <string name="comment_title">Comments</string>
+    <string name="new_meme">Upload Meme</string>
+    <string name="invite_body">Ssup fam! Check out these fresh memes!!</string>
+    <string name="play_store_link">https://play.google.com/store/apps/details?id=</string>
+    <string name="fave_item">Fave</string>
+    <string name="like_post">Like</string>
+    <string name="comment_post">Comment</string>
+    <string name="remove_fave">Remove fave</string>
+
+    <!-- Admob Ads -->
+    <string name="real_native_ad_id">ca-app-pub-1229251825159326/1041847804</string>
+    <string name="real_banner_ad_id">ca-app-pub-1229251825159326/7573620655</string>
+    <string name="interstitial_ad_id">ca-app-pub-1229251825159326/4355019235</string>
+    <string name="xperia_test_device">A0D507C615ACDE7046D818E718DB30C2</string>
+
+
+</resources>

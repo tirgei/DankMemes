@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.github.captain_miao.optroundcardview.OptRoundCardView
+    android:id="@+id/fave_item_card"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:elevation="2dp"
+    android:padding="@dimen/date_card_padding"
+    android:layout_marginLeft="@dimen/date_card_margin_leftright"
+    android:layout_marginRight="@dimen/date_card_margin_leftright"
+    android:layout_marginBottom="@dimen/date_card_margin_bottom">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/date_card_margin_bottom"
+        android:padding="@dimen/image_card_padding">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/fave_select_sample_meme"
+            android:adjustViewBounds="true"
+            android:layout_centerInParent="true"/>
+
+        <!--<Button
+            android:layout_width="@dimen/faves_button_size"
+            android:layout_height="@dimen/faves_button_size"
+            android:background="@drawable/ic_faved"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/faves_button_margin"
+            android:layout_marginBottom="@dimen/faves_button_margin"/>-->
+
+    </RelativeLayout>
+
+</com.github.captain_miao.optroundcardview.OptRoundCardView>
