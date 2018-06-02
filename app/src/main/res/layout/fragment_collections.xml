@@ -1,13 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gelostech.dankmemes.fragments.SettingsPreferenceFragment">
+    tools:context=".fragments.CollectionsFragment">
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/collectionsRv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
-        android:id="@android:id/list"/>
+        android:padding="5dp"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_collection"/>
 
 </FrameLayout>

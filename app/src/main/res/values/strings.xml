@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Dank Memes</string>
+    <string name="profile">Profile</string>
+    <string name="collections">Collections</string>
     <string name="faves">Favorites</string>
     <string name="date_picker">Date</string>
     <string name="settings">Settings</string>
@@ -28,6 +30,12 @@
     <string name="real_banner_ad_id">ca-app-pub-1229251825159326/7573620655</string>
     <string name="interstitial_ad_id">ca-app-pub-1229251825159326/4355019235</string>
     <string name="xperia_test_device">A0D507C615ACDE7046D818E718DB30C2</string>
+    <string name="image">image</string>
+    <string name="fave">fave</string>
+    <string name="my_posts">MY POSTS</string>
+    <string name="posts">posts</string>
+    <string name="followers">followers</string>
+    <string name="following">following</string>
 
 
 </resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/bs_share" android:title="Share" android:icon="@drawable/ic_share"/>
+    <item android:id="@+id/bs_save" android:title="Save" android:icon="@drawable/ic_save"/>
+    <item android:id="@+id/bs_delete" android:title="Delete" android:icon="@drawable/ic_delete"/>
+</menu>
