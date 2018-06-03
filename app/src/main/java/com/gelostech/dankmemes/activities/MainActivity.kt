@@ -1,5 +1,6 @@
 package com.gelostech.dankmemes.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.CoordinatorLayout
@@ -12,6 +13,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
 
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
 import com.gelostech.dankmemes.fragments.CollectionsFragment
 import com.gelostech.dankmemes.fragments.HomeFragment
@@ -22,13 +24,18 @@ import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
 import com.gelostech.dankmemes.commoners.BottomNavigationViewBehavior
+import com.gelostech.dankmemes.utils.setDrawable
+import com.yarolegovich.slidingrootnav.SlidingRootNav
+import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
+import com.yarolegovich.slidingrootnav.callback.DragStateListener
+import kotlinx.android.synthetic.main.drawer_layout.*
 
 
-
-class MainActivity : AppCompatActivity(), AHBottomNavigation.OnTabSelectedListener,
-        AHBottomNavigation.OnNavigationPositionListener, ViewPager.OnPageChangeListener  {
+class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
+        AHBottomNavigation.OnNavigationPositionListener, ViewPager.OnPageChangeListener, DragStateListener  {
     private var doubleBackToExit = false
     private var newMeme: MenuItem? = null
+    private lateinit var slidingDrawer: SlidingRootNav
 
     companion object {
         private const val HOME: String = "Home"
@@ -43,6 +50,7 @@ class MainActivity : AppCompatActivity(), AHBottomNavigation.OnTabSelectedListen
         setupToolbar()
         setupBottomNav()
         setupViewPager()
+        setupDrawer()
     }
 
     //Setup the main toolbar
@@ -89,6 +97,43 @@ class MainActivity : AppCompatActivity(), AHBottomNavigation.OnTabSelectedListen
         mainViewPager.offscreenPageLimit = 2
     }
 
+    //Setup drawer
+    private fun setupDrawer() {
+        slidingDrawer = SlidingRootNavBuilder(this)
+                .withMenuLayout(R.layout.drawer_layout)
+                .withDragDistance(150)
+                .withToolbarMenuToggle(mainToolbar)
+                .addDragStateListener(this)
+                .inject()
+
+        mainRoot.setOnClickListener {
+            if (slidingDrawer.isMenuOpened) slidingDrawer.closeMenu(true)
+        }
+
+        setupDrawerIcons()
+
+        drawerName.text = "Vincent Tirgei"
+        drawerEmail.text = "tirgeic@gmail.com"
+
+    }
+
+    private fun setupDrawerIcons() {
+        drawerRate.setDrawable(setDrawable(this, Ionicons.Icon.ion_ios_star, R.color.white, 18))
+        drawerShare.setDrawable(setDrawable(this, Ionicons.Icon.ion_android_share, R.color.white, 18))
+        drawerFeedback.setDrawable(setDrawable(this, Ionicons.Icon.ion_ios_email, R.color.white, 18))
+        drawerTerms.setDrawable(setDrawable(this, Ionicons.Icon.ion_clipboard, R.color.white, 18))
+        drawerPolicy.setDrawable(setDrawable(this, Ionicons.Icon.ion_ios_list, R.color.white, 18))
+        drawerLogout.setDrawable(setDrawable(this, Ionicons.Icon.ion_log_out, R.color.white, 18))
+    }
+
+    override fun onDragEnd(isMenuOpened: Boolean) {
+
+    }
+
+    override fun onDragStart() {
+
+    }
+
     override fun onTabSelected(position: Int, wasSelected: Boolean): Boolean {
         mainViewPager.setCurrentItem(position, true)
         newMeme?.isVisible = position == 0
@@ -127,15 +172,30 @@ class MainActivity : AppCompatActivity(), AHBottomNavigation.OnTabSelectedListen
         return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            R.id.menu_add_meme -> {
+                startActivity(Intent(this, PostActivity::class.java))
+                overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+            }
+        }
+
+        return true
+    }
+
     override fun onBackPressed() {
-        if (doubleBackToExit) {
-            super.onBackPressed()
+        if (slidingDrawer.isMenuOpened) {
+            slidingDrawer.closeMenu(true)
         } else {
-            toast("Tap back again to exit")
+            if (doubleBackToExit) {
+                super.onBackPressed()
+            } else {
+                toast("Tap back again to exit")
 
-            doubleBackToExit = true
+                doubleBackToExit = true
 
-            Handler().postDelayed({doubleBackToExit = false}, 1500)
+                Handler().postDelayed({doubleBackToExit = false}, 1500)
+            }
         }
     }
 

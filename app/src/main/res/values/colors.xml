@@ -16,6 +16,7 @@
     <color name="secondaryText">#D9757575</color>
     <color name="timeColor">#A6616161</color>
     <color name="placeholder_bg">#dddddd</color>
+    <color name="lightGray">#e6e6e6</color>
 
     <color name="darkWindowBackground">#33343B</color>
     <color name="lightWindowBackground">#F4F4F6</color>

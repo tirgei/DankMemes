@@ -11,6 +11,13 @@ import java.io.ByteArrayOutputStream
 
 
 object DankMemesUtil {
+
+    /**
+     * @param context Activity context
+     * @param icon FontAwesome icon
+     * @param color Color to set to icon
+     * @param size Size of icon
+     */
     fun setDrawable(context: Context, icon: IIcon, color: Int, size: Int): Drawable {
         return IconicsDrawable(context).icon(icon).color(ContextCompat.getColor(context, color)).sizeDp(size)
     }

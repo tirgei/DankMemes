@@ -26,9 +26,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.PostActivity" />
+        <activity android:name=".activities.PostActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
         <activity android:name=".activities.ProfileActivity" />
-        <activity android:name=".activities.ViewMemeActivity"></activity>
+        <activity android:name=".activities.CommentActivity" />
+        <activity android:name=".activities.ViewMemeActivity" />
+        <activity android:name=".commoners.BaseActivity"></activity>
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
     </application>
 
 </manifest>

@@ -6,7 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activities.MainActivity"
     android:background="@color/white"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true"
+    android:id="@+id/mainRoot">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/mainToolbar"
@@ -15,8 +16,9 @@
         style="?android:actionBarStyle"
         android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        app:layout_scrollFlags="scroll|enterAlways|snap">
+        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_scrollFlags="scroll|enterAlways|snap"
+        android:elevation="@dimen/no_elevation">
 
         <TextView
             android:id="@+id/mainToolbarTitle"

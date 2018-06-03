@@ -36,6 +36,8 @@
     <string name="posts">posts</string>
     <string name="followers">followers</string>
     <string name="following">following</string>
+    <string name="select_meme">Select meme</string>
+    <string name="add_new_comment">Add new comment...</string>
 
 
 </resources>
