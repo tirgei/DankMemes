@@ -2,6 +2,7 @@ package com.gelostech.dankmemes.utils;
 
 import android.content.Context
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.support.annotation.LayoutRes
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
@@ -44,6 +45,10 @@ fun CircleImageView.loadUrl(url: Int) {
 
 fun TextView.setFont(font: String) {
     this.typeface = Typeface.createFromAsset(context.assets, font)
+}
+
+fun TextView.setDrawable(icon: Drawable) {
+    this.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null)
 }
 
 inline fun View.snack(message: String, length: Int = Snackbar.LENGTH_LONG, f: Snackbar.() -> Unit) {
