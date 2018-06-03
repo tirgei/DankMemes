@@ -3,12 +3,13 @@ package com.gelostech.dankmemes.activities
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.loadUrl
 import kotlinx.android.synthetic.main.activity_view_meme.*
 
-class ViewMemeActivity : AppCompatActivity() {
+class ViewMemeActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
