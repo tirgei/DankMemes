@@ -16,6 +16,7 @@ import com.cocosw.bottomsheet.BottomSheet
 import com.cocosw.bottomsheet.BottomSheetHelper
 
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.activities.CommentActivity
 import com.gelostech.dankmemes.activities.ProfileActivity
 import com.gelostech.dankmemes.activities.ViewMemeActivity
 import com.gelostech.dankmemes.adapters.MemesAdapter
@@ -71,7 +72,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
             0 -> activity?.toast("Like")
             1 -> showBottomSheet(meme)
             2 -> activity?.toast("Fave")
-            3 -> activity?.toast("Comment")
+            3 -> showComments(meme)
             4 -> showMeme(meme)
             5 -> showProfile(meme)
 
@@ -111,6 +112,13 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
         }.show()
 
+    }
+
+    private fun showComments(meme: MemeModel) {
+        val i = Intent(activity, CommentActivity::class.java)
+        i.putExtra("memeId", meme.id)
+        startActivity(i)
+        activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
     }
 
     override fun onResume() {
