@@ -29,6 +29,9 @@ import com.yarolegovich.slidingrootnav.SlidingRootNav
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
 import com.yarolegovich.slidingrootnav.callback.DragStateListener
 import kotlinx.android.synthetic.main.drawer_layout.*
+import android.content.ActivityNotFoundException
+import android.net.Uri
+import org.jetbrains.anko.alert
 
 
 class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
@@ -111,6 +114,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         }
 
         setupDrawerIcons()
+        drawerClickListeners()
 
         drawerName.text = "Vincent Tirgei"
         drawerEmail.text = "tirgeic@gmail.com"
@@ -124,6 +128,70 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         drawerTerms.setDrawable(setDrawable(this, Ionicons.Icon.ion_clipboard, R.color.white, 18))
         drawerPolicy.setDrawable(setDrawable(this, Ionicons.Icon.ion_ios_list, R.color.white, 18))
         drawerLogout.setDrawable(setDrawable(this, Ionicons.Icon.ion_log_out, R.color.white, 18))
+    }
+
+    private fun drawerClickListeners() {
+        drawerRate.setOnClickListener {
+            slidingDrawer.closeMenu(true)
+
+            Handler().postDelayed({
+                val uri = Uri.parse(resources.getString(R.string.play_store_link) + this.packageName)
+                val goToMarket = Intent(Intent.ACTION_VIEW, uri)
+
+                goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                try {
+                    startActivity(goToMarket)
+                } catch (e: ActivityNotFoundException) {
+                    startActivity(Intent(Intent.ACTION_VIEW,
+                            Uri.parse(resources.getString(R.string.play_store_link) + this.packageName)))
+                }
+            }, 300)
+        }
+
+        drawerShare.setOnClickListener {
+            slidingDrawer.closeMenu(true)
+
+            Handler().postDelayed({
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.type = "text/plain"
+                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
+                val message = resources.getString(R.string.invite_body) + "\n\n" + resources.getString(R.string.play_store_link) + this.packageName
+                intent.putExtra(Intent.EXTRA_TEXT, message)
+                startActivity(Intent.createChooser(intent, "Invite pals..."))
+            }, 300)
+        }
+
+        drawerFeedback.setOnClickListener {
+            slidingDrawer.closeMenu(true)
+
+            Handler().postDelayed({
+                val emailIntent = Intent(Intent.ACTION_SENDTO)
+                emailIntent.data = Uri.parse("mailto: devtirgei@gmail.com")
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Dank Memes")
+                startActivity(Intent.createChooser(emailIntent, "Send feedback"))
+            }, 300)
+        }
+
+        drawerTerms.setOnClickListener {
+
+        }
+
+        drawerPolicy.setOnClickListener {
+
+        }
+
+        drawerLogout.setOnClickListener {
+            slidingDrawer.closeMenu(true)
+
+            Handler().postDelayed({
+                alert("Are you sure you want to log out?") {
+                    title = "Log out"
+                    positiveButton("LOG OUT") {}
+                    negativeButton("CANCEL") {}
+                }.show()
+            }, 300)
+        }
+
     }
 
     override fun onDragEnd(isMenuOpened: Boolean) {
