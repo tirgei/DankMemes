@@ -29,7 +29,6 @@
     <string name="real_native_ad_id">ca-app-pub-1229251825159326/1041847804</string>
     <string name="real_banner_ad_id">ca-app-pub-1229251825159326/7573620655</string>
     <string name="interstitial_ad_id">ca-app-pub-1229251825159326/4355019235</string>
-    <string name="xperia_test_device">A0D507C615ACDE7046D818E718DB30C2</string>
     <string name="image">image</string>
     <string name="fave">fave</string>
     <string name="my_posts">MY POSTS</string>
@@ -38,6 +37,18 @@
     <string name="following">following</string>
     <string name="select_meme">Select meme</string>
     <string name="add_new_comment">Add new comment...</string>
+    <string name="not_a_member_yet">Not a member yet?</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="email_address">Email address</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="username">Username</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="terms">Terms and Conditions</string>
+    <string name="agree_to_terms">I accept the</string>
 
 
 </resources>

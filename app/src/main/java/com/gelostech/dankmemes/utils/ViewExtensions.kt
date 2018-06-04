@@ -5,11 +5,16 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.support.annotation.LayoutRes
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -51,6 +56,10 @@ fun TextView.setDrawable(icon: Drawable) {
     this.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null)
 }
 
+fun EditText.setDrawable(icon: Drawable) {
+    this.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null)
+}
+
 inline fun View.snack(message: String, length: Int = Snackbar.LENGTH_LONG, f: Snackbar.() -> Unit) {
     val snack = Snackbar.make(this, message, length)
     snack.f()
@@ -60,6 +69,18 @@ inline fun View.snack(message: String, length: Int = Snackbar.LENGTH_LONG, f: Sn
 fun Snackbar.action(action: String, color: Int? = null, listener: (View) -> Unit) {
     setAction(action, listener)
     color?.let { setActionTextColor(ContextCompat.getColor(context, color)) }
+}
+
+inline fun FragmentManager.inTransaction(func: FragmentTransaction.() -> FragmentTransaction) {
+    beginTransaction().func().commit()
+}
+
+fun AppCompatActivity.addFragment(fragment: Fragment, frameId: Int){
+    supportFragmentManager.inTransaction { add(frameId, fragment) }
+}
+
+fun AppCompatActivity.replaceFragment(fragment: Fragment, frameId: Int) {
+    supportFragmentManager.inTransaction{ replace(frameId, fragment).addToBackStack(fragment.tag) }
 }
 
 class SemiSquareLayout : RelativeLayout {

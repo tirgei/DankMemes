@@ -57,13 +57,13 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         if (homeShimmer.isShown) homeShimmer.stopShimmerAnimation()
         homeShimmer.visibility = View.GONE
 
-        val meme1 = MemeModel("1", "Hahahah... ", "fd", R.drawable.games, 23, 45, System.currentTimeMillis(), "James Michael")
+        val meme1 = MemeModel("1", "Hahahah... ", "fd", R.drawable.games, 23, 45, System.currentTimeMillis(), "James")
         memesAdapter.addMeme(meme1)
 
-        val meme2 = MemeModel("1", "Do y'all agree with this?", "fd", R.drawable.prof, 23, 45, System.currentTimeMillis(), "Mickey Mouse")
+        val meme2 = MemeModel("1", "Do y'all agree with this?", "fd", R.drawable.prof, 23, 45, System.currentTimeMillis(), "Mickey")
         memesAdapter.addMeme(meme2)
 
-        val meme3 = MemeModel("1", "Ahhhhh... my ribs :D", "fd", R.drawable.games, 23,  45, System.currentTimeMillis(), "Hellen Wanker")
+        val meme3 = MemeModel("1", "Ahhhhh... my ribs :D", "fd", R.drawable.games, 23,  45, System.currentTimeMillis(), "Hellen")
         memesAdapter.addMeme(meme3)
     }
 
