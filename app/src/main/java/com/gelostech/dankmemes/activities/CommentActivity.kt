@@ -100,7 +100,7 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
     }
 
     /**
-     * This method deletes the comment from the database
+     * This function deletes the comment from the database
      * @param id ID of the comment
      */
     private fun deleteComment(id: String) {
