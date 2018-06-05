@@ -3,6 +3,7 @@ package com.gelostech.dankmemes.fragments
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -21,6 +22,7 @@ import com.gelostech.dankmemes.activities.ProfileActivity
 import com.gelostech.dankmemes.activities.ViewMemeActivity
 import com.gelostech.dankmemes.adapters.MemesAdapter
 import com.gelostech.dankmemes.commoners.BaseFragment
+import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -60,20 +62,20 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         val meme1 = MemeModel("1", "Hahahah... ", "fd", R.drawable.games, 23, 45, System.currentTimeMillis(), "James")
         memesAdapter.addMeme(meme1)
 
-        val meme2 = MemeModel("1", "Do y'all agree with this?", "fd", R.drawable.prof, 23, 45, System.currentTimeMillis(), "Mickey")
+        val meme2 = MemeModel("1", null, "fd", R.drawable.prof, 23, 45, System.currentTimeMillis(), "Mickey")
         memesAdapter.addMeme(meme2)
 
         val meme3 = MemeModel("1", "Ahhhhh... my ribs :D", "fd", R.drawable.games, 23,  45, System.currentTimeMillis(), "Hellen")
         memesAdapter.addMeme(meme3)
     }
 
-    override fun onItemClick(meme: MemeModel, viewID: Int) {
+    override fun onItemClick(meme: MemeModel, viewID: Int, image: Bitmap?) {
         when(viewID) {
             0 -> activity?.toast("Like")
             1 -> showBottomSheet(meme)
             2 -> activity?.toast("Fave")
             3 -> showComments(meme)
-            4 -> showMeme(meme)
+            4 -> showMeme(meme, image!!)
             5 -> showProfile(meme)
 
         }
@@ -86,10 +88,10 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
     }
 
-    private fun showMeme(meme: MemeModel) {
+    private fun showMeme(meme: MemeModel, image: Bitmap) {
         val i = Intent(activity, ViewMemeActivity::class.java)
-        i.putExtra("isFave", false)
-        i.putExtra("meme", meme)
+        DankMemesUtil.saveTemporaryImage(activity!!, image)
+        i.putExtra("caption", meme.caption)
         startActivity(i)
         activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }

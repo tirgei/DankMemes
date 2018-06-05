@@ -1,6 +1,8 @@
 package com.gelostech.dankmemes.adapters
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,7 @@ import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.inflate
 import com.gelostech.dankmemes.utils.loadUrl
+import com.makeramen.roundedimageview.RoundedDrawable
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.item_meme.view.*
@@ -37,7 +40,7 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
     }
 
     interface OnItemClickListener {
-        fun onItemClick(meme: MemeModel, viewID: Int)
+        fun onItemClick(meme: MemeModel, viewID: Int, image: Bitmap?)
     }
 
 
@@ -55,6 +58,7 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
         private var bounceInterpolator: MyBounceInterpolator
         private var weakReference: WeakReference<OnItemClickListener> = WeakReference(onItemClickListener)
         private lateinit var meme: MemeModel
+        private lateinit var image: Bitmap
 
         init {
             memeMore.setImageDrawable(setDrawable(context, Ionicons.Icon.ion_android_more_vertical, R.color.secondaryText, 14))
@@ -90,17 +94,19 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
         }
 
         override fun onClick(v: View?) {
+            image = (memeImage.drawable as RoundedDrawable).sourceBitmap
+
             when(v!!.id) {
                 memeLike.id -> {
-                    weakReference.get()!!.onItemClick(meme, 0)
+                    weakReference.get()!!.onItemClick(meme, 0, null)
                     memeLike.startAnimation(anim)
                 }
 
-                memeMore.id -> weakReference.get()!!.onItemClick(meme, 1)
-                memeFave.id -> weakReference.get()!!.onItemClick(meme, 2)
-                memeComment.id -> weakReference.get()!!.onItemClick(meme, 3)
-                memeImage.id -> weakReference.get()!!.onItemClick(meme, 4)
-                userIcon.id -> weakReference.get()!!.onItemClick(meme, 5)
+                memeMore.id -> weakReference.get()!!.onItemClick(meme, 1, null)
+                memeFave.id -> weakReference.get()!!.onItemClick(meme, 2, null)
+                memeComment.id -> weakReference.get()!!.onItemClick(meme, 3, null)
+                memeImage.id -> weakReference.get()!!.onItemClick(meme, 4, image)
+                userIcon.id -> weakReference.get()!!.onItemClick(meme, 5, null)
             }
         }
     }

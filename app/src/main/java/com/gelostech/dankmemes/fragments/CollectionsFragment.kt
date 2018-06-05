@@ -2,6 +2,7 @@ package com.gelostech.dankmemes.fragments
 
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -13,6 +14,7 @@ import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.activities.ViewMemeActivity
 import com.gelostech.dankmemes.adapters.CollectionsAdapter
 import com.gelostech.dankmemes.adapters.FavesAdapter
+import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.models.CollectionModel
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
@@ -73,10 +75,9 @@ class CollectionsFragment : Fragment(), FavesAdapter.OnItemClickListener{
         favesAdapter.addFave(fave4)
     }
 
-    override fun onItemClick(fave: FaveModel) {
+    override fun onItemClick(fave: FaveModel, image: Bitmap) {
         val i = Intent(activity, ViewMemeActivity::class.java)
-        i.putExtra("isFave", true)
-        i.putExtra("meme", fave)
+        DankMemesUtil.saveTemporaryImage(activity!!, image)
         startActivity(i)
         activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }

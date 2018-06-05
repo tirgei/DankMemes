@@ -9,7 +9,7 @@
         android:id="@+id/faveImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
+        android:scaleType="center"
         tools:src="@drawable/games"
         app:riv_corner_radius="5dp"/>
 
