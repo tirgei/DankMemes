@@ -1,6 +1,7 @@
 package com.gelostech.dankmemes.fragments
 
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
@@ -56,7 +57,7 @@ class ProfileFragment : Fragment(), MemesAdapter.OnItemClickListener {
         memesAdapter.addMeme(meme3)
     }
 
-    override fun onItemClick(meme: MemeModel, viewID: Int) {
+    override fun onItemClick(meme: MemeModel, viewID: Int, image: Bitmap?) {
 
     }
 }
