@@ -6,6 +6,7 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
@@ -40,5 +41,11 @@ open class BaseActivity : AppCompatActivity() {
 
     fun storagePermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun getUid(): String? {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        return user?.uid
     }
 }
