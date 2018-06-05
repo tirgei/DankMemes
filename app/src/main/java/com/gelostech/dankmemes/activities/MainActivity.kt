@@ -31,6 +31,7 @@ import com.yarolegovich.slidingrootnav.callback.DragStateListener
 import kotlinx.android.synthetic.main.drawer_layout.*
 import android.content.ActivityNotFoundException
 import android.net.Uri
+import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.alert
 
 
@@ -186,7 +187,14 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
             Handler().postDelayed({
                 alert("Are you sure you want to log out?") {
                     title = "Log out"
-                    positiveButton("LOG OUT") {}
+                    positiveButton("LOG OUT") {
+                        val firebaseAuth = FirebaseAuth.getInstance()
+                        firebaseAuth.signOut()
+
+                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
+                        finish()
+                    }
                     negativeButton("CANCEL") {}
                 }.show()
             }, 300)
