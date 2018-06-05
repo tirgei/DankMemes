@@ -26,12 +26,12 @@ import gun0912.tedbottompicker.TedBottomPicker
 
 class PostActivity : BaseActivity(), View.OnClickListener {
     private var imageUri: Uri? = null
-    private var TAG = PostActivity::class.java.simpleName
     private var imageSelected = false
     private var uploadMeme: MenuItem? = null
 
     companion object {
         private const val GALLERY_REQUEST = 1
+        private var TAG = PostActivity::class.java.simpleName
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,33 +92,11 @@ class PostActivity : BaseActivity(), View.OnClickListener {
                     val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                     startActivityForResult(galleryIntent, GALLERY_REQUEST)
 
-                    //pickImageFromGallery()
                 } else {
                     requestStoragePermission()
                 }
             }
         }
-    }
-
-    private fun pickImageFromGallery() {
-        val tedBottomPicker = TedBottomPicker.Builder(this@PostActivity)
-                .showCameraTile(false)
-                .showGalleryTile(false)
-                .setTitle("Pick meme..")
-                .setPreviewMaxCount(100)
-                .setOnImageSelectedListener {
-                    imageUri = it
-
-                    CropImage.activity(imageUri)
-                            .setGuidelines(CropImageView.Guidelines.ON)
-                            .start(this)
-                }
-                .setOnErrorListener {
-                    Log.d(TAG, "Picking meme error: $it")
-                }
-                .create()
-
-        tedBottomPicker.show(supportFragmentManager)
     }
 
     private fun startCropActivity(imageUri: Uri) {
