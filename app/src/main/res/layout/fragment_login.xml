@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.LoginFragment"
     android:background="@color/white"
     android:fillViewport="true">
@@ -67,13 +67,17 @@
                 android:textSize="13sp"
                 android:inputType="textPassword"/>
 
-            <Button
+            <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
                 android:id="@+id/loginButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button_solid"
                 android:text="@string/login"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                app:spinning_bar_color="@color/white"
+                app:spinning_bar_width="4dp"
+                app:spinning_bar_padding="2dp"
+                android:layout_gravity="center_horizontal"/>
 
             <TextView
                 android:id="@+id/loginForgotPassword"
