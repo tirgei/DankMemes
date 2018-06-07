@@ -39,6 +39,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         AHBottomNavigation.OnNavigationPositionListener, ViewPager.OnPageChangeListener, DragStateListener  {
     private var doubleBackToExit = false
     private var newMeme: MenuItem? = null
+    private var editProfile: MenuItem? = null
     private lateinit var slidingDrawer: SlidingRootNav
 
     companion object {
@@ -213,6 +214,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     override fun onTabSelected(position: Int, wasSelected: Boolean): Boolean {
         mainViewPager.setCurrentItem(position, true)
         newMeme?.isVisible = position == 0
+        editProfile?.isVisible = position == 2
 
         when(position) {
             0 -> mainToolbarTitle.text = getString(R.string.app_name)
@@ -243,6 +245,9 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         menuInflater.inflate(R.menu.menu_main, menu)
 
         newMeme = menu?.findItem(R.id.menu_add_meme)
+        editProfile = menu?.findItem(R.id.menu_edit_profile)
+
+        editProfile?.icon = setDrawable(this, Ionicons.Icon.ion_edit, R.color.textGray, 14)
         newMeme?.icon = setDrawable(this, Ionicons.Icon.ion_plus, R.color.textGray, 14)
 
         return super.onCreateOptionsMenu(menu)
@@ -252,6 +257,11 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         when(item?.itemId) {
             R.id.menu_add_meme -> {
                 startActivity(Intent(this, PostActivity::class.java))
+                overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+            }
+
+            R.id.menu_edit_profile -> {
+                startActivity(Intent(this, EditProfileActivity::class.java))
                 overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
             }
         }

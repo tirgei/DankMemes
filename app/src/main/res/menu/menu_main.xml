@@ -7,5 +7,10 @@
         app:showAsAction="ifRoom"
         android:title="Post meme"/>
 
+    <item
+        android:id="@+id/menu_edit_profile"
+        app:showAsAction="ifRoom"
+        android:title="Edit Profile"
+        android:visible="false"/>
 
 </menu>

@@ -49,6 +49,11 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="terms">Terms and Conditions</string>
     <string name="agree_to_terms">I accept the</string>
+    <string name="button">button</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="set_avatar">Set profile picture...</string>
+    <string name="bio">About me</string>
+    <string name="update_profile">Update profile</string>
 
 
 </resources>
