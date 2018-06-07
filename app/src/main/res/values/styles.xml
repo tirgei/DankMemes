@@ -20,5 +20,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="BottomSheet.StyleList" parent="BottomSheet.List">
+        <item name="android:textColorPrimary">@color/textGray</item>
+        <item name="android:textColorSecondary">@color/textGray</item>
+    </style>
+
 
 </resources>
