@@ -85,7 +85,11 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
                 userIcon.loadUrl(R.drawable.person)
                 userName.text = memePoster
                 memeTime.text = TimeFormatter().getTimeStamp(time!!)
-                memeCaption.text = caption
+                if (caption.isNullOrEmpty()) {
+                    memeCaption.visibility = View.GONE
+                } else {
+                    memeCaption.text = caption
+                }
                 memeImage.loadUrl(image!!)
                 memeLike.text = "$likesCount likes"
                 memeComment.text = "$commentsCount comments"
