@@ -22,8 +22,6 @@ import org.jetbrains.anko.toast
 import gun0912.tedbottompicker.TedBottomPicker
 
 
-
-
 class PostActivity : BaseActivity(), View.OnClickListener {
     private var imageUri: Uri? = null
     private var imageSelected = false
