@@ -26,8 +26,14 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 import android.support.v7.widget.RecyclerView
-
-
+import android.widget.EditText
+import android.widget.FrameLayout
+import com.gelostech.dankmemes.models.FaveModel
+import com.gelostech.dankmemes.models.ReportModel
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.Transaction
+import com.google.firebase.database.MutableData
 
 
 class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
@@ -51,7 +57,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         initViews()
         homeShimmer.startShimmerAnimation()
 
-        memesQuery = getDatabaseReference().child("dank-memes").orderByChild("time")
+        memesQuery = getDatabaseReference().child("dank-memes")
         memesQuery.addValueEventListener(memesValueListener)
         memesQuery.addChildEventListener(memesChildListener)
     }
@@ -92,7 +98,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
     private val memesChildListener = object : ChildEventListener {
         override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error laoding memes: ${p0.message}")
+            Log.e(TAG, "Error loading memes: ${p0.message}")
         }
 
         override fun onChildMoved(p0: DataSnapshot, p1: String?) {
@@ -117,9 +123,9 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
     override fun onItemClick(meme: MemeModel, viewID: Int, image: Bitmap?) {
         when(viewID) {
-            0 -> activity?.toast("Like")
-            1 -> showBottomSheet(meme)
-            2 -> activity?.toast("Fave")
+            0 -> likePost(meme.id!!)
+            1 -> showBottomSheet(meme, image!!)
+            2 -> favePost(meme.id!!)
             3 -> showComments(meme)
             4 -> showMeme(meme, image!!)
             5 -> showProfile(meme)
@@ -128,10 +134,12 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     }
 
     private fun showProfile(meme: MemeModel) {
-        val i = Intent(activity, ProfileActivity::class.java)
-        i.putExtra("userId", meme.memePoster)
-        startActivity(i)
-        activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+        if (meme.memePosterID != getUid()) {
+            val i = Intent(activity, ProfileActivity::class.java)
+            i.putExtra("userId", meme.memePosterID)
+            startActivity(i)
+            activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+        }
     }
 
     private fun showMeme(meme: MemeModel, image: Bitmap) {
@@ -142,7 +150,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
-    private fun showBottomSheet(meme: MemeModel) {
+    private fun showBottomSheet(meme: MemeModel, image: Bitmap) {
         bs = if (getUid() != meme.memePosterID) {
             BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet)
         } else {
@@ -152,10 +160,14 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         bs.listener { _, which ->
 
             when(which) {
-                R.id.bs_share -> activity?.toast("Share")
+                R.id.bs_share -> DankMemesUtil.shareImage(activity!!, image)
                 R.id.bs_delete -> deletePost(meme)
-                R.id.bs_save -> activity?.toast("Save")
-                R.id.bs_report -> activity?.toast("Report")
+                R.id.bs_save -> {
+                    if (storagePermissionGranted()) {
+                        DankMemesUtil.saveImage(activity!!, image)
+                    } else requestStoragePermission()
+                }
+                R.id.bs_report -> showReportDialog(meme)
             }
 
         }.show()
@@ -172,12 +184,110 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private fun deletePost(meme: MemeModel) {
         val dbRef = getDatabaseReference().child("dank-memes").child(meme.id!!)
 
-        activity?.alert("Delete this meme?") {
+        activity!!.alert("Delete this meme?") {
             positiveButton("DELETE") {
                 dbRef.removeValue()
             }
             negativeButton("CANCEL"){}
-        }
+        }.show()
+    }
+
+    private fun likePost(id: String) {
+        getDatabaseReference().child("dank-memes").child(id).runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                val meme = mutableData.getValue<MemeModel>(MemeModel::class.java)
+
+                if (meme!!.likes.containsKey(getUid())) {
+                    meme.likesCount = meme.likesCount!! - 1
+                    meme.likes.remove(getUid())
+
+                } else  {
+                    meme.likesCount = meme.likesCount!! + 1
+                    meme.likes[getUid()] = true
+                }
+
+                mutableData.value = meme
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
+                val meme = dataSnapshot!!.getValue<MemeModel>(MemeModel::class.java)
+                //Toast.makeText(getActivity(), "faveKey " + article.getFaveKey(), Toast.LENGTH_SHORT).show();
+
+                Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
+            }
+        })
+    }
+
+    private fun favePost(id: String) {
+        getDatabaseReference().child("dank-memes").child(id).runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                val meme = mutableData.getValue<MemeModel>(MemeModel::class.java)
+
+                if (meme!!.faves.containsKey(getUid())) {
+                    meme.faves.remove(getUid())
+
+                    getDatabaseReference().child("favorites").child(getUid()).child(meme.id!!).removeValue()
+
+                } else  {
+                    meme.faves[getUid()] = true
+
+                    val fave = FaveModel()
+                    fave.faveKey = meme.id!!
+                    fave.commentId = meme.id!!
+                    fave.picUrl = meme.imageUrl!!
+
+                    getDatabaseReference().child("favorites").child(getUid()).child(meme.id!!).setValue(fave)
+                }
+
+                mutableData.value = meme
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
+                val meme = dataSnapshot!!.getValue<MemeModel>(MemeModel::class.java)
+                //Toast.makeText(getActivity(), "faveKey " + article.getFaveKey(), Toast.LENGTH_SHORT).show();
+
+                Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
+            }
+        })
+    }
+
+    private fun showReportDialog(meme: MemeModel) {
+        val editText = EditText(activity)
+        val layout = FrameLayout(activity)
+        layout.setPaddingRelative(45,15,45,0)
+        layout.addView(editText)
+
+        activity!!.alert("Please provide a reason for reporting") {
+            customView = layout
+
+            positiveButton("REPORT") {
+                if (!DankMemesUtil.validated(editText)) {
+                    activity!!.toast("Please enter a reason to report")
+                    return@positiveButton
+                }
+
+                val key = getDatabaseReference().child("reports").push().key
+                val reason = editText.text.toString().trim()
+
+                val report = ReportModel()
+                report.id = key
+                report.memeId = meme.id
+                report.memePosterId = meme.memePosterID
+                report.reporterId = getUid()
+                report.memeUrl = meme.imageUrl
+                report.reason = reason
+                report.time = System.currentTimeMillis()
+
+                getDatabaseReference().child("reports").child(key!!).setValue(report).addOnCompleteListener {
+                    activity!!.toast("Meme reported!")
+                }
+
+            }
+
+            negativeButton("CANCEL"){}
+        }.show()
     }
 
     override fun onDestroy() {

@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,15 +15,23 @@ import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.activities.ViewMemeActivity
 import com.gelostech.dankmemes.adapters.CollectionsAdapter
 import com.gelostech.dankmemes.adapters.FavesAdapter
+import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.models.CollectionModel
 import com.gelostech.dankmemes.models.FaveModel
+import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_collections.*
+import org.jetbrains.anko.alert
 
-class CollectionsFragment : Fragment(), FavesAdapter.OnItemClickListener{
-    private lateinit var collectionsAdapter: CollectionsAdapter
+class CollectionsFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
     private lateinit var favesAdapter: FavesAdapter
+    private lateinit var favesQuery: Query
+
+    companion object {
+        private var TAG = CollectionsFragment::class.java.simpleName
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -34,7 +43,10 @@ class CollectionsFragment : Fragment(), FavesAdapter.OnItemClickListener{
         super.onViewCreated(view, savedInstanceState)
         initViews()
 
-        loadSample()
+        favesQuery = getDatabaseReference().child("favorites").child(getUid())
+        favesQuery.addValueEventListener(favesValueListener)
+        favesQuery.addChildEventListener(favesChildListener)
+
     }
 
     private fun initViews() {
@@ -42,37 +54,43 @@ class CollectionsFragment : Fragment(), FavesAdapter.OnItemClickListener{
         collectionsRv.layoutManager = GridLayoutManager(activity!!, 3)
         collectionsRv.addItemDecoration(RecyclerFormatter.GridItemDecoration(activity!!, R.dimen.grid_layout_margin))
 
-        /*collectionsAdapter = CollectionsAdapter(activity!!)
-        collectionsRv.adapter = collectionsAdapter*/
-
         favesAdapter = FavesAdapter(this)
         collectionsRv.adapter = favesAdapter
     }
 
-//    private fun loadSample() {
-//        val collection1 = CollectionModel("1", "Car memes", "sgdgf4564", 45, "ddhdhd")
-//        collectionsAdapter.addCollection(collection1)
-//
-//        val collection2 = CollectionModel("1", "School", "sgdgf4564", 45, "ddhdhd")
-//        collectionsAdapter.addCollection(collection2)
-//
-//        val collection3 = CollectionModel("1", "Dogs", "sgdgf4564", 45, "ddhdhd")
-//        collectionsAdapter.addCollection(collection3)
-//
-//    }
+    private val favesValueListener = object : ValueEventListener {
+        override fun onCancelled(p0: DatabaseError) {
+            Log.e(TAG, "Error fetching faves: ${p0.message}")
+        }
 
-    private fun loadSample() {
-        val fave1 = FaveModel("1", "sdvsdvs", R.drawable.games)
-        favesAdapter.addFave(fave1)
+        override fun onDataChange(p0: DataSnapshot) {
 
-        val fave2 = FaveModel("2", "FDgf", R.drawable.prof)
-        favesAdapter.addFave(fave2)
+        }
+    }
 
-        val fave3 = FaveModel("23", "SDgds", R.drawable.games)
-        favesAdapter.addFave(fave3)
+    private val favesChildListener = object : ChildEventListener {
+        override fun onCancelled(p0: DatabaseError) {
+            Log.e(TAG, "Error fetching faves: ${p0.message}")
+        }
 
-        val fave4 = FaveModel("23", "SDgds", R.drawable.games)
-        favesAdapter.addFave(fave4)
+        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+            Log.e(TAG, "Fave moved: ${p0.key}")
+        }
+
+        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+            val fave = p0.getValue(FaveModel::class.java)
+            favesAdapter.updateFave(fave!!)
+        }
+
+        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+            val fave = p0.getValue(FaveModel::class.java)
+            favesAdapter.addFave(fave!!)
+        }
+
+        override fun onChildRemoved(p0: DataSnapshot) {
+            val fave = p0.getValue(FaveModel::class.java)
+            favesAdapter.removeFave(fave!!)
+        }
     }
 
     override fun onItemClick(fave: FaveModel, image: Bitmap) {
@@ -80,5 +98,41 @@ class CollectionsFragment : Fragment(), FavesAdapter.OnItemClickListener{
         DankMemesUtil.saveTemporaryImage(activity!!, image)
         startActivity(i)
         activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+    override fun onLongItemClick(fave: FaveModel) {
+        activity!!.alert("Remove meme from favorites?"){
+            positiveButton("REMOVE") {
+                removeFave(fave.faveKey!!)
+            }
+            negativeButton("CANCEL") {}
+        }.show()
+    }
+
+    private fun removeFave(id: String) {
+        getDatabaseReference().child("dank-memes").child(id).runTransaction(object : Transaction.Handler {
+            override fun doTransaction(mutableData: MutableData): Transaction.Result {
+                val meme = mutableData.getValue<MemeModel>(MemeModel::class.java)
+
+                meme!!.faves.remove(getUid())
+                getDatabaseReference().child("favorites").child(getUid()).child(meme.id!!).removeValue()
+
+                mutableData.value = meme
+                return Transaction.success(mutableData)
+            }
+
+            override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
+                val meme = dataSnapshot!!.getValue<MemeModel>(MemeModel::class.java)
+                //Toast.makeText(getActivity(), "faveKey " + article.getFaveKey(), Toast.LENGTH_SHORT).show();
+
+                Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
+            }
+        })
+    }
+
+    override fun onDestroy() {
+        favesQuery.removeEventListener(favesValueListener)
+        favesQuery.removeEventListener(favesChildListener)
+        super.onDestroy()
     }
 }
