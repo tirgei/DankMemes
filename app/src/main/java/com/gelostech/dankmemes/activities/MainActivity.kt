@@ -41,6 +41,9 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private var newMeme: MenuItem? = null
     private var editProfile: MenuItem? = null
     private lateinit var slidingDrawer: SlidingRootNav
+    private lateinit var homeFragment: HomeFragment
+    private lateinit var collectionsFragment: CollectionsFragment
+    private lateinit var profileFragment: ProfileFragment
 
     companion object {
         private const val HOME: String = "Home"
@@ -90,9 +93,9 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     //Setup the main view pager
     private fun setupViewPager() {
         val adapter = PagerAdapter(supportFragmentManager, this)
-        val homeFragment = HomeFragment()
-        val profileFragment = ProfileFragment()
-        val collectionsFragment = CollectionsFragment()
+        homeFragment = HomeFragment()
+        profileFragment = ProfileFragment()
+        collectionsFragment = CollectionsFragment()
 
         adapter.addAllFrags(homeFragment, collectionsFragment, profileFragment)
         adapter.addAllTitles(HOME, COLLECTIONS, PROFILE)
@@ -261,7 +264,9 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
             }
 
             R.id.menu_edit_profile -> {
-                startActivity(Intent(this, EditProfileActivity::class.java))
+                val intent = Intent(this, EditProfileActivity::class.java)
+                intent.putExtra("user", profileFragment.getUser())
+                startActivity(intent)
                 overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
             }
         }
