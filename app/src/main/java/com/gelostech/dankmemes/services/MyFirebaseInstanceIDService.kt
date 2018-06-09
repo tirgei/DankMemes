@@ -41,7 +41,7 @@ class MyFirebaseInstanceIDService : FirebaseInstanceIdService() {
         val userID = FirebaseAuth.getInstance().currentUser?.uid
         if (userID != null) {
             val dbRef = FirebaseDatabase.getInstance().reference
-            dbRef.child("users").child(userID).child("token").setValue(token)
+            dbRef.child("users").child(userID).child("userToken").setValue(token)
         }
     }
 
