@@ -86,6 +86,7 @@ dependencies {
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.+'
     implementation 'com.karumi:dexter:4.2.0'
     implementation 'gun0912.ted:tedbottompicker:1.2.1'
+    implementation 'com.android.support:multidex:1.0.3'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
