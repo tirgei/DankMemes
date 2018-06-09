@@ -10,6 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -25,6 +29,7 @@ open class BaseFragment : Fragment() {
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
+    // User hasn't requested storage permission; request them to allow
     fun requestStoragePermission() {
         Dexter.withActivity(activity)
                 .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -42,14 +47,25 @@ open class BaseFragment : Fragment() {
                 }).check()
     }
 
+    // Check if user has granted storage permission
     fun storagePermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun getUid(): String? {
+    // Get root database reference
+    fun getDatabaseReference(): DatabaseReference = FirebaseDatabase.getInstance().reference
+
+    // Get FirebaseAuth instance
+    fun getFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    // Get Firebase Storage reference
+    fun getStorageReference(): StorageReference = FirebaseStorage.getInstance().reference
+
+    // Get user ID
+    fun getUid(): String {
         val user = FirebaseAuth.getInstance().currentUser
 
-        return user?.uid
+        return user!!.uid
     }
 
 
