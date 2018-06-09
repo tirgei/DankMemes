@@ -18,6 +18,7 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.Config
+import com.gelostech.dankmemes.commoners.DankMemesUtil
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -90,7 +91,7 @@ class NotificationUtils(private val mContext: Context) {
         val inboxStyle = NotificationCompat.InboxStyle()
         inboxStyle.addLine(message)
 
-        val notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
+        val notification = mBuilder.setTicker(title).setWhen(0)
                 .setAutoCancel(true)
                 .setContentTitle(title)
                 .setContentIntent(resultPendingIntent)
@@ -100,13 +101,20 @@ class NotificationUtils(private val mContext: Context) {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.resources, icon))
                 .setContentText(message)
-                .build()
 
         val notificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannel(notificationChannel)
         }
-        notificationManager.notify(Config.NOTIFICATION_ID, notification)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            notification.color = DankMemesUtil.getColor(mContext, R.color.colorAccent)
+            notification.setSmallIcon(R.mipmap.ic_launcher)
+        } else {
+            notification.setSmallIcon(R.mipmap.ic_launcher)
+        }
+
+        notificationManager.notify(Config.NOTIFICATION_ID, notification.build())
     }
 
     private fun showBigNotification(bitmap: Bitmap, mBuilder: NotificationCompat.Builder, icon: Int, title: String, message: String, timeStamp: String, resultPendingIntent: PendingIntent, alarmSound: Uri) {
@@ -114,23 +122,29 @@ class NotificationUtils(private val mContext: Context) {
         bigPictureStyle.setBigContentTitle(title)
         bigPictureStyle.setSummaryText(message)
         bigPictureStyle.bigPicture(bitmap)
-        val notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
+        val notification = mBuilder.setTicker(title).setWhen(0)
                 .setAutoCancel(true)
                 .setContentTitle(title)
                 .setContentIntent(resultPendingIntent)
                 .setSound(alarmSound)
                 .setStyle(bigPictureStyle)
                 .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.resources, icon))
                 .setContentText(message)
-                .build()
 
         val notificationManager = mContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannel(notificationChannel)
         }
-        notificationManager.notify(Config.NOTIFICATION_ID_BIG_IMAGE, notification)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            notification.color = DankMemesUtil.getColor(mContext, R.color.colorAccent)
+            notification.setSmallIcon(R.mipmap.ic_launcher)
+        } else {
+            notification.setSmallIcon(R.mipmap.ic_launcher)
+        }
+
+        notificationManager.notify(Config.NOTIFICATION_ID_BIG_IMAGE, notification.build())
     }
 
     /**
