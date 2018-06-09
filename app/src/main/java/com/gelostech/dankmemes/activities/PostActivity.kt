@@ -1,31 +1,31 @@
 package com.gelostech.dankmemes.activities
 
 import android.app.Activity
+import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.DankMemesUtil
+import com.gelostech.dankmemes.models.MemeModel
+import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.mikepenz.ionicons_typeface_library.Ionicons
-import kotlinx.android.synthetic.main.activity_post.*
-import android.content.Intent
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
-import android.R.attr.data
-import android.provider.MediaStore
-import android.util.Log
-import android.view.Menu
+import kotlinx.android.synthetic.main.activity_post.*
 import org.jetbrains.anko.toast
-import gun0912.tedbottompicker.TedBottomPicker
-
+import com.gelostech.dankmemes.utils.PreferenceHelper.get
 
 class PostActivity : BaseActivity(), View.OnClickListener {
     private var imageUri: Uri? = null
     private var imageSelected = false
     private var uploadMeme: MenuItem? = null
+    private lateinit var prefs: SharedPreferences
 
     companion object {
         private const val GALLERY_REQUEST = 1
@@ -38,6 +38,8 @@ class PostActivity : BaseActivity(), View.OnClickListener {
 
         initViews()
         checkIfShareAction()
+
+        prefs = PreferenceHelper.defaultPrefs(this)
     }
 
     private fun initViews() {
@@ -135,6 +137,49 @@ class PostActivity : BaseActivity(), View.OnClickListener {
             toast("Please select a meme...")
             return
         }
+
+        if (!imageSelected) return
+
+        showLoading("Posting meme...")
+        val id = getDatabaseReference().child("dank-memes").push().key
+
+        // Create new meme object
+        val meme = MemeModel()
+        meme.id = id
+        meme.caption = postCaption.text.toString().trim()
+        meme.likesCount = 0
+        meme.commentsCount = 0
+        meme.memePoster = prefs["username"]
+        meme.memePosterID = getUid()
+        meme.time = System.currentTimeMillis()
+
+        val ref = getStorageReference().child("memes").child(getUid()).child(id!!)
+        val uploadTask = ref.putFile(imageUri!!)
+        uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                throw task.exception!!
+            }
+            Log.d(TAG, "Image uploaded")
+
+            // Continue with the task to get the download URL
+            ref.downloadUrl
+        }.addOnCompleteListener({ task ->
+            if (task.isSuccessful) {
+                meme.imageUrl = task.result.toString()
+
+                getDatabaseReference().child("dank-memes").child(id).setValue(meme).addOnCompleteListener {
+                    hideLoading()
+                    toast("Meme posted!")
+                    showSelectImage()
+                    postCaption.setText("")
+                }
+
+            } else {
+                toast("Error updating profile. Please try again.")
+                Log.d(TAG, "Error updating profile: ${task.exception}")
+            }
+        })
+
     }
 
     /**
