@@ -2,7 +2,6 @@ package com.gelostech.dankmemes.adapters
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
@@ -23,6 +22,19 @@ class CommentAdapter(context: Context, onItemClickListener: OnItemClickListener)
         notifyItemInserted(comments.size - 1)
     }
 
+    fun removeComment(comment: CommentModel) {
+        var indexToRemove: Int = -1
+
+        for ((index, commentModel) in comments.withIndex()) {
+            if (comment.commentKey == commentModel.commentKey) {
+                indexToRemove = index
+            }
+        }
+
+        comments.removeAt(indexToRemove)
+        notifyItemRemoved(indexToRemove)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentHolder {
         return CommentHolder(parent.inflate(R.layout.item_comment), onItemClickListener)
     }
@@ -40,33 +52,33 @@ class CommentAdapter(context: Context, onItemClickListener: OnItemClickListener)
         private val commentText = itemView.commentText
         private val commentTime = itemView.commentTime
         private val weakReference = WeakReference<OnItemClickListener>(onItemClickListener)
-        private lateinit var comment: CommentModel
+        private lateinit var commentObject: CommentModel
 
         init {
             commentIcon.setOnClickListener(this)
             commentRoot.setOnLongClickListener(this)
         }
 
-        fun bindView(comment: CommentModel, context: Context) {
-            this.comment = comment
+        fun bindView(commentObject: CommentModel, context: Context) {
+            this.commentObject = commentObject
 
-            with(comment) {
+            with(commentObject) {
                 Glide.with(context).load(R.drawable.person).thumbnail(0.1f).into(commentIcon)
-                commentUser.text = "Vincent Tirgei"
-                commentText.text = commentContent
-                commentTime.text = TimeFormatter().getTimeStamp(time!!)
+                commentUser.text = userName
+                commentText.text = comment
+                commentTime.text = TimeFormatter().getTimeStamp(timeStamp!!)
             }
         }
 
         override fun onClick(v: View?) {
             when(v?.id) {
-                commentIcon.id -> weakReference.get()!!.onItemClick(comment, 0)
+                commentIcon.id -> weakReference.get()!!.onItemClick(commentObject, 0)
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
             when(v?.id) {
-                commentRoot.id -> weakReference.get()!!.onItemClick(comment, 1)
+                commentRoot.id -> weakReference.get()!!.onLongItemClick(commentObject)
             }
 
             return true
@@ -75,6 +87,7 @@ class CommentAdapter(context: Context, onItemClickListener: OnItemClickListener)
 
     interface OnItemClickListener{
         fun onItemClick(comment: CommentModel, viewId: Int)
+        fun onLongItemClick(comment: CommentModel)
     }
 
 }
