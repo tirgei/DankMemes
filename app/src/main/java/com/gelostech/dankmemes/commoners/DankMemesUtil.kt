@@ -8,17 +8,28 @@ import com.mikepenz.iconics.typeface.IIcon
 import android.graphics.BitmapFactory
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import java.io.ByteArrayOutputStream
 import android.widget.EditText
 import android.text.TextUtils
 import android.view.View
 import android.graphics.drawable.BitmapDrawable
+import android.app.DownloadManager
+import android.content.Intent
+import android.media.MediaScannerConnection
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.os.StrictMode
 import android.util.Log
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import android.widget.Toast
+import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.models.MemeModel
+import com.gelostech.dankmemes.models.ReportModel
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.toast
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 
 object DankMemesUtil {
@@ -94,5 +105,87 @@ object DankMemesUtil {
             e.printStackTrace()
         }
     }
+
+    fun downloadPic(context: Context, url: String) {
+        Toast.makeText(context, "Downloading...", Toast.LENGTH_SHORT).show()
+        val directory = File("${Environment.getExternalStorageDirectory()}/DankMemes")
+
+        if (!directory.exists()) {
+            directory.mkdirs()
+        }
+
+        val mgr = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadLink = Uri.parse(url)
+        val request = DownloadManager.Request(downloadLink)
+
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                .setAllowedOverRoaming(false)
+                .setDescription("Downloading meme...")
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setTitle(context.resources.getString(R.string.app_name))
+                .setDestinationInExternalFilesDir(context, Environment.DIRECTORY_PICTURES, "DankMeme-${System.currentTimeMillis()}.jpg" )
+                .allowScanningByMediaScanner()
+
+        mgr.enqueue(request)
+
+    }
+
+    fun saveImage(context: Context, bitmap: Bitmap) {
+
+        val file = File(Environment.getExternalStorageDirectory().toString() + File.separator + "Dank Memes")
+        if(!file.exists()) file.mkdirs()
+
+        val fileName = "Meme-" + System.currentTimeMillis() + ".jpg"
+
+        val newImage = File(file, fileName)
+        if(newImage.exists()) file.delete()
+        try {
+            val out = FileOutputStream(newImage)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+            out.flush()
+            out.close()
+
+            if (Build.VERSION.SDK_INT >= 19) {
+                MediaScannerConnection.scanFile(context, arrayOf(newImage.absolutePath), null, null)
+            } else {
+                context.sendBroadcast( Intent("android.intent.action.MEDIA_MOUNTED", Uri.fromFile(newImage)))
+            }
+            context.toast("Meme saved")
+
+        } catch (e: Exception){
+            Log.d(javaClass.simpleName, e.localizedMessage)
+        }
+
+    }
+
+    fun shareImage(context: Context, bitmap: Bitmap) {
+        val share = Intent(Intent.ACTION_SEND)
+        share.type = "image/*"
+
+        val bytes = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val f = File("${Environment.getExternalStorageDirectory()}/${File.separator}/temporary_file.jpg")
+
+        try {
+            f.createNewFile()
+            val fo = FileOutputStream(f)
+            fo.write(bytes.toByteArray())
+        } catch (e: IOException) {
+                e.printStackTrace()
+        }
+
+        if(Build.VERSION.SDK_INT>=24){
+           try{
+              val m = StrictMode::class.java.getMethod("disableDeathOnFileUriExposure")
+              m.invoke(null)
+           }catch(e: Exception){
+              e.printStackTrace()
+           }
+        }
+
+        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"))
+        context.startActivity(Intent.createChooser(share, "Share Meme via..."))
+    }
+
 
 }
