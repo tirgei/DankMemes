@@ -34,8 +34,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/item_meme"
-        android:overScrollMode="never"
-        android:padding="10dp"
-        android:clipToPadding="false"/>
+        android:overScrollMode="never"/>
 
 </FrameLayout>

@@ -3,10 +3,8 @@ package com.gelostech.dankmemes.activities
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.CoordinatorLayout
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
@@ -23,7 +21,6 @@ import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
-import com.gelostech.dankmemes.commoners.BottomNavigationViewBehavior
 import com.gelostech.dankmemes.utils.setDrawable
 import com.yarolegovich.slidingrootnav.SlidingRootNav
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
@@ -31,12 +28,15 @@ import com.yarolegovich.slidingrootnav.callback.DragStateListener
 import kotlinx.android.synthetic.main.drawer_layout.*
 import android.content.ActivityNotFoundException
 import android.net.Uri
+import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.alert
 
 
 class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
-        AHBottomNavigation.OnNavigationPositionListener, ViewPager.OnPageChangeListener, DragStateListener  {
+        AHBottomNavigation.OnNavigationPositionListener, ViewPager.OnPageChangeListener,
+        HomeFragment.HomeBottomNavigationStateListener  {
+
     private var doubleBackToExit = false
     private var newMeme: MenuItem? = null
     private var editProfile: MenuItem? = null
@@ -54,6 +54,10 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        homeFragment = HomeFragment()
+        profileFragment = ProfileFragment()
+        collectionsFragment = CollectionsFragment()
 
         setupToolbar()
         setupBottomNav()
@@ -85,17 +89,15 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         bottomNav.isBehaviorTranslationEnabled = false
         bottomNav.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
         bottomNav.setUseElevation(true, 5f)
+
         bottomNav.setOnTabSelectedListener(this)
         bottomNav.setOnNavigationPositionListener(this)
-
+        homeFragment.bottomNavigationListener(this)
     }
 
     //Setup the main view pager
     private fun setupViewPager() {
         val adapter = PagerAdapter(supportFragmentManager, this)
-        homeFragment = HomeFragment()
-        profileFragment = ProfileFragment()
-        collectionsFragment = CollectionsFragment()
 
         adapter.addAllFrags(homeFragment, collectionsFragment, profileFragment)
         adapter.addAllTitles(HOME, COLLECTIONS, PROFILE)
@@ -111,7 +113,6 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
                 .withMenuLayout(R.layout.drawer_layout)
                 .withDragDistance(150)
                 .withToolbarMenuToggle(mainToolbar)
-                .addDragStateListener(this)
                 .inject()
 
         mainRoot.setOnClickListener {
@@ -206,14 +207,6 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
     }
 
-    override fun onDragEnd(isMenuOpened: Boolean) {
-
-    }
-
-    override fun onDragStart() {
-
-    }
-
     override fun onTabSelected(position: Int, wasSelected: Boolean): Boolean {
         mainViewPager.setCurrentItem(position, true)
         newMeme?.isVisible = position == 0
@@ -242,6 +235,14 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 
+    }
+
+    override fun homeHideBottomNavigation() {
+        bottomNav.visibility = View.GONE
+    }
+
+    override fun homeShowBottomNavigation() {
+        bottomNav.visibility = View.VISIBLE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

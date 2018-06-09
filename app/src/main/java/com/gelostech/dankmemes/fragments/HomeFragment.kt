@@ -1,21 +1,16 @@
 package com.gelostech.dankmemes.fragments
 
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.os.Handler
-import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.cocosw.bottomsheet.BottomSheet
-import com.cocosw.bottomsheet.BottomSheetHelper
 
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.activities.CommentActivity
@@ -30,12 +25,16 @@ import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
+import android.support.v7.widget.RecyclerView
+
+
 
 
 class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var bs: BottomSheet.Builder
     private lateinit var memesQuery: Query
+    private lateinit var bottomNavigationStateListener: HomeBottomNavigationStateListener
 
     companion object {
         private var TAG = HomeFragment::class.java.simpleName
@@ -60,15 +59,27 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private fun initViews() {
         homeRv.setHasFixedSize(true)
         homeRv.layoutManager = LinearLayoutManager(activity)
+        homeRv.addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
         homeRv.itemAnimator = DefaultItemAnimator()
 
         memesAdapter = MemesAdapter(activity!!, this)
         homeRv.adapter = memesAdapter
+
+        homeRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                if (dy > 0) {
+                    bottomNavigationStateListener.homeHideBottomNavigation()
+                } else if (dy < 0) {
+                    bottomNavigationStateListener.homeShowBottomNavigation()
+
+                }
+            }
+        })
     }
 
     private val memesValueListener = object : ValueEventListener {
         override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error laoding memes: ${p0.message}")
+            Log.e(TAG, "Error loading memes: ${p0.message}")
         }
 
         override fun onDataChange(p0: DataSnapshot) {
@@ -173,6 +184,15 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         memesQuery.removeEventListener(memesValueListener)
         memesQuery.removeEventListener(memesChildListener)
         super.onDestroy()
+    }
+
+    interface HomeBottomNavigationStateListener{
+        fun homeHideBottomNavigation()
+        fun homeShowBottomNavigation()
+    }
+
+    fun bottomNavigationListener(bottomNavigationStateListener: HomeBottomNavigationStateListener) {
+        this.bottomNavigationStateListener = bottomNavigationStateListener
     }
 
 

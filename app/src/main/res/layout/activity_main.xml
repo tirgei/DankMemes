@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activities.MainActivity"
     android:background="@color/white"
-    android:animateLayoutChanges="true"
     android:id="@+id/mainRoot">
 
     <android.support.v7.widget.Toolbar
@@ -15,10 +14,10 @@
         android:layout_height="wrap_content"
         style="?android:actionBarStyle"
         android:layout_alignParentTop="true"
-        android:background="@android:color/transparent"
+        android:background="@color/white"
         android:theme="@style/ThemeOverlay.AppCompat.Light"
         app:layout_scrollFlags="scroll|enterAlways|snap"
-        android:elevation="@dimen/no_elevation">
+        android:elevation="0.5dp">
 
         <TextView
             android:id="@+id/mainToolbarTitle"
@@ -34,7 +33,7 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <android.support.v4.view.ViewPager
+    <com.gelostech.dankmemes.utils.NonSwipeableViewPager
         android:id="@+id/mainViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

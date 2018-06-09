@@ -5,9 +5,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +20,7 @@ import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.models.UserModel
+import com.gelostech.dankmemes.utils.RecyclerFormatter
 import com.gelostech.dankmemes.utils.loadUrl
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -30,6 +31,7 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private lateinit var image: Bitmap
     private lateinit var user: UserModel
     private lateinit var profileRef: DatabaseReference
+    private lateinit var bottomNavigationStateListener: ProfileBottomNavigationStateListener
 
     companion object {
         private val TAG = ProfileFragment::class.java.simpleName
@@ -54,10 +56,22 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private fun initViews() {
         profileRv.setHasFixedSize(true)
         profileRv.layoutManager = LinearLayoutManager(activity)
+        profileRv.addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
         profileRv.itemAnimator = DefaultItemAnimator()
 
         memesAdapter = MemesAdapter(activity!!, this)
         profileRv.adapter = memesAdapter
+
+        profileRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                if (dy > 0) {
+                    bottomNavigationStateListener.profileHideBottomNavigation()
+                } else if (dy < 0) {
+                    bottomNavigationStateListener.profileShowBottomNavigation()
+
+                }
+            }
+        })
 
         profileImage.setOnClickListener {
             temporarilySaveImage()
@@ -105,6 +119,15 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     override fun onDestroy() {
         profileRef.removeEventListener(profileListener)
         super.onDestroy()
+    }
+
+    interface ProfileBottomNavigationStateListener{
+        fun profileHideBottomNavigation()
+        fun profileShowBottomNavigation()
+    }
+
+    fun bottomNavigationListener(bottomNavigationStateListener: ProfileBottomNavigationStateListener) {
+        this.bottomNavigationStateListener = bottomNavigationStateListener
     }
 
 }
