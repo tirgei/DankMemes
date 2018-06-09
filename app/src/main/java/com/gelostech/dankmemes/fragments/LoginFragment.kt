@@ -2,6 +2,7 @@ package com.gelostech.dankmemes.fragments
 
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
@@ -16,21 +17,27 @@ import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.commoners.DankMemesUtil.drawableToBitmap
 import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
+import com.gelostech.dankmemes.models.UserModel
+import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.replaceFragment
 import com.gelostech.dankmemes.utils.setDrawable
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
-
+import com.gelostech.dankmemes.utils.PreferenceHelper.set
 
 class LoginFragment : BaseFragment() {
     private lateinit var signupSuccessful: Bitmap
     private var isLoggingIn = false
+    private lateinit var prefs: SharedPreferences
 
     companion object {
         private val TAG = LoginFragment::class.java.simpleName
@@ -42,6 +49,7 @@ class LoginFragment : BaseFragment() {
 
         val successfulIcon = setDrawable(activity!!, Ionicons.Icon.ion_checkmark_round, R.color.white, 25)
         signupSuccessful = drawableToBitmap(successfulIcon)
+        prefs = PreferenceHelper.defaultPrefs(activity!!)
 
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
@@ -69,7 +77,6 @@ class LoginFragment : BaseFragment() {
         getFirebaseAuth().signInWithEmailAndPassword(email, pw)
                 .addOnCompleteListener(activity!!, { task ->
                     if (task.isSuccessful) {
-                        loginButton.doneLoadingAnimation(DankMemesUtil.getColor(activity!!, R.color.pink), signupSuccessful)
                         Log.e(TAG, "signingIn: Success!")
 
                         // update UI with the signed-in user's information
@@ -133,11 +140,27 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun updateUI(user: FirebaseUser) {
-        Handler().postDelayed({
-            startActivity(Intent(activity!!, MainActivity::class.java))
-            activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-            activity!!.finish()
-        }, 400)
+        val dbRef = getDatabaseReference().child("users").child(user.uid)
+        dbRef.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+                Log.e(TAG, "Error fetching user: ${p0.message}")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                loginButton.doneLoadingAnimation(DankMemesUtil.getColor(activity!!, R.color.pink), signupSuccessful)
+                val userObject = p0.getValue(UserModel::class.java)
+
+                prefs["username"] = userObject!!.userName
+                prefs["email"] = userObject.userEmail
+
+                Handler().postDelayed({
+                    startActivity(Intent(activity!!, MainActivity::class.java))
+                    activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+                    activity!!.finish()
+                }, 400)
+            }
+        })
+
     }
 
     // Check if user has initiated logging in process. If in process, disable back button
