@@ -16,6 +16,8 @@ import org.jetbrains.anko.toast
 
 class LoginActivity : BaseActivity() {
     private var doubleBackToExit = false
+    private lateinit var signUpFragment: SignupFragment
+    private lateinit var loginFragment: LoginFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         checkIfLoggedIn()
@@ -25,12 +27,16 @@ class LoginActivity : BaseActivity() {
 
         val user = FirebaseAuth.getInstance().currentUser
 
+        signUpFragment = SignupFragment()
+        loginFragment = LoginFragment()
+
         if (user != null && user.isAnonymous) {
-            addFragment(SignupFragment(), loginHolder.id)
+            addFragment(signUpFragment, loginHolder.id)
         } else {
-            addFragment(LoginFragment(), loginHolder.id)
+            addFragment(loginFragment, loginHolder.id)
         }
 
+        requestStoragePermission()
     }
 
     private fun checkIfLoggedIn() {
@@ -44,8 +50,12 @@ class LoginActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 0) {
+        if (!signUpFragment.backPressOkay() || !loginFragment.backPressOkay()) {
+            toast("Please wait...")
+
+        } else if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStackImmediate()
+
         } else {
             if (doubleBackToExit) {
                 super.onBackPressed()
@@ -59,11 +69,4 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        val frag = supportFragmentManager.findFragmentById(SignupFragment().id)
-        frag.onActivityResult(requestCode, resultCode, data)
-
-    }*/
 }

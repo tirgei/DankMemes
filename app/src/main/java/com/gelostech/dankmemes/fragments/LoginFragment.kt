@@ -29,8 +29,8 @@ import org.jetbrains.anko.toast
 
 
 class LoginFragment : BaseFragment() {
-    private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var signupSuccessful: Bitmap
+    private var isLoggingIn = false
 
     companion object {
         private val TAG = LoginFragment::class.java.simpleName
@@ -40,7 +40,6 @@ class LoginFragment : BaseFragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 
-        firebaseAuth = FirebaseAuth.getInstance()
         val successfulIcon = setDrawable(activity!!, Ionicons.Icon.ion_checkmark_round, R.color.white, 25)
         signupSuccessful = drawableToBitmap(successfulIcon)
 
@@ -65,15 +64,16 @@ class LoginFragment : BaseFragment() {
         val email = loginEmail.text.toString().trim()
         val pw = loginPassword.text.toString().trim()
 
+        isLoggingIn = true
         loginButton.startAnimation()
-        firebaseAuth.signInWithEmailAndPassword(email, pw)
+        getFirebaseAuth().signInWithEmailAndPassword(email, pw)
                 .addOnCompleteListener(activity!!, { task ->
                     if (task.isSuccessful) {
                         loginButton.doneLoadingAnimation(DankMemesUtil.getColor(activity!!, R.color.pink), signupSuccessful)
                         Log.e(TAG, "signingIn: Success!")
 
                         // update UI with the signed-in user's information
-                        val user = firebaseAuth.currentUser
+                        val user = task.result.user
                         updateUI(user!!)
                     } else {
                         try {
@@ -106,7 +106,7 @@ class LoginFragment : BaseFragment() {
 
             positiveButton("SEND EMAIL") {
 
-                firebaseAuth.sendPasswordResetEmail(email)
+                getFirebaseAuth().sendPasswordResetEmail(email)
                         .addOnCompleteListener(activity!!, { task ->
                             if (task.isSuccessful) {
                                 Log.e(TAG, "sendResetPassword: Success!")
@@ -139,6 +139,9 @@ class LoginFragment : BaseFragment() {
             activity!!.finish()
         }, 400)
     }
+
+    // Check if user has initiated logging in process. If in process, disable back button
+    fun backPressOkay(): Boolean = !isLoggingIn
 
     override fun onDestroy() {
         if (loginButton != null) loginButton.dispose()

@@ -4,10 +4,10 @@ package com.gelostech.dankmemes.fragments
 import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,21 +20,23 @@ import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.commoners.DankMemesUtil.drawableToBitmap
 import com.gelostech.dankmemes.commoners.DankMemesUtil.getColor
 import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
-import com.gelostech.dankmemes.utils.loadUrl
-import com.gelostech.dankmemes.utils.replaceFragment
-import com.gelostech.dankmemes.utils.setDrawable
+import com.gelostech.dankmemes.models.UserModel
+import com.gelostech.dankmemes.utils.*
 import com.google.firebase.auth.*
+import com.google.firebase.iid.FirebaseInstanceId
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_signup.*
 import org.jetbrains.anko.toast
+import com.gelostech.dankmemes.utils.PreferenceHelper.set
 
 class SignupFragment : BaseFragment() {
-    private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var signupSuccessful: Bitmap
     private var imageUri: Uri? = null
     private var imageSelected = false
+    private var isCreatingAccount = false
+    private lateinit var prefs: SharedPreferences
 
     companion object {
         private val TAG = SignupFragment::class.java.simpleName
@@ -45,9 +47,9 @@ class SignupFragment : BaseFragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
 
-        firebaseAuth = FirebaseAuth.getInstance()
         val successfulIcon = setDrawable(activity!!, Ionicons.Icon.ion_checkmark_round, R.color.white, 25)
         signupSuccessful = drawableToBitmap(successfulIcon)
+        prefs = PreferenceHelper.defaultPrefs(activity!!)
 
         return inflater.inflate(R.layout.fragment_signup, container, false)
     }
@@ -79,13 +81,12 @@ class SignupFragment : BaseFragment() {
         }
 
         signupButton.setOnClickListener {
-            val user = firebaseAuth.currentUser
+            val user = getFirebaseAuth().currentUser
 
             if (user != null && user.isAnonymous) {
                 linkToId()
             } else {
-                //signUp()
-                updateUI(user)
+                signUp()
             }
         }
     }
@@ -94,6 +95,7 @@ class SignupFragment : BaseFragment() {
         // Check if all fields are filled
         if (!DankMemesUtil.validated(signupUsername, signupEmail, signupPassword, signupConfirmPassword)) return
 
+        val name = signupUsername.text.toString().trim()
         val email = signupEmail.text.toString().trim()
         val pw = signupPassword.text.toString().trim()
         val confirmPw = signupConfirmPassword.text.toString().trim()
@@ -117,8 +119,9 @@ class SignupFragment : BaseFragment() {
         }
 
         // Create new user
+        isCreatingAccount = true
         signupButton.startAnimation()
-        firebaseAuth.createUserWithEmailAndPassword(email, pw)
+        getFirebaseAuth().createUserWithEmailAndPassword(email, pw)
                 .addOnCompleteListener(activity!!, {task ->
                     if (task.isSuccessful) {
                         signupButton.doneLoadingAnimation(getColor(activity!!, R.color.pink), signupSuccessful)
@@ -127,6 +130,9 @@ class SignupFragment : BaseFragment() {
                         // update UI with the signed-in user's information
                         val user = task.result.user
                         updateUI(user)
+
+                        prefs["username"] = name
+                        prefs["email"] = email
 
                     } else {
                         try {
@@ -159,6 +165,7 @@ class SignupFragment : BaseFragment() {
         // Check if all fields are filled
         if (!DankMemesUtil.validated(signupUsername, signupEmail, signupPassword, signupConfirmPassword)) return
 
+        val name = signupUsername.text.toString().trim()
         val email = signupEmail.text.toString().trim()
         val pw = signupPassword.text.toString().trim()
         val confirmPw = signupConfirmPassword.text.toString().trim()
@@ -184,15 +191,17 @@ class SignupFragment : BaseFragment() {
         signupButton.startAnimation()
         val credential =  EmailAuthProvider.getCredential(email, pw)
 
-        firebaseAuth.currentUser!!.linkWithCredential(credential)
+        getFirebaseAuth().currentUser!!.linkWithCredential(credential)
                 .addOnCompleteListener(activity!!, {task ->
                     if (task.isSuccessful) {
-                        signupButton.doneLoadingAnimation(getColor(activity!!, R.color.pink), signupSuccessful)
                         Log.e(TAG, "signingIn: Success!")
 
                         // update UI with the signed-in user's information
                         val user = task.result.user
                         updateUI(user)
+
+                        prefs["username"] = name
+                        prefs["email"] = email
 
                     } else {
                         try {
@@ -219,13 +228,49 @@ class SignupFragment : BaseFragment() {
 
     }
 
-    private fun updateUI(user: FirebaseUser?) {
-        Handler().postDelayed({
-            startActivity(Intent(activity!!, MainActivity::class.java))
-            activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-            activity!!.finish()
-        }, 500)
+    private fun updateUI(user: FirebaseUser) {
+        val token = FirebaseInstanceId.getInstance().token
+        val id = user.uid
+
+        val newUser = UserModel()
+        newUser.userName = signupUsername.text.toString().trim()
+        newUser.userEmail = user.email
+        newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())
+        newUser.userToken = token
+        newUser.userId = id
+        newUser.userBio = activity?.getString(R.string.new_user_bio)
+
+        val ref = getStorageReference().child("avatars").child(id)
+        val uploadTask = ref.putFile(imageUri!!)
+        uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                throw task.exception!!
+            }
+            Log.d(TAG, "Image uploaded")
+
+            // Continue with the task to get the download URL
+            ref.downloadUrl
+        }.addOnCompleteListener({ task ->
+            if (task.isSuccessful) {
+                newUser.userAvatar =  task.result.toString()
+
+                user.sendEmailVerification()
+                getDatabaseReference().child("users").child(id).setValue(newUser).addOnCompleteListener {
+                    signupButton.doneLoadingAnimation(getColor(activity!!, R.color.pink), signupSuccessful)
+
+                    startActivity(Intent(activity!!, MainActivity::class.java))
+                    activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+                    activity!!.finish()
+                }
+            } else {
+                signupButton.revertAnimation()
+                activity?.toast("Error signing up. Please try again.")
+                Log.d(TAG, "Error signing up: ${task.exception}")
+            }
+        })
     }
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -259,6 +304,9 @@ class SignupFragment : BaseFragment() {
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(context!!, this)
     }
+
+    // Check if user has initiated signing up process. If in process, disable back button
+    fun backPressOkay(): Boolean = !isCreatingAccount
 
     override fun onDestroy() {
         if (signupButton != null) signupButton.dispose()
