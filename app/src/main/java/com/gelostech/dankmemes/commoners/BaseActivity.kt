@@ -56,7 +56,7 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun hideLoading() {
-        progressDialog.hide()
+        progressDialog.dismiss()
     }
 
     // Check if user has granted storage permission
