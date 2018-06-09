@@ -27,11 +27,13 @@ import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
 import com.yarolegovich.slidingrootnav.callback.DragStateListener
 import kotlinx.android.synthetic.main.drawer_layout.*
 import android.content.ActivityNotFoundException
+import android.content.SharedPreferences
 import android.net.Uri
 import android.view.View
+import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.alert
-
+import com.gelostech.dankmemes.utils.PreferenceHelper.get
 
 class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         AHBottomNavigation.OnNavigationPositionListener, ViewPager.OnPageChangeListener,
@@ -44,6 +46,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private lateinit var homeFragment: HomeFragment
     private lateinit var collectionsFragment: CollectionsFragment
     private lateinit var profileFragment: ProfileFragment
+    private lateinit var prefs: SharedPreferences
 
     companion object {
         private const val HOME: String = "Home"
@@ -54,6 +57,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        prefs = PreferenceHelper.defaultPrefs(this)
 
         homeFragment = HomeFragment()
         profileFragment = ProfileFragment()
@@ -122,8 +126,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         setupDrawerIcons()
         drawerClickListeners()
 
-        drawerName.text = "Vincent Tirgei"
-        drawerEmail.text = "tirgeic@gmail.com"
+        drawerName.text = prefs["username"]
+        drawerEmail.text = prefs["email"]
 
     }
 
