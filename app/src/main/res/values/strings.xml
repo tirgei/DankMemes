@@ -54,6 +54,7 @@
     <string name="set_avatar">Set profile picture...</string>
     <string name="bio">About me</string>
     <string name="update_profile">Update profile</string>
+    <string name="new_user_bio">Hello there. I\'m here for the memes too :)</string>
 
 
 </resources>
