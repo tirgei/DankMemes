@@ -10,5 +10,6 @@ data class MemeModel(
         var likesCount: Int? = null,
         var commentsCount: Int? = null,
         var time: Long? = null,
-        var memePoster: String? = null
+        var memePoster: String? = null,
+        var memePosterID: String? = null
 ): Serializable

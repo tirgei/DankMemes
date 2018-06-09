@@ -4,17 +4,23 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
 import com.gelostech.dankmemes.commoners.MyBounceInterpolator
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.inflate
 import com.gelostech.dankmemes.utils.loadUrl
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
@@ -27,6 +33,25 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
     fun addMeme(meme: MemeModel) {
         memes.add(meme)
         notifyItemInserted(memes.size - 1)
+    }
+
+    fun updateMeme(meme: MemeModel) {
+        for ((index, memeModel) in memes.withIndex()) {
+            if (meme.id == memeModel.id) {
+                memes[index] = meme
+                notifyItemChanged(index, meme)
+            }
+        }
+    }
+
+    fun removeMeme(meme: MemeModel) {
+
+        for ((index, memeModel) in memes.withIndex()) {
+            if (meme.id == memeModel.id) {
+                memes.removeAt(index)
+                notifyItemRemoved(index)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemeHolder {
@@ -59,6 +84,7 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
         private var weakReference: WeakReference<OnItemClickListener> = WeakReference(onItemClickListener)
         private lateinit var meme: MemeModel
         private lateinit var image: Bitmap
+        private var TAG = MemeHolder::class.java.simpleName
 
         init {
             memeMore.setImageDrawable(setDrawable(context, Ionicons.Icon.ion_android_more_vertical, R.color.secondaryText, 14))
@@ -90,11 +116,19 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
                 } else {
                     memeCaption.text = caption
                 }
-                memeImage.loadUrl(image!!)
+                memeImage.loadUrl(imageUrl!!)
                 memeLike.text = "$likesCount likes"
-                memeComment.text = "$commentsCount comments"
+                comments(commentsCount!!)
             }
 
+        }
+
+        private fun comments(comments: Int) {
+            when {
+                comments > 1 -> memeComment.text = "$comments comments"
+                comments == 1 -> memeComment.text = "$comments comment"
+                else -> memeComment.text = "comment"
+            }
         }
 
         override fun onClick(v: View?) {
@@ -113,6 +147,10 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
                 userIcon.id -> weakReference.get()!!.onItemClick(meme, 5, null)
             }
         }
+
+
     }
+
+
 
 }

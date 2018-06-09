@@ -9,6 +9,7 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -25,13 +26,20 @@ import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 
 
 class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var bs: BottomSheet.Builder
+    private lateinit var memesQuery: Query
+
+    companion object {
+        private var TAG = HomeFragment::class.java.simpleName
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -42,8 +50,11 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        homeShimmer.startShimmerAnimation()
 
-        Handler().postDelayed({loadSample()}, 2000)
+        memesQuery = getDatabaseReference().child("dank-memes").orderByChild("time")
+        memesQuery.addValueEventListener(memesValueListener)
+        memesQuery.addChildEventListener(memesChildListener)
     }
 
     private fun initViews() {
@@ -55,18 +66,42 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         homeRv.adapter = memesAdapter
     }
 
-    private fun loadSample() {
-        if (homeShimmer.isShown) homeShimmer.stopShimmerAnimation()
-        homeShimmer.visibility = View.GONE
+    private val memesValueListener = object : ValueEventListener {
+        override fun onCancelled(p0: DatabaseError) {
+            Log.e(TAG, "Error laoding memes: ${p0.message}")
+        }
 
-        val meme1 = MemeModel("1", "Hahahah... ", "fd", R.drawable.games, 23, 45, System.currentTimeMillis(), "James")
-        memesAdapter.addMeme(meme1)
+        override fun onDataChange(p0: DataSnapshot) {
+            if (p0.exists()) {
+                if (homeShimmer.isShown) homeShimmer.stopShimmerAnimation()
+                homeShimmer.visibility = View.GONE
+            }
+        }
+    }
 
-        val meme2 = MemeModel("1", null, "fd", R.drawable.prof, 23, 45, System.currentTimeMillis(), "Mickey")
-        memesAdapter.addMeme(meme2)
+    private val memesChildListener = object : ChildEventListener {
+        override fun onCancelled(p0: DatabaseError) {
+            Log.e(TAG, "Error laoding memes: ${p0.message}")
+        }
 
-        val meme3 = MemeModel("1", "Ahhhhh... my ribs :D", "fd", R.drawable.games, 23,  45, System.currentTimeMillis(), "Hellen")
-        memesAdapter.addMeme(meme3)
+        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+            Log.e(TAG, "Meme moved: ${p0.key}")
+        }
+
+        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+            val meme = p0.getValue(MemeModel::class.java)
+            memesAdapter.updateMeme(meme!!)
+        }
+
+        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+            val meme = p0.getValue(MemeModel::class.java)
+            memesAdapter.addMeme(meme!!)
+        }
+
+        override fun onChildRemoved(p0: DataSnapshot) {
+            val meme = p0.getValue(MemeModel::class.java)
+            memesAdapter.removeMeme(meme!!)
+        }
     }
 
     override fun onItemClick(meme: MemeModel, viewID: Int, image: Bitmap?) {
@@ -97,7 +132,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     }
 
     private fun showBottomSheet(meme: MemeModel) {
-        bs = if (getUid() != null) {
+        bs = if (getUid() != meme.memePosterID) {
             BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet)
         } else {
             BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_me)
@@ -107,7 +142,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
             when(which) {
                 R.id.bs_share -> activity?.toast("Share")
-                R.id.bs_delete -> activity?.toast("Delete")
+                R.id.bs_delete -> deletePost(meme)
                 R.id.bs_save -> activity?.toast("Save")
                 R.id.bs_report -> activity?.toast("Report")
             }
@@ -123,14 +158,21 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
     }
 
-    override fun onResume() {
-        super.onResume()
-        homeShimmer.startShimmerAnimation()
+    private fun deletePost(meme: MemeModel) {
+        val dbRef = getDatabaseReference().child("dank-memes").child(meme.id!!)
+
+        activity?.alert("Delete this meme?") {
+            positiveButton("DELETE") {
+                dbRef.removeValue()
+            }
+            negativeButton("CANCEL"){}
+        }
     }
 
-    override fun onPause() {
-        homeShimmer.stopShimmerAnimation()
-        super.onPause()
+    override fun onDestroy() {
+        memesQuery.removeEventListener(memesValueListener)
+        memesQuery.removeEventListener(memesChildListener)
+        super.onDestroy()
     }
 
 

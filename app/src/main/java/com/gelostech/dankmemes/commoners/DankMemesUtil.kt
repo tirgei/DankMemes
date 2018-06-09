@@ -14,11 +14,15 @@ import android.widget.EditText
 import android.text.TextUtils
 import android.view.View
 import android.graphics.drawable.BitmapDrawable
-
-
+import android.util.Log
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 
 object DankMemesUtil {
+    private var TAG = DankMemesUtil::class.java.simpleName
 
     /**
      * This function returns a FontAwesome drawable
