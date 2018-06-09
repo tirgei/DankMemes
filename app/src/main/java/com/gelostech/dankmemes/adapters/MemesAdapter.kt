@@ -26,13 +26,19 @@ import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.item_meme.view.*
 import java.lang.ref.WeakReference
+import android.support.v4.content.ContextCompat
+import com.gelostech.dankmemes.utils.setDrawable
+import com.google.firebase.auth.FirebaseAuth
+import com.mikepenz.iconics.IconicsDrawable
+
+
 
 class MemesAdapter(private val context: Context, private val onItemClickListener: OnItemClickListener) : RecyclerView.Adapter<MemesAdapter.MemeHolder>(){
     private val memes = mutableListOf<MemeModel>()
 
     fun addMeme(meme: MemeModel) {
-        memes.add(meme)
-        notifyItemInserted(memes.size - 1)
+        memes.add(0, meme)
+        notifyItemInserted(0)
     }
 
     fun updateMeme(meme: MemeModel) {
@@ -45,13 +51,16 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
     }
 
     fun removeMeme(meme: MemeModel) {
+        var indexToRemove: Int = -1
 
         for ((index, memeModel) in memes.withIndex()) {
             if (meme.id == memeModel.id) {
-                memes.removeAt(index)
-                notifyItemRemoved(index)
+                indexToRemove = index
             }
         }
+
+        memes.removeAt(indexToRemove)
+        notifyItemRemoved(indexToRemove)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemeHolder {
@@ -85,12 +94,11 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
         private lateinit var meme: MemeModel
         private lateinit var image: Bitmap
         private var TAG = MemeHolder::class.java.simpleName
+        private val c = context
 
         init {
             memeMore.setImageDrawable(setDrawable(context, Ionicons.Icon.ion_android_more_vertical, R.color.secondaryText, 14))
-            memeFave.setImageDrawable(setDrawable(context, Ionicons.Icon.ion_ios_heart_outline, R.color.secondaryText, 19))
-            memeLike.setCompoundDrawablesWithIntrinsicBounds(setDrawable(context, FontAwesome.Icon.faw_thumbs_up, R.color.secondaryText, 20), null, null, null)
-            memeComment.setCompoundDrawablesWithIntrinsicBounds(setDrawable(context, Ionicons.Icon.ion_ios_chatboxes_outline, R.color.secondaryText, 20), null, null, null)
+            memeComment.setDrawable(setDrawable(context, Ionicons.Icon.ion_ios_chatboxes_outline, R.color.secondaryText, 20))
 
             anim = AnimationUtils.loadAnimation(context, R.anim.bounce)
             bounceInterpolator = MyBounceInterpolator(0.2, 20.0)
@@ -119,6 +127,16 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
                 memeImage.loadUrl(imageUrl!!)
                 memeLike.text = "$likesCount likes"
                 comments(commentsCount!!)
+
+                if (likes.containsKey(FirebaseAuth.getInstance().currentUser!!.uid))
+                    liked(likesCount!!)
+                else
+                    notLiked(likesCount!!)
+
+                if (!faves.containsKey(FirebaseAuth.getInstance().currentUser!!.uid))
+                    memeFave.setImageDrawable(setDrawable(c, Ionicons.Icon.ion_ios_heart_outline, R.color.secondaryText, 19))
+                else
+                    memeFave.setImageDrawable(setDrawable(c, Ionicons.Icon.ion_ios_heart, R.color.pink, 19))
             }
 
         }
@@ -131,6 +149,26 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
             }
         }
 
+        private fun liked(likes: Int) {
+            memeLike.setDrawable(DankMemesUtil.setDrawable(c, FontAwesome.Icon.faw_thumbs_up2, R.color.colorAccent, 20))
+            when {
+                likes > 1 -> memeLike.text = likes.toString() + " likes"
+                likes == 1 -> memeLike.text = likes.toString() + " like"
+                else -> memeLike.text = "like"
+            }
+            memeLike.setTextColor(ContextCompat.getColor(c, R.color.colorAccent))
+        }
+
+        private fun notLiked(likes: Int) {
+            memeLike.setDrawable(DankMemesUtil.setDrawable(c, FontAwesome.Icon.faw_thumbs_up, R.color.secondaryText, 20))
+            when {
+                likes > 1 -> memeLike.text = likes.toString() + " likes"
+                likes == 1 -> memeLike.text = likes.toString() + " like"
+                else -> memeLike.text = "like"
+            }
+            memeLike.setTextColor(ContextCompat.getColor(c, R.color.textGray))
+        }
+
         override fun onClick(v: View?) {
             image = (memeImage.drawable as RoundedDrawable).sourceBitmap
 
@@ -140,7 +178,7 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
                     memeLike.startAnimation(anim)
                 }
 
-                memeMore.id -> weakReference.get()!!.onItemClick(meme, 1, null)
+                memeMore.id -> weakReference.get()!!.onItemClick(meme, 1, image)
                 memeFave.id -> weakReference.get()!!.onItemClick(meme, 2, null)
                 memeComment.id -> weakReference.get()!!.onItemClick(meme, 3, null)
                 memeImage.id -> weakReference.get()!!.onItemClick(meme, 4, image)
