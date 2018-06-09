@@ -32,7 +32,7 @@
     <string name="image">image</string>
     <string name="fave">fave</string>
     <string name="my_posts">MY POSTS</string>
-    <string name="posts">posts</string>
+    <string name="posts">POSTS</string>
     <string name="followers">followers</string>
     <string name="following">following</string>
     <string name="select_meme">Select meme</string>
@@ -55,6 +55,7 @@
     <string name="bio">About me</string>
     <string name="update_profile">Update profile</string>
     <string name="new_user_bio">Hello there. I\'m here for the memes too :)</string>
+    <string name="POSTS">posts</string>
 
 
 </resources>
