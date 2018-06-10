@@ -11,8 +11,7 @@
         android:id="@+id/viewMemeImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
-        tools:src="@drawable/prof"/>
+        android:background="@android:color/black"/>
 
     <RelativeLayout
         android:id="@+id/memeCaption"

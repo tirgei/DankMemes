@@ -41,7 +41,6 @@
                     android:id="@+id/editProfileImage"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
-                    tools:src="@drawable/prof"
                     android:scaleType="centerCrop"/>
 
                 <ImageButton

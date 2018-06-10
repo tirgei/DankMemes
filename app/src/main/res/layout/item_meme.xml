@@ -20,7 +20,7 @@
             android:layout_height="@dimen/notif_icon"
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
-            tools:src="@drawable/person"/>
+            android:src="@drawable/person"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
             android:id="@+id/memeMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="3dp"
+            android:padding="10dp"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="2dp"
             android:background="@android:color/transparent"
@@ -87,8 +87,7 @@
         android:contentDescription="@string/image"
         android:scaleType="fitXY"
         android:adjustViewBounds="true"
-        app:riv_corner_radius="2dp"
-        tools:src="@drawable/games"/>
+        app:riv_corner_radius="2dp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -65,8 +65,7 @@
         android:layout_below="@id/memeCaption"
         android:layout_marginTop="10dp"
         android:background="@color/placeholder_bg"
-        android:scaleType="centerCrop"
-        tools:src="@drawable/games"/>
+        android:scaleType="centerCrop"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

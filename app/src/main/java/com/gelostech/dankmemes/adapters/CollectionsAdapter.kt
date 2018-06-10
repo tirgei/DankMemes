@@ -34,8 +34,8 @@ class CollectionsAdapter(context: Context) : RecyclerView.Adapter<CollectionsAda
 
         fun bindViews(collection: CollectionModel) {
             with(collection) {
-                collectionImage.loadUrl(R.drawable.games)
-                collectionName.text = name
+                /*collectionImage.loadUrl(R.drawable.games)
+                collectionName.text = name*/
             }
         }
 
