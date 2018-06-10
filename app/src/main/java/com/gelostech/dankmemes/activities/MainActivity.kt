@@ -28,12 +28,18 @@ import com.yarolegovich.slidingrootnav.callback.DragStateListener
 import kotlinx.android.synthetic.main.drawer_layout.*
 import android.content.ActivityNotFoundException
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.net.Uri
 import android.view.View
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.alert
 import com.gelostech.dankmemes.utils.PreferenceHelper.get
+import android.graphics.Color.parseColor
+import com.gelostech.dankmemes.commoners.DankMemesUtil
+import com.wooplr.spotlight.SpotlightView
+
+
 
 class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         AHBottomNavigation.OnNavigationPositionListener, ViewPager.OnPageChangeListener,
@@ -138,6 +144,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         drawerTerms.setDrawable(setDrawable(this, Ionicons.Icon.ion_clipboard, R.color.white, 18))
         drawerPolicy.setDrawable(setDrawable(this, Ionicons.Icon.ion_ios_list, R.color.white, 18))
         drawerLogout.setDrawable(setDrawable(this, Ionicons.Icon.ion_log_out, R.color.white, 18))
+        drawerMoreApps.setDrawable(setDrawable(this, FontAwesome.Icon.faw_google_play, R.color.white, 18))
     }
 
     private fun drawerClickListeners() {
@@ -183,11 +190,34 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         }
 
         drawerTerms.setOnClickListener {
+            slidingDrawer.closeMenu(true)
+
+            Handler().postDelayed({
+                openLink("https://sites.google.com/view/dankmemesapp/terms-and-conditions")
+            }, 300)
 
         }
 
         drawerPolicy.setOnClickListener {
+            slidingDrawer.closeMenu(true)
 
+            Handler().postDelayed({
+                openLink("https://sites.google.com/view/dankmemesapp/privacy-policy")
+            }, 300)
+
+        }
+
+        drawerMoreApps.setOnClickListener {
+            val uri = Uri.parse(resources.getString(R.string.developer_id))
+            val devAccount = Intent(Intent.ACTION_VIEW, uri)
+
+            devAccount.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+            try {
+                startActivity(devAccount)
+            } catch (e: ActivityNotFoundException) {
+                startActivity(Intent(Intent.ACTION_VIEW,
+                        Uri.parse(resources.getString(R.string.developer_id))))
+            }
         }
 
         drawerLogout.setOnClickListener {
@@ -209,6 +239,12 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
             }, 300)
         }
 
+    }
+
+    private fun openLink(url: String) {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse(url)
+        startActivity(i)
     }
 
     override fun onTabSelected(position: Int, wasSelected: Boolean): Boolean {
@@ -258,7 +294,35 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         editProfile?.icon = setDrawable(this, Ionicons.Icon.ion_edit, R.color.textGray, 14)
         newMeme?.icon = setDrawable(this, Ionicons.Icon.ion_plus, R.color.textGray, 14)
 
+        Handler().post {
+            val view: View = findViewById(R.id.menu_add_meme)
+            showPostMemeTip(view)
+        }
+
         return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun showPostMemeTip(v: View) {
+        SpotlightView.Builder(this)
+                .introAnimationDuration(400)
+                .enableRevealAnimation(true)
+                .performClick(true)
+                .fadeinTextDuration(400)
+                .headingTvColor(Color.parseColor("#eb273f"))
+                .headingTvSize(32)
+                .headingTvText("Post Meme")
+                .subHeadingTvColor(Color.parseColor("#ffffff"))
+                .subHeadingTvSize(16)
+                .subHeadingTvText("Tap here to share your meme collection :)")
+                .maskColor(Color.parseColor("#dc000000"))
+                .target(v)
+                .lineAnimDuration(400)
+                .lineAndArcColor(Color.parseColor("#eb273f"))
+                .dismissOnTouch(true)
+                .dismissOnBackPress(true)
+                .enableDismissAfterShown(true)
+                .usageId("POST_MEME") //UNIQUE ID
+                .show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -277,6 +341,11 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         }
 
         return true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        drawerName.text = prefs["username"]
     }
 
     override fun onBackPressed() {

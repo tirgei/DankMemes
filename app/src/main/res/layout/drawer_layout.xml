@@ -94,6 +94,16 @@
             android:drawablePadding="7dp"
             android:text="Privacy policy"/>
 
+        <TextView
+            android:id="@+id/drawerMoreApps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/notif_summary"
+            android:drawablePadding="7dp"
+            android:text="More apps"/>
+
     </LinearLayout>
 
     <TextView
