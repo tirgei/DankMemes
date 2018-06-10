@@ -20,6 +20,7 @@
     <string name="new_meme">Upload Meme</string>
     <string name="invite_body">Ssup fam! Check out these fresh memes!!</string>
     <string name="play_store_link">https://play.google.com/store/apps/details?id=</string>
+    <string name="developer_id">https://play.google.com/store/apps/developer?id=Gelos+Technologies</string>
     <string name="fave_item">Fave</string>
     <string name="like_post">Like</string>
     <string name="comment_post">Comment</string>
