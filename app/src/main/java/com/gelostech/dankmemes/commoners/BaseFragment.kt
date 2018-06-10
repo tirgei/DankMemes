@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.gelostech.dankmemes.utils.Connectivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -28,6 +29,8 @@ open class BaseFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         return super.onCreateView(inflater, container, savedInstanceState)
     }
+
+    fun isConnected(): Boolean = Connectivity.isConnected(activity!!)
 
     // User hasn't requested storage permission; request them to allow
     fun requestStoragePermission() {

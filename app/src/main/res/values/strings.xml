@@ -59,4 +59,11 @@
     <string name="POSTS">posts</string>
 
 
+    <!-- mopub setup -->
+    <string name="ad_unit_id_native">7e53b70eb06c4ad0b6d08cf8bcb79ec7</string>
+    <string name="native_icon_image">native_icon_image</string>
+    <string name="native_main_image">native_main_image</string>
+    <string name="learn_more">Learn More</string>
+    <string name="native_privacy_information_icon_image">Privacy Information Icon image</string>
+
 </resources>

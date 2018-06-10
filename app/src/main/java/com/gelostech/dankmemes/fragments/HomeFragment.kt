@@ -34,10 +34,15 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.Transaction
 import com.google.firebase.database.MutableData
+import com.mopub.nativeads.MoPubNativeAdPositioning
+import com.mopub.nativeads.MoPubRecyclerAdapter
+import com.mopub.nativeads.MoPubStaticNativeAdRenderer
+import com.mopub.nativeads.ViewBinder
 
 
 class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private lateinit var memesAdapter: MemesAdapter
+    private lateinit var mopubAdapter: MoPubRecyclerAdapter
     private lateinit var bs: BottomSheet.Builder
     private lateinit var memesQuery: Query
     private lateinit var bottomNavigationStateListener: HomeBottomNavigationStateListener
@@ -55,6 +60,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        initMopub()
         homeShimmer.startShimmerAnimation()
 
         memesQuery = getDatabaseReference().child("dank-memes")
@@ -67,9 +73,9 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         homeRv.layoutManager = LinearLayoutManager(activity)
         homeRv.addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
         homeRv.itemAnimator = DefaultItemAnimator()
+        (homeRv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
 
         memesAdapter = MemesAdapter(activity!!, this)
-        homeRv.adapter = memesAdapter
 
         homeRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
@@ -81,6 +87,27 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
                 }
             }
         })
+    }
+
+    private fun initMopub() {
+        val adPositioning = MoPubNativeAdPositioning.MoPubServerPositioning()
+        mopubAdapter = MoPubRecyclerAdapter(activity!!, memesAdapter, adPositioning)
+        mopubAdapter.setContentChangeStrategy(MoPubRecyclerAdapter.ContentChangeStrategy.MOVE_ALL_ADS_WITH_CONTENT)
+
+        val myViewBinder = ViewBinder.Builder(R.layout.item_native)
+                .titleId(R.id.native_title)
+                .textId(R.id.native_text)
+                .mainImageId(R.id.native_main_image)
+                .iconImageId(R.id.native_icon_image)
+                .callToActionId(R.id.native_cta)
+                .privacyInformationIconImageId(R.id.native_privacy_information_icon_image)
+                .build()
+
+        val myRenderer = MoPubStaticNativeAdRenderer(myViewBinder)
+        mopubAdapter.registerAdRenderer(myRenderer)
+        homeRv.adapter = mopubAdapter
+        if (isConnected()) mopubAdapter.loadAds(activity!!.getString(R.string.ad_unit_id_native))
+
     }
 
     private val memesValueListener = object : ValueEventListener {
@@ -290,9 +317,15 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         }.show()
     }
 
+    override fun onResume() {
+        mopubAdapter.refreshAds(activity!!.getString(R.string.ad_unit_id_native))
+        super.onResume()
+    }
+
     override fun onDestroy() {
         memesQuery.removeEventListener(memesValueListener)
         memesQuery.removeEventListener(memesChildListener)
+        mopubAdapter.destroy()
         super.onDestroy()
     }
 

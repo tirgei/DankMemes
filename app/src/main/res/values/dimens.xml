@@ -18,4 +18,5 @@
     <dimen name="album_desc">13sp</dimen>
     <dimen name="prof_texts">20sp</dimen>
 
+    <dimen name="native_main_image_height">200dp</dimen>
 </resources>

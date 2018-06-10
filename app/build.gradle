@@ -79,6 +79,12 @@ dependencies {
     implementation 'com.yarolegovich:sliding-root-nav:1.1.0'
     implementation 'br.com.simplepass:loading-button-android:1.14.0'
 
+    // Ads libs
+    // For native video. This will automatically also include native static
+    implementation('com.mopub:mopub-sdk-native-video:5.1.0@aar') {
+        transitive = true
+    }
+
     implementation 'com.github.kizitonwose.time:time-android:1.0.1'
     implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
