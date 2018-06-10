@@ -87,6 +87,7 @@ dependencies {
     implementation 'com.karumi:dexter:4.2.0'
     implementation 'gun0912.ted:tedbottompicker:1.2.1'
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.github.wooplr:Spotlight:1.2.3'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
