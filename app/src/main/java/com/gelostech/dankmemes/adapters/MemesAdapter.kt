@@ -29,6 +29,7 @@ import java.lang.ref.WeakReference
 import android.support.v4.content.ContextCompat
 import com.gelostech.dankmemes.utils.setDrawable
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import com.mikepenz.iconics.IconicsDrawable
 
 
@@ -116,7 +117,11 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
             this.meme = meme
 
             with(meme) {
-                userIcon.loadUrl(R.drawable.person)
+                val avatarRef = FirebaseStorage.getInstance().reference.child("avatars").child(memePosterID!!)
+                avatarRef.downloadUrl.addOnSuccessListener {
+                    userIcon.loadUrl(it.toString())
+                }
+
                 userName.text = memePoster
                 memeTime.text = TimeFormatter().getTimeStamp(time!!)
                 if (caption.isNullOrEmpty()) {

@@ -9,6 +9,8 @@ import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.models.CommentModel
 import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.inflate
+import com.gelostech.dankmemes.utils.loadUrl
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.item_comment.view.*
 import java.lang.ref.WeakReference
 
@@ -63,7 +65,10 @@ class CommentAdapter(context: Context, onItemClickListener: OnItemClickListener)
             this.commentObject = commentObject
 
             with(commentObject) {
-                Glide.with(context).load(R.drawable.person).thumbnail(0.1f).into(commentIcon)
+                val avatarRef = FirebaseStorage.getInstance().reference.child("avatars").child(authorId!!)
+                avatarRef.downloadUrl.addOnSuccessListener {
+                    commentIcon.loadUrl(it.toString())
+                }
                 commentUser.text = userName
                 commentText.text = comment
                 commentTime.text = TimeFormatter().getTimeStamp(timeStamp!!)
