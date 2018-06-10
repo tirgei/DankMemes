@@ -80,6 +80,12 @@ class SignupFragment : BaseFragment() {
                 (activity as AppCompatActivity).replaceFragment(LoginFragment(), R.id.loginHolder)
         }
 
+        signupTerms.setOnClickListener {
+            val i = Intent(Intent.ACTION_VIEW)
+            i.data = Uri.parse("https://sites.google.com/view/dankmemesapp/terms-and-conditions")
+            startActivity(i)
+        }
+
         signupButton.setOnClickListener {
             val user = getFirebaseAuth().currentUser
 
