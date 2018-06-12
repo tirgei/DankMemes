@@ -19,8 +19,8 @@ class FavesAdapter(private val onItemClickListener: OnItemClickListener) : Recyc
     private val faves = mutableListOf<FaveModel>()
 
     fun addFave(fave: FaveModel) {
-        faves.add(0, fave)
-        notifyItemInserted(0)
+        faves.add(fave)
+        notifyItemInserted(faves.size-1)
     }
 
     fun updateFave(fave: FaveModel) {
