@@ -10,7 +10,7 @@ import com.gelostech.dankmemes.utils.inflate
 import com.gelostech.dankmemes.utils.loadUrl
 import kotlinx.android.synthetic.main.item_collection.view.*
 
-class CollectionsAdapter(context: Context) : RecyclerView.Adapter<CollectionsAdapter.CollectionsHolder>() {
+class CollectionsAdapter() : RecyclerView.Adapter<CollectionsAdapter.CollectionsHolder>() {
     private val collections = mutableListOf<CollectionModel>()
 
     fun addCollection(collection: CollectionModel) {
