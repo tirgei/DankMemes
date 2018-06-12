@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.karumi.dexter.PermissionToken
@@ -18,6 +19,8 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.single.PermissionListener
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.listener.PermissionRequest
+import com.nostra13.universalimageloader.core.ImageLoader
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import org.jetbrains.anko.toast
 
 
@@ -26,6 +29,7 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(this))
         progressDialog = ProgressDialog(this)
     }
 
@@ -78,5 +82,10 @@ open class BaseActivity : AppCompatActivity() {
         val user = FirebaseAuth.getInstance().currentUser
 
         return user!!.uid
+    }
+
+    fun refreshToken() {
+        val token = FirebaseInstanceId.getInstance().token
+        getDatabaseReference().child("users").child(getUid()).child("userToken").setValue(token)
     }
 }
