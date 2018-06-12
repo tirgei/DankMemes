@@ -1,5 +1,6 @@
 package com.gelostech.dankmemes.activities
 
+import am.appwise.components.ni.NoInternetDialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -53,6 +54,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private lateinit var collectionsFragment: CollectionsFragment
     private lateinit var profileFragment: ProfileFragment
     private lateinit var prefs: SharedPreferences
+    private lateinit var noInternetDialog: NoInternetDialog
 
     companion object {
         private const val HOME: String = "Home"
@@ -73,6 +75,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         setupBottomNav()
         setupViewPager()
         setupDrawer()
+        initNoInternet()
     }
 
     //Setup the main toolbar
@@ -208,16 +211,21 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         }
 
         drawerMoreApps.setOnClickListener {
-            val uri = Uri.parse(resources.getString(R.string.developer_id))
-            val devAccount = Intent(Intent.ACTION_VIEW, uri)
+            slidingDrawer.closeMenu(true)
 
-            devAccount.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-            try {
-                startActivity(devAccount)
-            } catch (e: ActivityNotFoundException) {
-                startActivity(Intent(Intent.ACTION_VIEW,
-                        Uri.parse(resources.getString(R.string.developer_id))))
-            }
+            Handler().postDelayed({
+                val uri = Uri.parse(resources.getString(R.string.developer_id))
+                val devAccount = Intent(Intent.ACTION_VIEW, uri)
+
+                devAccount.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                try {
+                    startActivity(devAccount)
+                } catch (e: ActivityNotFoundException) {
+                    startActivity(Intent(Intent.ACTION_VIEW,
+                            Uri.parse(resources.getString(R.string.developer_id))))
+                }
+            }, 300)
+
         }
 
         drawerLogout.setOnClickListener {
@@ -245,6 +253,12 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         val i = Intent(Intent.ACTION_VIEW)
         i.data = Uri.parse(url)
         startActivity(i)
+    }
+
+    private fun initNoInternet() {
+        noInternetDialog = NoInternetDialog.Builder(this)
+                .setCancelable(true)
+                .build()
     }
 
     override fun onTabSelected(position: Int, wasSelected: Boolean): Boolean {
@@ -346,6 +360,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     override fun onResume() {
         super.onResume()
         drawerName.text = prefs["username"]
+        refreshToken()
     }
 
     override fun onBackPressed() {
@@ -362,6 +377,11 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
                 Handler().postDelayed({doubleBackToExit = false}, 1500)
             }
         }
+    }
+
+    override fun onDestroy() {
+        noInternetDialog.onDestroy()
+        super.onDestroy()
     }
 
 
