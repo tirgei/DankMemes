@@ -183,8 +183,6 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
             }
 
             override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
-                val meme = dataSnapshot!!.getValue<MemeModel>(MemeModel::class.java)
-                //Toast.makeText(getActivity(), "faveKey " + article.getFaveKey(), Toast.LENGTH_SHORT).show();
 
                 Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
             }
@@ -217,8 +215,6 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
             }
 
             override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
-                val meme = dataSnapshot!!.getValue<MemeModel>(MemeModel::class.java)
-                //Toast.makeText(getActivity(), "faveKey " + article.getFaveKey(), Toast.LENGTH_SHORT).show();
 
                 Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
             }
