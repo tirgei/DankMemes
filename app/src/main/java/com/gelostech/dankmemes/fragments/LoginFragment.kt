@@ -60,10 +60,15 @@ class LoginFragment : BaseFragment() {
         loginEmail.setDrawable(setDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.secondaryText, 18))
         loginPassword.setDrawable(setDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.secondaryText, 18))
 
-        loginRegister.setOnClickListener { (activity as AppCompatActivity).replaceFragment(SignupFragment(), R.id.loginHolder) }
+        loginRegister.setOnClickListener {
+            if (!isLoggingIn)
+                (activity as AppCompatActivity).replaceFragment(SignupFragment(), R.id.loginHolder)
+            else
+                activity!!.toast("Please wait...")
+        }
 
         loginButton.setOnClickListener { signIn() }
-        loginForgotPassword.setOnClickListener { forgotPassword() }
+        loginForgotPassword.setOnClickListener { if (!isLoggingIn) forgotPassword() else activity!!.toast("Please wait...")}
     }
 
     private fun signIn() {
@@ -86,14 +91,17 @@ class LoginFragment : BaseFragment() {
                         try {
                             throw task.exception!!
                         } catch (wrongPassword: FirebaseAuthInvalidCredentialsException) {
+                            isLoggingIn = false
                             loginButton.revertAnimation()
                             loginPassword.error = "Password incorrect"
 
                         } catch (userNull: FirebaseAuthInvalidUserException) {
+                            isLoggingIn = false
                             loginButton.revertAnimation()
                             activity?.toast("Account not found. Have you signed up?")
 
                         } catch (e: Exception) {
+                            isLoggingIn = false
                             loginButton.revertAnimation()
                             Log.e(TAG, "signingIn: Failure - ${e.localizedMessage}" )
                             activity?.toast("Error signing in. Please try again.")
@@ -154,6 +162,8 @@ class LoginFragment : BaseFragment() {
                 prefs["email"] = userObject.userEmail
 
                 Handler().postDelayed({
+                    activity!!.toast("Welcome back ${userObject.userName}")
+
                     startActivity(Intent(activity!!, MainActivity::class.java))
                     activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
                     activity!!.finish()

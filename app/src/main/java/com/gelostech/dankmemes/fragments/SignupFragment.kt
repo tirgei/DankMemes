@@ -63,27 +63,33 @@ class SignupFragment : BaseFragment() {
         signupConfirmPassword.setDrawable(setDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.secondaryText, 18))
 
         signupAvatar.setOnClickListener {
-            if (storagePermissionGranted()) {
-                val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(galleryIntent, AVATAR_REQUEST)
+            if (!isCreatingAccount) {
+                if (storagePermissionGranted()) {
+                    val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    startActivityForResult(galleryIntent, AVATAR_REQUEST)
 
-                //pickImageFromGallery()
-            } else {
-                requestStoragePermission()
+                    //pickImageFromGallery()
+                } else {
+                    requestStoragePermission()
+                }
             }
         }
 
         signupLogin.setOnClickListener {
-            if (activity!!.supportFragmentManager.backStackEntryCount > 0)
-                activity!!.supportFragmentManager.popBackStackImmediate()
-            else
-                (activity as AppCompatActivity).replaceFragment(LoginFragment(), R.id.loginHolder)
+            if (!isCreatingAccount) {
+                if (activity!!.supportFragmentManager.backStackEntryCount > 0)
+                    activity!!.supportFragmentManager.popBackStackImmediate()
+                else
+                    (activity as AppCompatActivity).replaceFragment(LoginFragment(), R.id.loginHolder)
+            } else activity!!.toast("Please wait...")
         }
 
         signupTerms.setOnClickListener {
-            val i = Intent(Intent.ACTION_VIEW)
-            i.data = Uri.parse("https://sites.google.com/view/dankmemesapp/terms-and-conditions")
-            startActivity(i)
+           if (!isCreatingAccount) {
+               val i = Intent(Intent.ACTION_VIEW)
+               i.data = Uri.parse("https://sites.google.com/view/dankmemesapp/terms-and-conditions")
+               startActivity(i)
+           } else activity!!.toast("Please wait...")
         }
 
         signupButton.setOnClickListener {
@@ -144,18 +150,22 @@ class SignupFragment : BaseFragment() {
                         try {
                             throw task.exception!!
                         } catch (weakPassword: FirebaseAuthWeakPasswordException){
+                            isCreatingAccount = false
                             signupButton.revertAnimation()
                             signupPassword.error = "Please enter a stronger password"
 
                         } catch (userExists: FirebaseAuthUserCollisionException) {
+                            isCreatingAccount = false
                             signupButton.revertAnimation()
                             activity?.toast("Account already exists. Please log in.")
 
                         } catch (malformedEmail: FirebaseAuthInvalidCredentialsException) {
+                            isCreatingAccount = false
                             signupButton.revertAnimation()
                             signupEmail.error = "Incorrect email format"
 
                         } catch (e: Exception) {
+                            isCreatingAccount = false
                             signupButton.revertAnimation()
                             Log.e(TAG, "signingIn: Failure - $e}" )
                             activity?.toast("Error signing up. Please try again.")
@@ -194,6 +204,7 @@ class SignupFragment : BaseFragment() {
             return
         }
 
+        isCreatingAccount = true
         signupButton.startAnimation()
         val credential =  EmailAuthProvider.getCredential(email, pw)
 
@@ -213,18 +224,22 @@ class SignupFragment : BaseFragment() {
                         try {
                             throw task.exception!!
                         } catch (weakPassword: FirebaseAuthWeakPasswordException){
+                            isCreatingAccount = false
                             signupButton.revertAnimation()
                             signupPassword.error = "Please enter a stronger password"
 
                         } catch (userExists: FirebaseAuthUserCollisionException) {
+                            isCreatingAccount = false
                             signupButton.revertAnimation()
                             activity?.toast("Account already exists. Please log in.")
 
                         } catch (malformedEmail: FirebaseAuthInvalidCredentialsException) {
+                            isCreatingAccount = false
                             signupButton.revertAnimation()
                             signupEmail.error = "Incorrect email format"
 
                         } catch (e: Exception) {
+                            isCreatingAccount = false
                             signupButton.revertAnimation()
                             Log.e(TAG, "signingIn: Failure - $e}" )
                             activity?.toast("Error signing up. Please try again.")
@@ -254,7 +269,7 @@ class SignupFragment : BaseFragment() {
             }
             Log.d(TAG, "Image uploaded")
 
-            // Continue with the task to get the download URL
+            // Continue with the task to getBitmap the download URL
             ref.downloadUrl
         }.addOnCompleteListener({ task ->
             if (task.isSuccessful) {
@@ -264,6 +279,7 @@ class SignupFragment : BaseFragment() {
                 getDatabaseReference().child("users").child(id).setValue(newUser).addOnCompleteListener {
                     signupButton.doneLoadingAnimation(getColor(activity!!, R.color.pink), signupSuccessful)
 
+                    activity!!.toast("Welcome ${signupUsername.text.toString().trim()}")
                     startActivity(Intent(activity!!, MainActivity::class.java))
                     activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
                     activity!!.finish()
