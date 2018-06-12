@@ -18,10 +18,16 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import com.gelostech.dankmemes.R
+import com.google.firebase.storage.FirebaseStorage
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
+import com.nostra13.universalimageloader.core.ImageLoader
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
+import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.toast
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -182,6 +188,108 @@ object DankMemesUtil {
 
         share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"))
         context.startActivity(Intent.createChooser(share, "Share Meme via..."))
+    }
+
+    fun loadFromStorage(id: String, image: CircleImageView) {
+        image.setImageResource(R.drawable.person)
+        val bitmap = getBitmap(id)
+        if (bitmap != null) {
+            image.setImageBitmap(bitmap)
+        }
+
+        val avatarRef = FirebaseStorage.getInstance().reference.child("avatars").child(id)
+        avatarRef.downloadUrl.addOnSuccessListener {
+            ImageLoader.getInstance().loadImage(it.toString(), object : SimpleImageLoadingListener() {
+                override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
+                    super.onLoadingComplete(imageUri, view, loadedImage)
+                    if (loadedImage != null) {
+                        cacheBitmap(loadedImage, id)
+                        image.setImageBitmap(loadedImage)
+                    }
+                }
+            })
+        }
+    }
+
+    fun cacheBitmap(bitmap: Bitmap?, name: String?) {
+        val loader = ImageLoader.getInstance()
+        if (bitmap == null || name == null) return
+        try {
+            loader.diskCache.remove(name)
+        } catch (e: Exception) {
+        }
+
+        try {
+            loader.diskCache.save(name, bitmap)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun cacheBitmap(url: String, name: String) {
+        val loader = ImageLoader.getInstance()
+        try {
+            loader.diskCache.remove(name)
+        } catch (e: Exception) {
+        }
+
+        try {
+            loader.loadImage(url, object : SimpleImageLoadingListener(){
+                override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
+                    super.onLoadingComplete(imageUri, view, loadedImage)
+                    if (loadedImage!=null)
+                        loader.diskCache.save(name, loadedImage)
+                }
+            })
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun getBitmap(name: String): Bitmap? {
+        val imageLoader = ImageLoader.getInstance()
+        val f = imageLoader.diskCache.get(name)
+
+        return if (f != null && f.exists()) {
+            decodedBitmap(f.absolutePath, 500, 500, 85)
+        } else {
+            null
+        }
+    }
+
+    private fun decodedBitmap(filePath: String, reqWidth: Int, reqHeight: Int, quality: Int): Bitmap? {
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true //checks the dimensions
+        try {
+            BitmapFactory.decodeFile(filePath, options) //decodes without loading in memory
+        } catch (e: Exception) {
+        }
+
+        options.inSampleSize = calculateSampleSize(options, reqWidth, reqHeight)
+        options.inJustDecodeBounds = false
+        val bitmap = BitmapFactory.decodeFile(filePath, options)
+        val bytearrayoutputstream = ByteArrayOutputStream()
+        bitmap?.compress(Bitmap.CompressFormat.JPEG, quality, bytearrayoutputstream) ?: return null
+
+        val BYTE = bytearrayoutputstream.toByteArray()
+
+        return BitmapFactory.decodeByteArray(BYTE, 0, BYTE.size)
+    }
+
+    private fun calculateSampleSize(options: BitmapFactory.Options, rw: Int, rh: Int): Int {
+        val width = options.outWidth
+        val height = options.outHeight
+        var inSampleSize = 1
+        if (width > rw || height > rh) {
+            val halfH = height / 2
+            val halfW = width / 2
+            while (halfH / inSampleSize > rh && halfW / inSampleSize > rw) {
+                inSampleSize *= 2
+            }
+        }
+        return inSampleSize
     }
 
 

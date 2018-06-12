@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.models.CommentModel
 import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.inflate
@@ -14,9 +15,8 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.item_comment.view.*
 import java.lang.ref.WeakReference
 
-class CommentAdapter(context: Context, onItemClickListener: OnItemClickListener): RecyclerView.Adapter<CommentAdapter.CommentHolder>() {
+class CommentAdapter(onItemClickListener: OnItemClickListener): RecyclerView.Adapter<CommentAdapter.CommentHolder>() {
     private val comments = mutableListOf<CommentModel>()
-    private val c: Context = context
     private val onItemClickListener = onItemClickListener;
 
     fun addComment(comment: CommentModel) {
@@ -44,7 +44,7 @@ class CommentAdapter(context: Context, onItemClickListener: OnItemClickListener)
     override fun getItemCount(): Int = comments.size
 
     override fun onBindViewHolder(holder: CommentHolder, position: Int) {
-        holder.bindView(comments[position], c)
+        holder.bindView(comments[position])
     }
 
     class CommentHolder(itemView: View, onItemClickListener: OnItemClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
@@ -61,17 +61,27 @@ class CommentAdapter(context: Context, onItemClickListener: OnItemClickListener)
             commentRoot.setOnLongClickListener(this)
         }
 
-        fun bindView(commentObject: CommentModel, context: Context) {
+        fun bindView(commentObject: CommentModel) {
             this.commentObject = commentObject
 
             with(commentObject) {
-                val avatarRef = FirebaseStorage.getInstance().reference.child("avatars").child(authorId!!)
-                avatarRef.downloadUrl.addOnSuccessListener {
-                    commentIcon.loadUrl(it.toString())
-                }
+                loadIcon(commentObject)
                 commentUser.text = userName
                 commentText.text = comment
                 commentTime.text = TimeFormatter().getTimeStamp(timeStamp!!)
+            }
+        }
+
+        private fun loadIcon(comment: CommentModel) {
+            if (DankMemesUtil.getBitmap(comment.authorId!!) == null)
+                commentIcon.loadUrl(R.drawable.person)
+            else
+                commentIcon.setImageBitmap(DankMemesUtil.getBitmap(comment.authorId!!))
+
+            val avatarRef = FirebaseStorage.getInstance().reference.child("avatars").child(comment.authorId!!)
+            avatarRef.downloadUrl.addOnSuccessListener {
+                DankMemesUtil.cacheBitmap(it.toString(), comment.authorId!!)
+                commentIcon.loadUrl(it.toString())
             }
         }
 

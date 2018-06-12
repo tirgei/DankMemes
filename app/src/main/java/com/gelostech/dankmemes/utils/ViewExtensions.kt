@@ -48,10 +48,19 @@ fun ImageView.loadUrl(url: String) {
             .into(this)
 }
 
-fun CircleImageView.loadUrl(url: String) {
+fun CircleImageView.loadUrl(url: Int) {
     Glide.with(context)
             .setDefaultRequestOptions(RequestOptions()
                     .placeholder(R.drawable.loading))
+            .load(url)
+            .thumbnail(0.05f)
+            .into(this)
+}
+
+fun CircleImageView.loadUrl(url: String) {
+    Glide.with(context.applicationContext)
+            .setDefaultRequestOptions(RequestOptions()
+                    .placeholder(R.drawable.person))
             .load(url)
             .thumbnail(0.05f)
             .into(this)

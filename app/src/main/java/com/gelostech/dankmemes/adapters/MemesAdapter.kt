@@ -2,9 +2,7 @@ package com.gelostech.dankmemes.adapters
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -17,21 +15,18 @@ import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.inflate
 import com.gelostech.dankmemes.utils.loadUrl
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.item_meme.view.*
 import java.lang.ref.WeakReference
 import android.support.v4.content.ContextCompat
+import com.gelostech.dankmemes.commoners.DankMemesUtil.cacheBitmap
+import com.gelostech.dankmemes.commoners.DankMemesUtil.getBitmap
+import com.gelostech.dankmemes.commoners.DankMemesUtil.loadFromStorage
 import com.gelostech.dankmemes.utils.setDrawable
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
-import com.mikepenz.iconics.IconicsDrawable
-
 
 
 class MemesAdapter(private val context: Context, private val onItemClickListener: OnItemClickListener) : RecyclerView.Adapter<MemesAdapter.MemeHolder>(){
@@ -117,10 +112,8 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
             this.meme = meme
 
             with(meme) {
-                val avatarRef = FirebaseStorage.getInstance().reference.child("avatars").child(memePosterID!!)
-                avatarRef.downloadUrl.addOnSuccessListener {
-                    userIcon.loadUrl(it.toString())
-                }
+                loadIcon(meme)
+                //loadFromStorage(memePosterID!!, userIcon)
 
                 userName.text = memePoster
                 memeTime.text = TimeFormatter().getTimeStamp(time!!)
@@ -146,6 +139,19 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
 
         }
 
+        private fun loadIcon(meme: MemeModel) {
+            if (getBitmap(meme.memePosterID!!) == null)
+                userIcon.loadUrl(R.drawable.person)
+            else
+                userIcon.setImageBitmap(getBitmap(meme.memePosterID!!))
+
+            val avatarRef = FirebaseStorage.getInstance().reference.child("avatars").child(meme.memePosterID!!)
+            avatarRef.downloadUrl.addOnSuccessListener {
+                cacheBitmap(it.toString(), meme.memePosterID!!)
+                userIcon.loadUrl(it.toString())
+            }
+        }
+
         private fun comments(comments: Int) {
             when {
                 comments > 1 -> memeComment.text = "$comments comments"
@@ -155,7 +161,7 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
         }
 
         private fun liked(likes: Int) {
-            memeLike.setDrawable(DankMemesUtil.setDrawable(c, FontAwesome.Icon.faw_thumbs_up2, R.color.colorAccent, 20))
+            memeLike.setDrawable(setDrawable(c, FontAwesome.Icon.faw_thumbs_up2, R.color.colorAccent, 20))
             when {
                 likes > 1 -> memeLike.text = likes.toString() + " likes"
                 likes == 1 -> memeLike.text = likes.toString() + " like"
@@ -165,7 +171,7 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
         }
 
         private fun notLiked(likes: Int) {
-            memeLike.setDrawable(DankMemesUtil.setDrawable(c, FontAwesome.Icon.faw_thumbs_up, R.color.secondaryText, 20))
+            memeLike.setDrawable(setDrawable(c, FontAwesome.Icon.faw_thumbs_up, R.color.secondaryText, 20))
             when {
                 likes > 1 -> memeLike.text = likes.toString() + " likes"
                 likes == 1 -> memeLike.text = likes.toString() + " like"
