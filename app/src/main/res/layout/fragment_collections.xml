@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,6 +12,31 @@
         android:overScrollMode="never"
         android:padding="5dp"
         android:clipToPadding="false"
-        tools:listitem="@layout/item_collection"/>
+        tools:listitem="@layout/item_fave"/>
 
-</FrameLayout>
+    <RelativeLayout
+        android:id="@+id/collectionsEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <ImageView
+            android:id="@+id/collectionsEmptyStateImage"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/feed"
+            android:contentDescription="@string/image"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/secondaryText"
+            android:layout_below="@id/collectionsEmptyStateImage"
+            android:text="You haven't favorited any memes yet"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

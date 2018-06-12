@@ -60,6 +60,7 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
         profileRef.addValueEventListener(profileListener)
         memesQuery.addChildEventListener(memesChildListener)
+        memesQuery.addValueEventListener(memesValueListener)
     }
 
     private fun initViews() {
@@ -100,6 +101,22 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
             profileName.text = user.userName
             profileBio.text = user.userBio
             profileImage.loadUrl(user.userAvatar!!)
+        }
+    }
+
+    private val memesValueListener = object : ValueEventListener {
+        override fun onCancelled(p0: DatabaseError) {
+            Log.e(TAG, "Error loading memes: ${p0.message}")
+        }
+
+        override fun onDataChange(p0: DataSnapshot) {
+            if (p0.exists()) {
+                profileEmptyState.visibility = View.GONE
+                profileRv.visibility = View.VISIBLE
+            } else {
+                profileRv.visibility = View.GONE
+                profileEmptyState.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -209,8 +226,6 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
             }
 
             override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
-                val meme = dataSnapshot!!.getValue<MemeModel>(MemeModel::class.java)
-                //Toast.makeText(getActivity(), "faveKey " + article.getFaveKey(), Toast.LENGTH_SHORT).show();
 
                 Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
             }
@@ -243,8 +258,6 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
             }
 
             override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
-                val meme = dataSnapshot!!.getValue<MemeModel>(MemeModel::class.java)
-                //Toast.makeText(getActivity(), "faveKey " + article.getFaveKey(), Toast.LENGTH_SHORT).show();
 
                 Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
             }
@@ -254,6 +267,7 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     override fun onDestroy() {
         profileRef.removeEventListener(profileListener)
         memesQuery.removeEventListener(memesChildListener)
+        memesQuery.removeEventListener(memesValueListener)
         super.onDestroy()
     }
 

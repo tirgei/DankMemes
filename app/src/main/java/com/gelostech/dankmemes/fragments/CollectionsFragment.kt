@@ -64,7 +64,13 @@ class CollectionsFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
         }
 
         override fun onDataChange(p0: DataSnapshot) {
-
+            if (p0.exists()) {
+                collectionsEmptyState.visibility = View.GONE
+                collectionsRv.visibility = View.VISIBLE
+            } else {
+                collectionsRv.visibility = View.GONE
+                collectionsEmptyState.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -122,8 +128,6 @@ class CollectionsFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
             }
 
             override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
-                val meme = dataSnapshot!!.getValue<MemeModel>(MemeModel::class.java)
-                //Toast.makeText(getActivity(), "faveKey " + article.getFaveKey(), Toast.LENGTH_SHORT).show();
 
                 Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
             }

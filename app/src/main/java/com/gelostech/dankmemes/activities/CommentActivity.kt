@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.adapters.CommentAdapter
 import com.gelostech.dankmemes.commoners.BaseActivity
@@ -63,7 +64,7 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
         commentsRv.setHasFixedSize(true)
         commentsRv.layoutManager = LinearLayoutManager(this)
         commentsRv.itemAnimator = DefaultItemAnimator()
-        commentAdapter = CommentAdapter(this, this)
+        commentAdapter = CommentAdapter( this)
         commentsRv.adapter = commentAdapter
 
         sendComment.setOnClickListener { addComment() }
@@ -75,7 +76,13 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
         }
 
         override fun onDataChange(p0: DataSnapshot) {
-
+            if (p0.exists()) {
+                commentsEmptyState.visibility = View.GONE
+                commentsRv.visibility = View.VISIBLE
+            } else {
+                commentsRv.visibility = View.GONE
+                commentsEmptyState.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -138,8 +145,6 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
                 }
 
                 override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
-                    val meme = dataSnapshot!!.getValue<MemeModel>(MemeModel::class.java)
-                    //Toast.makeText(getActivity(), "faveKey " + article.getFaveKey(), Toast.LENGTH_SHORT).show();
 
                     Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
                 }
@@ -198,8 +203,6 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
                 }
 
                 override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
-                    val meme = dataSnapshot!!.getValue<MemeModel>(MemeModel::class.java)
-                    //Toast.makeText(getActivity(), "faveKey " + article.getFaveKey(), Toast.LENGTH_SHORT).show();
 
                     Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
                 }

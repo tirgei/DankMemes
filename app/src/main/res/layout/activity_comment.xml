@@ -26,6 +26,31 @@
         android:overScrollMode="never"
         android:background="@color/white"/>
 
+    <RelativeLayout
+        android:id="@+id/commentsEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <ImageView
+            android:id="@+id/commentsEmptyStateImage"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/feed"
+            android:contentDescription="@string/image"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/secondaryText"
+            android:layout_below="@id/commentsEmptyStateImage"
+            android:text="No comments added yet"/>
+
+    </RelativeLayout>
+
     <View
         android:id="@+id/commentDivider"
         android:layout_width="match_parent"
