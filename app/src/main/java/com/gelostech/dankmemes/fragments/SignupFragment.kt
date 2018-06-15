@@ -30,6 +30,7 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_signup.*
 import org.jetbrains.anko.toast
 import com.gelostech.dankmemes.utils.PreferenceHelper.set
+import com.google.firebase.messaging.FirebaseMessaging
 
 class SignupFragment : BaseFragment() {
     private lateinit var signupSuccessful: Bitmap
@@ -276,6 +277,7 @@ class SignupFragment : BaseFragment() {
                 newUser.userAvatar =  task.result.toString()
 
                 user.sendEmailVerification()
+                FirebaseMessaging.getInstance().subscribeToTopic("memes")
                 getDatabaseReference().child("users").child(id).setValue(newUser).addOnCompleteListener {
                     signupButton.doneLoadingAnimation(getColor(activity!!, R.color.pink), signupSuccessful)
 

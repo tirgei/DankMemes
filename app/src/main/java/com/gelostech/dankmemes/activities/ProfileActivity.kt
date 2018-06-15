@@ -9,6 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import android.widget.FrameLayout
 import com.cocosw.bottomsheet.BottomSheet
@@ -33,6 +34,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
     private lateinit var profileRef: DatabaseReference
     private lateinit var memesQuery: Query
     private lateinit var bs: BottomSheet.Builder
+    private lateinit var name: String
 
     companion object {
         private var TAG = ProfileActivity::class.java.simpleName
@@ -50,6 +52,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         memesQuery = getDatabaseReference().child("dank-memes").orderByChild("memePosterID").equalTo(userId)
 
         profileRef.addValueEventListener(profileListener)
+        memesQuery.addValueEventListener(memesValueListener)
         memesQuery.addChildEventListener(memesChildListener)
     }
 
@@ -87,10 +90,28 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
 
         override fun onDataChange(p0: DataSnapshot) {
             val user = p0.getValue(UserModel::class.java)!!
+            name = user.userName!!
 
             viewProfileName.text = user.userName
             viewProfileBio.text = user.userBio
             viewProfileImage.loadUrl(user.userAvatar!!)
+        }
+    }
+
+    private val memesValueListener = object : ValueEventListener {
+        override fun onCancelled(p0: DatabaseError) {
+            Log.e(TAG, "Error loading memes: ${p0.message}")
+        }
+
+        override fun onDataChange(p0: DataSnapshot) {
+            if (p0.exists()) {
+                viewProfileEmptyState.visibility = View.GONE
+                viewProfileRv.visibility = View.VISIBLE
+            } else {
+                viewProfileEmptyStateText.text = "$name hasn't posted any memes yet"
+                viewProfileRv.visibility = View.GONE
+                viewProfileEmptyState.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -274,6 +295,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
 
     override fun onDestroy() {
         profileRef.removeEventListener(profileListener)
+        memesQuery.removeEventListener(memesValueListener)
         memesQuery.removeEventListener(memesChildListener)
         super.onDestroy()
     }
