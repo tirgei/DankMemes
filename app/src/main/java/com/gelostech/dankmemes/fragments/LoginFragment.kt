@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 import com.gelostech.dankmemes.utils.PreferenceHelper.set
+import com.google.firebase.messaging.FirebaseMessaging
 
 class LoginFragment : BaseFragment() {
     private lateinit var signupSuccessful: Bitmap
@@ -148,6 +149,7 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun updateUI(user: FirebaseUser) {
+        FirebaseMessaging.getInstance().subscribeToTopic("memes")
         val dbRef = getDatabaseReference().child("users").child(user.uid)
         dbRef.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {

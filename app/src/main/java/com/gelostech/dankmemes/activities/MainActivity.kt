@@ -38,6 +38,7 @@ import org.jetbrains.anko.alert
 import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import android.graphics.Color.parseColor
 import com.gelostech.dankmemes.commoners.DankMemesUtil
+import com.google.firebase.messaging.FirebaseMessaging
 import com.wooplr.spotlight.SpotlightView
 
 
@@ -237,6 +238,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
                     positiveButton("LOG OUT") {
                         val firebaseAuth = FirebaseAuth.getInstance()
                         firebaseAuth.signOut()
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic("memes")
 
                         startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                         overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
