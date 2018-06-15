@@ -102,6 +102,32 @@
                 android:focusableInTouchMode="false"
                 android:focusable="false"/>
 
+            <RelativeLayout
+                android:id="@+id/viewProfileEmptyState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+
+                <ImageView
+                    android:id="@+id/viewProfileEmptyStateImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/feed"
+                    android:contentDescription="@string/image"/>
+
+                <TextView
+                    android:id="@+id/viewProfileEmptyStateText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/viewProfileEmptyStateImage"
+                    android:layout_centerHorizontal="true"/>
+
+            </RelativeLayout>
+
+
+
         </RelativeLayout>
 
     </android.support.v4.widget.NestedScrollView>
