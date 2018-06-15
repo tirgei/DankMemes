@@ -26,10 +26,6 @@
     <string name="comment_post">Comment</string>
     <string name="remove_fave">Remove fave</string>
 
-    <!-- Admob Ads -->
-    <string name="real_native_ad_id">ca-app-pub-1229251825159326/1041847804</string>
-    <string name="real_banner_ad_id">ca-app-pub-1229251825159326/7573620655</string>
-    <string name="interstitial_ad_id">ca-app-pub-1229251825159326/4355019235</string>
     <string name="image">image</string>
     <string name="fave">fave</string>
     <string name="my_posts">MY POSTS</string>
