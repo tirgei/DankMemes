@@ -117,9 +117,10 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
 
                 userName.text = memePoster
                 memeTime.text = TimeFormatter().getTimeStamp(time!!)
-                if (caption.isNullOrEmpty()) {
+                if (caption == null) {
                     memeCaption.visibility = View.GONE
                 } else {
+                    if (!memeCaption.isShown) memeCaption.visibility = View.VISIBLE
                     memeCaption.text = caption
                 }
                 memeImage.loadUrl(imageUrl!!)
