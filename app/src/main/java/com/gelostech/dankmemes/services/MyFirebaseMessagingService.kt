@@ -38,7 +38,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             try {
                 val json = JSONObject(remoteMessage.data.toString())
-                handleDataMessage(json)
+                //handleDataMessage(json)
             } catch (e: Exception) {
                 Log.e(TAG, "Exception: " + e.message)
             }
@@ -62,7 +62,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun handleDataMessage(json: JSONObject) {
+    /*private fun handleDataMessage(json: JSONObject) {
         Log.e(TAG, "push json: " + json.toString())
 
         try {
@@ -116,7 +116,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             Log.e(TAG, "Exception: " + e.message)
         }
 
-    }
+    }*/
 
     /**
      * Showing notification with text only

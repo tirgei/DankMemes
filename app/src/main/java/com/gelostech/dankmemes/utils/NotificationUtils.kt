@@ -98,7 +98,6 @@ class NotificationUtils(private val mContext: Context) {
                 .setSound(alarmSound)
                 .setStyle(inboxStyle)
                 .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.resources, icon))
                 .setContentText(message)
 
@@ -109,7 +108,7 @@ class NotificationUtils(private val mContext: Context) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notification.color = DankMemesUtil.getColor(mContext, R.color.colorAccent)
-            notification.setSmallIcon(R.mipmap.ic_launcher)
+            notification.setSmallIcon(R.drawable.ic_notif)
         } else {
             notification.setSmallIcon(R.mipmap.ic_launcher)
         }
