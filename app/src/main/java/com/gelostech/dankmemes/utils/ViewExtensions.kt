@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.gelostech.dankmemes.R
 import com.google.firebase.storage.StorageReference
+import com.makeramen.roundedimageview.RoundedImageView
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
 import de.hdodenhof.circleimageview.CircleImageView
@@ -40,6 +41,15 @@ fun ImageView.loadUrl(url: Int) {
 }
 
 fun ImageView.loadUrl(url: String) {
+    Glide.with(context)
+            .setDefaultRequestOptions(RequestOptions()
+                    .placeholder(R.drawable.loading))
+            .load(url)
+            .thumbnail(0.05f)
+            .into(this)
+}
+
+fun RoundedImageView.loadUrl(url: String) {
     Glide.with(context)
             .setDefaultRequestOptions(RequestOptions()
                     .placeholder(R.drawable.loading))
