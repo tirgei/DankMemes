@@ -21,10 +21,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.gelostech.dankmemes.R
-import com.google.firebase.storage.StorageReference
 import com.makeramen.roundedimageview.RoundedImageView
-import com.mikepenz.iconics.IconicsDrawable
-import com.mikepenz.iconics.typeface.IIcon
 import de.hdodenhof.circleimageview.CircleImageView
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {
@@ -82,6 +79,14 @@ fun TextView.setFont(font: String) {
 
 fun TextView.setDrawable(icon: Drawable) {
     this.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null)
+}
+
+fun View.showView() {
+    this.visibility = View.VISIBLE
+}
+
+fun View.hideView() {
+    this.visibility = View.GONE
 }
 
 fun EditText.setDrawable(icon: Drawable) {
