@@ -12,9 +12,6 @@ import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
 import com.gelostech.dankmemes.commoners.MyBounceInterpolator
 import com.gelostech.dankmemes.models.MemeModel
-import com.gelostech.dankmemes.utils.TimeFormatter
-import com.gelostech.dankmemes.utils.inflate
-import com.gelostech.dankmemes.utils.loadUrl
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
@@ -24,10 +21,9 @@ import android.support.v4.content.ContextCompat
 import com.gelostech.dankmemes.commoners.DankMemesUtil.cacheBitmap
 import com.gelostech.dankmemes.commoners.DankMemesUtil.getBitmap
 import com.gelostech.dankmemes.commoners.DankMemesUtil.loadFromStorage
-import com.gelostech.dankmemes.utils.setDrawable
+import com.gelostech.dankmemes.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
-
 
 class MemesAdapter(private val context: Context, private val onItemClickListener: OnItemClickListener) : RecyclerView.Adapter<MemesAdapter.MemeHolder>(){
     private val memes = mutableListOf<MemeModel>()
@@ -117,10 +113,10 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
 
                 userName.text = memePoster
                 memeTime.text = TimeFormatter().getTimeStamp(time!!)
-                if (caption == null) {
-                    memeCaption.visibility = View.GONE
+                if (caption!!.isNullOrEmpty()) {
+                    memeCaption.hideView()
                 } else {
-                    if (!memeCaption.isShown) memeCaption.visibility = View.VISIBLE
+                    if (!memeCaption.isShown) memeCaption.showView()
                     memeCaption.text = caption
                 }
                 memeImage.loadUrl(imageUrl!!)
