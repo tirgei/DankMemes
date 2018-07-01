@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Dank Memes</string>
+    <string name="profile">Profile</string>
+    <string name="collections">Collections</string>
     <string name="faves">Favorites</string>
     <string name="date_picker">Date</string>
     <string name="settings">Settings</string>
@@ -18,12 +20,46 @@
     <string name="new_meme">Upload Meme</string>
     <string name="invite_body">Ssup fam! Check out these fresh memes!!</string>
     <string name="play_store_link">https://play.google.com/store/apps/details?id=</string>
+    <string name="developer_id">https://play.google.com/store/apps/developer?id=Gelos+Technologies</string>
     <string name="fave_item">Fave</string>
     <string name="like_post">Like</string>
     <string name="comment_post">Comment</string>
     <string name="remove_fave">Remove fave</string>
 
-    <!-- Admob Ads -->
+    <string name="image">image</string>
+    <string name="fave">fave</string>
+    <string name="my_posts">MY POSTS</string>
+    <string name="posts">POSTS</string>
+    <string name="followers">followers</string>
+    <string name="following">following</string>
+    <string name="select_meme">Select meme</string>
+    <string name="add_new_comment">Add new comment...</string>
+    <string name="not_a_member_yet">Not a member yet?</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="email_address">Email address</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="username">Username</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="terms">Terms and Conditions</string>
+    <string name="agree_to_terms">I accept the</string>
+    <string name="button">button</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="set_avatar">Set profile picture...</string>
+    <string name="bio">About me</string>
+    <string name="update_profile">Update profile</string>
+    <string name="new_user_bio">Hello there. I\'m here for the memes too :)</string>
+    <string name="POSTS">posts</string>
 
+
+    <!-- mopub setup -->
+    <string name="ad_unit_id_native">11a17b188668469fb0412708c3d16813</string>
+    <string name="native_icon_image">native_icon_image</string>
+    <string name="native_main_image">native_main_image</string>
+    <string name="learn_more">Learn More</string>
+    <string name="native_privacy_information_icon_image">Privacy Information Icon image</string>
 
 </resources>

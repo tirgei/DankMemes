@@ -8,11 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
+    <style name="DankMemesTheme" parent="DankMemesTheme.Base">
 
     </style>
 
-    <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="DankMemesTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -20,10 +20,5 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- PopuP Enter Exit Animation -->
-    <style name="PopupAnimation" parent="Widget.AppCompat.PopupWindow">
-        <item name="android:windowEnterAnimation">@anim/bottom_up</item>
-        <item name="android:windowExitAnimation">@anim/bottom_down</item>
-    </style>
 
 </resources>

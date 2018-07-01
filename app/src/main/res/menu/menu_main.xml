@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_add_meme"
+        app:showAsAction="ifRoom"
+        android:title="Post meme"/>
+
+    <item
+        android:id="@+id/menu_edit_profile"
+        app:showAsAction="ifRoom"
+        android:title="Edit Profile"
+        android:visible="false"/>
+
+</menu>

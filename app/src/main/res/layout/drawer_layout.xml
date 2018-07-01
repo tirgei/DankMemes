@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/nav_gradient">
+
+    <ImageView
+        android:id="@+id/drawerIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="20dp"
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="@string/image"/>
+
+    <TextView
+        android:id="@+id/drawerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@id/drawerIcon"
+        tools:text="Vincent Tirgei"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="@dimen/feed_text"/>
+
+    <TextView
+        android:id="@+id/drawerEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_below="@id/drawerName"
+        android:textColor="@color/white"
+        android:textSize="@dimen/album_desc"
+        tools:text="tirgeic@gmail.com"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="20dp"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/drawerRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/notif_summary"
+            android:drawablePadding="7dp"
+            android:text="Rate app"/>
+
+        <TextView
+            android:id="@+id/drawerShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/notif_summary"
+            android:drawablePadding="7dp"
+            android:text="Share app"/>
+
+        <TextView
+            android:id="@+id/drawerFeedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/notif_summary"
+            android:drawablePadding="7dp"
+            android:text="Send feedback"/>
+
+        <TextView
+            android:id="@+id/drawerTerms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/notif_summary"
+            android:drawablePadding="7dp"
+            android:text="Terms of Use"/>
+
+        <TextView
+            android:id="@+id/drawerPolicy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/notif_summary"
+            android:drawablePadding="7dp"
+            android:text="Privacy policy"/>
+
+        <TextView
+            android:id="@+id/drawerMoreApps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/notif_summary"
+            android:drawablePadding="7dp"
+            android:text="More apps"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/drawerLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/notif_summary"
+        android:drawablePadding="7dp"
+        android:text="Log out"/>
+
+</RelativeLayout>

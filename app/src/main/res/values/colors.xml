@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimaryDark">#009688</color>
     <color name="colorAccent">#009688</color>
     <color name="colorPrimaryLight">#FFE0B2</color>
-    <color name="primaryText">#FFFFFF</color>
-    <color name="secondaryText">#757575</color>
     <color name="dividerColor">#BDBDBD</color>
     <color name="windowBackground">#000000</color>
     <color name="gold">#b2497d</color>
+    <color name="white">#FFFFFF</color>
+    <color name="inactiveColor">#8c8c8c</color>
+    <color name="feedDivider">#CCe0e0e0</color>
+    <color name="pink">#ec407a</color>
+
+    <color name="textGray">#616161</color>
+    <color name="primaryText">#212121</color>
+    <color name="secondaryText">#D9757575</color>
+    <color name="timeColor">#A6616161</color>
+    <color name="placeholder_bg">#dddddd</color>
+    <color name="lightGray">#e6e6e6</color>
 
     <color name="darkWindowBackground">#33343B</color>
     <color name="lightWindowBackground">#F4F4F6</color>
+
 </resources>

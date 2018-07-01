@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="date_stamp_size">20sp</dimen>
-    <dimen name="date_textview_leftright">10dp</dimen>
-    <dimen name="date_textview_topbottom">2dp</dimen>
-    <dimen name="date_textviewMargin_bottom">10dp</dimen>
-    <dimen name="date_card_margin_leftright">1dp</dimen>
-    <dimen name="date_card_margin_bottom">5dp</dimen>
-    <dimen name="date_card_padding">1.5dp</dimen>
-    <dimen name="image_card_padding">0.5dp</dimen>
-    <dimen name="faves_button_size">40dp</dimen>
-    <dimen name="faves_button_margin">10dp</dimen>
-    <dimen name="card_options">40dp</dimen>
+    <dimen name="no_elevation">0dp</dimen>
+    <dimen name="notif_icon">35dp</dimen>
+    <dimen name="notif_padding_v">15dp</dimen>
+    <dimen name="notif_padding_h">10dp</dimen>
+    <dimen name="featured_description">14sp</dimen>
+    <dimen name="albums_spacing">5dp</dimen>
 
+    <dimen name="grid_layout_margin">5dp</dimen>
+
+    <!-- text spacings -->
+    <dimen name="notif_summary">15.5sp</dimen>
+    <dimen name="album_title">14sp</dimen>
+    <dimen name="notif_time">11sp</dimen>
+    <dimen name="feed_user">15sp</dimen>
+    <dimen name="feed_text">17sp</dimen>
+    <dimen name="album_desc">13sp</dimen>
+    <dimen name="prof_texts">20sp</dimen>
+
+    <dimen name="native_main_image_height">200dp</dimen>
 </resources>
