@@ -2,28 +2,26 @@ package com.gelostech.dankmemes.adapters
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.commoners.DankMemesUtil
+import com.gelostech.dankmemes.commoners.DankMemesUtil.cacheBitmap
+import com.gelostech.dankmemes.commoners.DankMemesUtil.getBitmap
 import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
 import com.gelostech.dankmemes.commoners.MyBounceInterpolator
 import com.gelostech.dankmemes.models.MemeModel
+import com.gelostech.dankmemes.utils.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.item_meme.view.*
 import java.lang.ref.WeakReference
-import android.support.v4.content.ContextCompat
-import com.gelostech.dankmemes.commoners.DankMemesUtil.cacheBitmap
-import com.gelostech.dankmemes.commoners.DankMemesUtil.getBitmap
-import com.gelostech.dankmemes.commoners.DankMemesUtil.loadFromStorage
-import com.gelostech.dankmemes.utils.*
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.storage.FirebaseStorage
 
 class MemesAdapter(private val context: Context, private val onItemClickListener: OnItemClickListener) : RecyclerView.Adapter<MemesAdapter.MemeHolder>(){
     private val memes = mutableListOf<MemeModel>()

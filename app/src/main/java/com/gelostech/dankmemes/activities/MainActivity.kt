@@ -1,16 +1,20 @@
 package com.gelostech.dankmemes.activities
 
 import am.appwise.components.ni.NoInternetDialog
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.SharedPreferences
+import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
-
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
@@ -18,29 +22,20 @@ import com.gelostech.dankmemes.fragments.CollectionsFragment
 import com.gelostech.dankmemes.fragments.HomeFragment
 import com.gelostech.dankmemes.fragments.ProfileFragment
 import com.gelostech.dankmemes.utils.PagerAdapter
+import com.gelostech.dankmemes.utils.PreferenceHelper
+import com.gelostech.dankmemes.utils.PreferenceHelper.get
+import com.gelostech.dankmemes.utils.setDrawable
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
-import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.toast
-import com.gelostech.dankmemes.utils.setDrawable
+import com.wooplr.spotlight.SpotlightView
 import com.yarolegovich.slidingrootnav.SlidingRootNav
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
-import com.yarolegovich.slidingrootnav.callback.DragStateListener
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.drawer_layout.*
-import android.content.ActivityNotFoundException
-import android.content.SharedPreferences
-import android.graphics.Color
-import android.net.Uri
-import android.view.View
-import com.gelostech.dankmemes.utils.PreferenceHelper
-import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.alert
-import com.gelostech.dankmemes.utils.PreferenceHelper.get
-import android.graphics.Color.parseColor
-import com.gelostech.dankmemes.commoners.DankMemesUtil
-import com.google.firebase.messaging.FirebaseMessaging
-import com.wooplr.spotlight.SpotlightView
-
+import org.jetbrains.anko.toast
 
 
 class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,

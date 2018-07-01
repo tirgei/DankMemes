@@ -17,13 +17,13 @@ import com.gelostech.dankmemes.commoners.DankMemesUtil.drawableToBitmap
 import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
 import com.gelostech.dankmemes.models.UserModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
+import com.gelostech.dankmemes.utils.PreferenceHelper.set
 import com.gelostech.dankmemes.utils.loadUrl
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_edit_profile.*
 import org.jetbrains.anko.toast
-import com.gelostech.dankmemes.utils.PreferenceHelper.set
 
 class EditProfileActivity : BaseActivity() {
     private var imageUri: Uri? = null

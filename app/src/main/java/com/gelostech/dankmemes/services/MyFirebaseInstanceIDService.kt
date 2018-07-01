@@ -5,11 +5,11 @@ import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.utils.PreferenceHelper
+import com.gelostech.dankmemes.utils.PreferenceHelper.set
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.FirebaseInstanceIdService
-import com.gelostech.dankmemes.utils.PreferenceHelper.set
 
 
 class MyFirebaseInstanceIDService : FirebaseInstanceIdService() {

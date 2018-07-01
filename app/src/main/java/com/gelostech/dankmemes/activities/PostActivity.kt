@@ -14,12 +14,12 @@ import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
+import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_post.*
 import org.jetbrains.anko.toast
-import com.gelostech.dankmemes.utils.PreferenceHelper.get
 
 class PostActivity : BaseActivity(), View.OnClickListener {
     private var imageUri: Uri? = null
