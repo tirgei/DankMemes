@@ -3,7 +3,6 @@ package com.gelostech.dankmemes.activities
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -66,6 +65,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         viewProfileRv.layoutManager = LinearLayoutManager(this)
         viewProfileRv.addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(this))
         viewProfileRv.itemAnimator = DefaultItemAnimator()
+        viewProfileHeader.attachTo(viewProfileRv)
 
         memesAdapter = MemesAdapter(this, this)
         viewProfileRv.adapter = memesAdapter
@@ -106,10 +106,8 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         override fun onDataChange(p0: DataSnapshot) {
             if (p0.exists()) {
                 viewProfileEmptyState.visibility = View.GONE
-                viewProfileRv.visibility = View.VISIBLE
             } else {
                 viewProfileEmptyStateText.text = "$name hasn't posted any memes yet"
-                viewProfileRv.visibility = View.GONE
                 viewProfileEmptyState.visibility = View.VISIBLE
             }
         }

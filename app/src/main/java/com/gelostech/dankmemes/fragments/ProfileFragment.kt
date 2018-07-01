@@ -7,14 +7,11 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import com.cocosw.bottomsheet.BottomSheet
-
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.activities.CommentActivity
 import com.gelostech.dankmemes.activities.ViewMemeActivity
@@ -68,20 +65,10 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         profileRv.layoutManager = LinearLayoutManager(activity!!)
         profileRv.addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
         profileRv.itemAnimator = DefaultItemAnimator()
+        profileHeader.attachTo(profileRv)
 
         memesAdapter = MemesAdapter(activity!!, this)
         profileRv.adapter = memesAdapter
-
-        profileRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-                if (dy > 0) {
-                    bottomNavigationStateListener.profileHideBottomNavigation()
-                } else if (dy < 0) {
-                    bottomNavigationStateListener.profileShowBottomNavigation()
-
-                }
-            }
-        })
 
         profileImage.setOnClickListener {
             temporarilySaveImage()
@@ -112,9 +99,7 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         override fun onDataChange(p0: DataSnapshot) {
             if (p0.exists()) {
                 profileEmptyState.visibility = View.GONE
-                profileRv.visibility = View.VISIBLE
             } else {
-                profileRv.visibility = View.GONE
                 profileEmptyState.visibility = View.VISIBLE
             }
         }

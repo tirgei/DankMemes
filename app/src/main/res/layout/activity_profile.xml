@@ -19,117 +19,116 @@
         app:titleTextColor="@color/textGray"
         android:elevation="@dimen/no_elevation"/>
 
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
+    <RelativeLayout
         android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:layout_below="@id/viewProfileToolbar"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:fillViewport="true">
+        android:layout_width="match_parent"
+        android:layout_below="@id/viewProfileToolbar">
 
-        <RelativeLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/viewProfileRv"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_width="match_parent">
+            android:overScrollMode="never"
+            tools:listitem="@layout/item_meme"/>
+
+        <com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader
+            android:id="@+id/viewProfileHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <RelativeLayout
-                android:id="@+id/viewProfileTop"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true">
+                android:layout_height="wrap_content">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/viewProfileImage"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginStart="10dp"
-                    tools:src="@drawable/person"/>
-
-                <LinearLayout
+                <RelativeLayout
+                    android:id="@+id/viewProfileTop"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/viewProfileImage"
-                    android:layout_marginStart="10dp"
-                    android:layout_centerVertical="true"
-                    android:orientation="vertical">
+                    android:paddingTop="20dp"
+                    android:clipToPadding="false"
+                    android:paddingBottom="10dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
 
-                    <TextView
-                        android:id="@+id/viewProfileName"
-                        android:layout_width="wrap_content"
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/viewProfileImage"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="10dp"
+                        tools:src="@drawable/person"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/textGray"
-                        tools:text="Vincent Tirgei"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
+                        android:layout_toEndOf="@id/viewProfileImage"
+                        android:layout_marginStart="10dp"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/viewProfileBio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/secondaryText"
-                        android:textSize="14sp"
-                        tools:text="Here's some random brief summary about me :)"/>
+                        <TextView
+                            android:id="@+id/viewProfileName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/textGray"
+                            tools:text="Vincent Tirgei"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
 
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/viewProfileBio"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/secondaryText"
+                            android:textSize="14sp"
+                            tools:text="Here's some random brief summary about me :)"/>
 
-            </RelativeLayout>
+                    </LinearLayout>
 
-            <TextView
-                android:id="@+id/viewProfilePostsTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="10dp"
-                android:layout_below="@id/viewProfileTop"
-                android:text="@string/posts"
-                android:textColor="@color/textGray"
-                android:textSize="15sp"
-                android:textStyle="bold"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/viewProfileRv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/viewProfilePostsTitle"
-                android:overScrollMode="never"
-                tools:listitem="@layout/item_meme"
-                android:nestedScrollingEnabled="false"
-                android:focusableInTouchMode="false"
-                android:focusable="false"/>
-
-            <RelativeLayout
-                android:id="@+id/viewProfileEmptyState"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
-
-                <ImageView
-                    android:id="@+id/viewProfileEmptyStateImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="200dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/feed"
-                    android:contentDescription="@string/image"/>
+                </RelativeLayout>
 
                 <TextView
-                    android:id="@+id/viewProfileEmptyStateText"
+                    android:id="@+id/viewProfilePostsTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/viewProfileEmptyStateImage"
-                    android:layout_centerHorizontal="true"/>
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_below="@id/viewProfileTop"
+                    android:text="@string/posts"
+                    android:textColor="@color/textGray"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
 
             </RelativeLayout>
 
+        </com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader>
 
+        <RelativeLayout
+            android:id="@+id/viewProfileEmptyState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:id="@+id/viewProfileEmptyStateImage"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/feed"
+                android:contentDescription="@string/image"/>
+
+            <TextView
+                android:id="@+id/viewProfileEmptyStateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/viewProfileEmptyStateImage"
+                android:layout_centerHorizontal="true"/>
 
         </RelativeLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </RelativeLayout>
 
 </RelativeLayout>
