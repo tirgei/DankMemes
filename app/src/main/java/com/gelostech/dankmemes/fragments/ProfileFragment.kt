@@ -17,6 +17,7 @@ import com.gelostech.dankmemes.activities.CommentActivity
 import com.gelostech.dankmemes.activities.ViewMemeActivity
 import com.gelostech.dankmemes.adapters.MemesAdapter
 import com.gelostech.dankmemes.commoners.BaseFragment
+import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
@@ -69,12 +70,6 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
         memesAdapter = MemesAdapter(activity!!, this)
         profileRv.adapter = memesAdapter
-
-        profileImage.setOnClickListener {
-            temporarilySaveImage()
-            startActivity(Intent(activity, ViewMemeActivity::class.java))
-            activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        }
     }
 
     private val profileListener = object : ValueEventListener {
@@ -88,6 +83,14 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
             profileName.text = user.userName
             profileBio.text = user.userBio
             profileImage.loadUrl(user.userAvatar!!)
+
+            profileImage.setOnClickListener {
+                temporarilySaveImage()
+
+                val i = Intent(activity, ViewMemeActivity::class.java)
+                i.putExtra(Config.PIC_URL, user.userAvatar!!)
+                DankMemesUtil.fadeIn(activity!!)
+            }
         }
     }
 
@@ -148,11 +151,13 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     }
 
     private fun showMeme(meme: MemeModel, image: Bitmap) {
-        val i = Intent(activity, ViewMemeActivity::class.java)
         DankMemesUtil.saveTemporaryImage(activity!!, image)
+
+        val i = Intent(activity, ViewMemeActivity::class.java)
+        i.putExtra(Config.PIC_URL, meme.imageUrl)
         i.putExtra("caption", meme.caption)
         startActivity(i)
-        activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        DankMemesUtil.fadeIn(activity!!)
     }
 
     private fun showBottomSheet(meme: MemeModel, image: Bitmap) {

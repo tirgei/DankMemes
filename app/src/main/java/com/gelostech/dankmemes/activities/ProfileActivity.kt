@@ -15,6 +15,7 @@ import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.adapters.MemesAdapter
 import com.gelostech.dankmemes.commoners.BaseActivity
+import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.commoners.DankMemesUtil
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
@@ -70,11 +71,6 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         memesAdapter = MemesAdapter(this, this)
         viewProfileRv.adapter = memesAdapter
 
-        viewProfileImage.setOnClickListener {
-            temporarilySaveImage()
-            startActivity(Intent(this, ViewMemeActivity::class.java))
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        }
 
     }
 
@@ -95,6 +91,13 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
             viewProfileName.text = user.userName
             viewProfileBio.text = user.userBio
             viewProfileImage.loadUrl(user.userAvatar!!)
+
+            viewProfileImage.setOnClickListener {
+                temporarilySaveImage()
+                val i = Intent(this@ProfileActivity, ViewMemeActivity::class.java)
+                i.putExtra(Config.PIC_URL, user.userAvatar!!)
+                DankMemesUtil.fadeIn(this@ProfileActivity)
+            }
         }
     }
 

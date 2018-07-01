@@ -1,5 +1,6 @@
 package com.gelostech.dankmemes.commoners
 
+import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
@@ -18,14 +19,12 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.Toast
 import com.gelostech.dankmemes.R
 import com.google.firebase.storage.FirebaseStorage
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
 import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import de.hdodenhof.circleimageview.CircleImageView
 import org.jetbrains.anko.toast
@@ -290,6 +289,18 @@ object DankMemesUtil {
             }
         }
         return inSampleSize
+    }
+
+    fun animateEnterRight(activity: Activity) {
+        activity.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+    }
+
+    fun animateEnterLeft(activity: Activity) {
+        activity.overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
+    }
+
+    fun fadeIn(activity: Activity) {
+        activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
 

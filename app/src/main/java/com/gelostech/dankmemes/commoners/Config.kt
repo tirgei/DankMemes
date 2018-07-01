@@ -13,4 +13,6 @@ object Config {
     const val NOTIFICATION_ID = 100
     const val NOTIFICATION_ID_BIG_IMAGE = 101
 
+    const val PIC_URL = "pic_url"
+
 }

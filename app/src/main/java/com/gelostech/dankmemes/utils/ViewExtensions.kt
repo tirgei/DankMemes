@@ -21,6 +21,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.gelostech.dankmemes.R
+import com.github.chrisbanes.photoview.PhotoView
 import com.makeramen.roundedimageview.RoundedImageView
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -68,6 +69,13 @@ fun CircleImageView.loadUrl(url: String) {
     Glide.with(context.applicationContext)
             .setDefaultRequestOptions(RequestOptions()
                     .placeholder(R.drawable.person))
+            .load(url)
+            .thumbnail(0.05f)
+            .into(this)
+}
+
+fun PhotoView.loadUrl(url: String) {
+    Glide.with(context)
             .load(url)
             .thumbnail(0.05f)
             .into(this)
