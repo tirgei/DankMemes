@@ -74,3 +74,6 @@ gen-external-apklibs
 .Trashes
 ehthumbs.db
 Thumbs.db
+/keystore.properties
+app/libs/
+keystore.properties
