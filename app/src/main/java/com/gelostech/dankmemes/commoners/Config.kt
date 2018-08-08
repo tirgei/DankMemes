@@ -15,4 +15,8 @@ object Config {
 
     const val PIC_URL = "pic_url"
 
+    // Firebase
+    const val MEMES = "memes"
+    const val TIME = "time"
+
 }

@@ -13,12 +13,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.activities.CommentActivity
 import com.gelostech.dankmemes.activities.ProfileActivity
 import com.gelostech.dankmemes.activities.ViewMemeActivity
 import com.gelostech.dankmemes.adapters.MemesAdapter
+import com.gelostech.dankmemes.callbacks.MemesUpdate
 import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.commoners.DankMemesUtil
@@ -26,7 +28,11 @@ import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.models.ReportModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
+import com.gelostech.dankmemes.utils.showView
 import com.google.firebase.database.*
+import com.google.firebase.database.Transaction
+import com.google.firebase.firestore.*
+import com.google.firebase.firestore.Query
 import com.mopub.nativeads.MoPubNativeAdPositioning
 import com.mopub.nativeads.MoPubRecyclerAdapter
 import com.mopub.nativeads.MoPubStaticNativeAdRenderer
@@ -36,12 +42,14 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 
 
-class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
+class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpdate {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var mopubAdapter: MoPubRecyclerAdapter
     private lateinit var bs: BottomSheet.Builder
-    private lateinit var memesQuery: Query
     private lateinit var bottomNavigationStateListener: HomeBottomNavigationStateListener
+    private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var lastDocument: DocumentSnapshot
+    private lateinit var loadMoreFooter: RelativeLayout
 
     companion object {
         private var TAG = HomeFragment::class.java.simpleName
@@ -59,20 +67,21 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         initMopub()
         homeShimmer.startShimmerAnimation()
 
-        memesQuery = getDatabaseReference().child("dank-memes")
-        memesQuery.addValueEventListener(memesValueListener)
-        memesQuery.addChildEventListener(memesChildListener)
+        loadInitial()
     }
 
     private fun initViews() {
+        layoutManager = LinearLayoutManager(activity)
+
         homeRv.setHasFixedSize(true)
-        homeRv.layoutManager = LinearLayoutManager(activity)
+        homeRv.layoutManager = layoutManager
         homeRv.addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
         homeRv.itemAnimator = DefaultItemAnimator()
         (homeRv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
 
-        memesAdapter = MemesAdapter(activity!!, this)
+        memesAdapter = MemesAdapter(activity!!, this, this)
 
+        // Hide bottom Nav on scroll
         homeRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 if (dy > 0) {
@@ -83,6 +92,105 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
                 }
             }
         })
+
+        loadMoreFooter = homeRv.loadMoreFooterView as RelativeLayout
+        homeRv.setOnLoadMoreListener {
+            loadMoreFooter.showView()
+            loadMore()
+        }
+
+    }
+
+    private fun loadInitial() {
+        getFirestore().collection(Config.MEMES)
+                .orderBy(Config.TIME, Query.Direction.DESCENDING)
+                .limit(12)
+                .addSnapshotListener { p0, p1 ->
+                    hasPosts()
+
+                    if (p1 != null) {
+                        Log.e(TAG, "Error loading initial memes: $p1")
+
+                    }
+
+                    if (p0 == null || p0.isEmpty) {
+                        noPosts()
+                    } else {
+                        lastDocument = p0.documents[p0.size()-1]
+
+                        for (change: DocumentChange in p0.documentChanges) {
+
+                            when(change.type) {
+                                DocumentChange.Type.ADDED -> {
+                                    val meme = change.document.toObject(MemeModel::class.java)
+                                    memesAdapter.addMeme(meme)
+                                }
+
+                                DocumentChange.Type.MODIFIED -> {
+                                    val meme = change.document.toObject(MemeModel::class.java)
+                                    memesAdapter.updateMeme(meme)
+                                }
+
+                                DocumentChange.Type.REMOVED -> {
+                                    val meme = change.document.toObject(MemeModel::class.java)
+                                    memesAdapter.removeMeme(meme)
+                                }
+
+
+                            }
+                        }
+
+                    }
+
+                }
+
+    }
+
+    private fun loadMore() {
+        Log.e(TAG, "Loading from ${memesAdapter.getLastKey()}")
+
+        getFirestore().collection(Config.MEMES)
+                .orderBy(Config.TIME, Query.Direction.DESCENDING)
+                .startAfter(lastDocument)
+                .limit(12)
+                .addSnapshotListener { p0, p1 ->
+                    //hasPosts()
+
+                    if (p1 != null) {
+                        Log.e(TAG, "Error loading more memes: $p1")
+
+                    }
+
+                    if (p0 == null || p0.isEmpty) {
+                        Log.e(TAG, "No more memes")
+                    } else {
+                        lastDocument = p0.documents[p0.size()-1]
+
+                        for (change: DocumentChange in p0.documentChanges) {
+
+                            when(change.type) {
+                                DocumentChange.Type.ADDED -> {
+                                    val meme = change.document.toObject(MemeModel::class.java)
+                                    memesAdapter.addMeme(meme)
+                                }
+
+                                DocumentChange.Type.MODIFIED -> {
+                                    val meme = change.document.toObject(MemeModel::class.java)
+                                    memesAdapter.updateMeme(meme)
+                                }
+
+                                DocumentChange.Type.REMOVED -> {
+                                    val meme = change.document.toObject(MemeModel::class.java)
+                                    memesAdapter.removeMeme(meme)
+                                }
+
+
+                            }
+                        }
+
+                    }
+
+                }
     }
 
     private fun initMopub() {
@@ -104,44 +212,6 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         homeRv.adapter = mopubAdapter
         if (isConnected()) mopubAdapter.loadAds(activity!!.getString(R.string.ad_unit_id_native))
 
-    }
-
-    private val memesValueListener = object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error loading memes: ${p0.message}")
-        }
-
-        override fun onDataChange(p0: DataSnapshot) {
-            if (p0.exists()) {
-                if (homeShimmer.isShown) homeShimmer.stopShimmerAnimation()
-                homeShimmer.visibility = View.GONE
-            }
-        }
-    }
-
-    private val memesChildListener = object : ChildEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error loading memes: ${p0.message}")
-        }
-
-        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-            Log.e(TAG, "Meme moved: ${p0.key}")
-        }
-
-        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-            val meme = p0.getValue(MemeModel::class.java)
-            memesAdapter.updateMeme(meme!!)
-        }
-
-        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-            val meme = p0.getValue(MemeModel::class.java)
-            memesAdapter.addMeme(meme!!)
-        }
-
-        override fun onChildRemoved(p0: DataSnapshot) {
-            val meme = p0.getValue(MemeModel::class.java)
-            memesAdapter.removeMeme(meme!!)
-        }
     }
 
     override fun onItemClick(meme: MemeModel, viewID: Int, image: Bitmap?) {
@@ -311,14 +381,24 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         }.show()
     }
 
+    private fun hasPosts() {
+        homeShimmer.stopShimmerAnimation()
+        homeShimmer.visibility = View.GONE
+    }
+
+    private fun noPosts() {
+
+    }
+
+    override fun memesUpdated(position: Int) {
+    }
+
     override fun onResume() {
         mopubAdapter.refreshAds(activity!!.getString(R.string.ad_unit_id_native))
         super.onResume()
     }
 
     override fun onDestroy() {
-        memesQuery.removeEventListener(memesValueListener)
-        memesQuery.removeEventListener(memesChildListener)
         mopubAdapter.destroy()
         super.onDestroy()
     }

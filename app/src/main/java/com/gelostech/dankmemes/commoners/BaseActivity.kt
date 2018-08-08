@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -70,6 +71,9 @@ open class BaseActivity : AppCompatActivity() {
 
     // Get root database reference
     fun getDatabaseReference(): DatabaseReference = FirebaseDatabase.getInstance().reference
+
+    // Get root firestore reference
+    fun getFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
     // Get Firebase Storage reference
     fun getStorageReference(): StorageReference = FirebaseStorage.getInstance().reference

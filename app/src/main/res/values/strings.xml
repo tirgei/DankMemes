@@ -48,7 +48,7 @@
     <string name="agree_to_terms">I accept the</string>
     <string name="button">button</string>
     <string name="edit_profile">Edit profile</string>
-    <string name="set_avatar">Set profile picture...</string>
+    <string name="set_avatar">Set profile picture…</string>
     <string name="bio">About me</string>
     <string name="update_profile">Update profile</string>
     <string name="new_user_bio">Hello there. I\'m here for the memes too :)</string>
@@ -56,7 +56,7 @@
 
 
     <!-- mopub setup -->
-    <string name="ad_unit_id_native">11a17b188668469fb0412708c3d16813</string>
+    <string name="ad_unit_id_native">7e53b70eb06c4ad0b6d08cf8bcb79ec7</string>
     <string name="native_icon_image">native_icon_image</string>
     <string name="native_main_image">native_main_image</string>
     <string name="learn_more">Learn More</string>

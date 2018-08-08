@@ -11,6 +11,7 @@ data class MemeModel(
         var time: Long? = null,
         var memePoster: String? = null,
         var memePosterID: String? = null,
+        var thumbnail: String? = null,
         var likes: MutableMap<String, Boolean> = mutableMapOf(),
         var faves: MutableMap<String, Boolean> = mutableMapOf()
 ): Serializable

@@ -16,6 +16,7 @@ import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.activities.CommentActivity
 import com.gelostech.dankmemes.activities.ViewMemeActivity
 import com.gelostech.dankmemes.adapters.MemesAdapter
+import com.gelostech.dankmemes.callbacks.MemesUpdate
 import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.commoners.DankMemesUtil
@@ -29,7 +30,7 @@ import kotlinx.android.synthetic.main.fragment_profile.*
 import org.jetbrains.anko.alert
 
 
-class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
+class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpdate{
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var image: Bitmap
     private lateinit var user: UserModel
@@ -68,7 +69,7 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         profileRv.itemAnimator = DefaultItemAnimator()
         profileHeader.attachTo(profileRv)
 
-        memesAdapter = MemesAdapter(activity!!, this)
+        memesAdapter = MemesAdapter(activity!!, this, this)
         profileRv.adapter = memesAdapter
     }
 
@@ -252,6 +253,10 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
                 Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
             }
         })
+    }
+
+    override fun memesUpdated(position: Int) {
+
     }
 
     override fun onDestroy() {

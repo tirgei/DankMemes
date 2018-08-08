@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:shimmer="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.HomeFragment"
     android:background="@color/white">
 
@@ -29,11 +30,14 @@
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <com.aspsine.irecyclerview.IRecyclerView
         android:id="@+id/homeRv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/item_meme"
-        android:overScrollMode="never"/>
+        android:overScrollMode="never"
+        app:refreshEnabled="false"
+        app:loadMoreEnabled="true"
+        app:loadMoreFooterLayout="@layout/loading"/>
 
 </FrameLayout>

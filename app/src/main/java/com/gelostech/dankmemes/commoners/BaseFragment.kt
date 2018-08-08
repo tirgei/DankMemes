@@ -13,6 +13,7 @@ import com.gelostech.dankmemes.utils.Connectivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.karumi.dexter.Dexter
@@ -57,6 +58,9 @@ open class BaseFragment : Fragment() {
 
     // Get root database reference
     fun getDatabaseReference(): DatabaseReference = FirebaseDatabase.getInstance().reference
+
+    // Get root firestore reference
+    fun getFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
     // Get FirebaseAuth instance
     fun getFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()

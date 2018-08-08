@@ -14,6 +14,7 @@ import android.widget.FrameLayout
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.adapters.MemesAdapter
+import com.gelostech.dankmemes.callbacks.MemesUpdate
 import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.commoners.DankMemesUtil
@@ -28,7 +29,7 @@ import kotlinx.android.synthetic.main.activity_profile.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 
-class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
+class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener, MemesUpdate {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var image: Bitmap
     private lateinit var profileRef: DatabaseReference
@@ -68,7 +69,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         viewProfileRv.itemAnimator = DefaultItemAnimator()
         viewProfileHeader.attachTo(viewProfileRv)
 
-        memesAdapter = MemesAdapter(this, this)
+        memesAdapter = MemesAdapter(this, this, this)
         viewProfileRv.adapter = memesAdapter
 
 
@@ -287,6 +288,10 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         }
 
         return true
+    }
+
+    override fun memesUpdated(position: Int) {
+
     }
 
     override fun onBackPressed() {

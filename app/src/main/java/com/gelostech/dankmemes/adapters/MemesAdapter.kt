@@ -18,6 +18,7 @@ import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.item_meme.view.*
 import java.lang.ref.WeakReference
 import android.support.v4.content.ContextCompat
+import com.gelostech.dankmemes.callbacks.MemesUpdate
 import com.gelostech.dankmemes.commoners.DankMemesUtil.cacheBitmap
 import com.gelostech.dankmemes.commoners.DankMemesUtil.getBitmap
 import com.gelostech.dankmemes.commoners.DankMemesUtil.loadFromStorage
@@ -25,12 +26,13 @@ import com.gelostech.dankmemes.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 
-class MemesAdapter(private val context: Context, private val onItemClickListener: OnItemClickListener) : RecyclerView.Adapter<MemesAdapter.MemeHolder>(){
+class MemesAdapter(private val context: Context, private val onItemClickListener: OnItemClickListener, private val memesUpdate: MemesUpdate) : RecyclerView.Adapter<MemesAdapter.MemeHolder>(){
     private val memes = mutableListOf<MemeModel>()
 
     fun addMeme(meme: MemeModel) {
-        memes.add(0, meme)
-        notifyItemInserted(0)
+        memes.add(meme)
+        notifyItemInserted(memes.size-1)
+        memesUpdate.memesUpdated(memes.size-1)
     }
 
     fun updateMeme(meme: MemeModel) {
@@ -53,6 +55,10 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
 
         memes.removeAt(indexToRemove)
         notifyItemRemoved(indexToRemove)
+    }
+
+    fun getLastKey(): String {
+        return memes[memes.size-1].id!!
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemeHolder {
@@ -119,7 +125,13 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
                     if (!memeCaption.isShown) memeCaption.showView()
                     memeCaption.text = caption
                 }
-                memeImage.loadUrl(imageUrl!!)
+
+                if (thumbnail.isNullOrEmpty()) {
+                    memeImage.loadUrl(imageUrl!!)
+                } else {
+                    memeImage.loadUrl(imageUrl!!, thumbnail!!)
+                }
+
                 memeLike.text = "$likesCount likes"
                 comments(commentsCount!!)
 
