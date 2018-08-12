@@ -17,7 +17,7 @@ import com.gelostech.dankmemes.adapters.MemesAdapter
 import com.gelostech.dankmemes.callbacks.MemesUpdate
 import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.Config
-import com.gelostech.dankmemes.commoners.DankMemesUtil
+import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.models.ReportModel
@@ -77,7 +77,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener, MemesU
 
     private fun temporarilySaveImage() {
         image = (viewProfileImage.drawable as BitmapDrawable).bitmap
-        DankMemesUtil.saveTemporaryImage(this, image)
+        AppUtils.saveTemporaryImage(this, image)
     }
 
     private val profileListener = object : ValueEventListener {
@@ -97,7 +97,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener, MemesU
                 temporarilySaveImage()
                 val i = Intent(this@ProfileActivity, ViewMemeActivity::class.java)
                 i.putExtra(Config.PIC_URL, user.userAvatar!!)
-                DankMemesUtil.fadeIn(this@ProfileActivity)
+                AppUtils.fadeIn(this@ProfileActivity)
             }
         }
     }
@@ -155,7 +155,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener, MemesU
 
     private fun showMeme(meme: MemeModel, image: Bitmap) {
         val i = Intent(this, ViewMemeActivity::class.java)
-        DankMemesUtil.saveTemporaryImage(this, image)
+        AppUtils.saveTemporaryImage(this, image)
         i.putExtra("caption", meme.caption)
         startActivity(i)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -167,10 +167,10 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener, MemesU
         bs.listener { _, which ->
 
             when(which) {
-                R.id.bs_share -> DankMemesUtil.shareImage(this, image)
+                R.id.bs_share -> AppUtils.shareImage(this, image)
                 R.id.bs_save -> {
                     if (storagePermissionGranted()) {
-                        DankMemesUtil.saveImage(this, image)
+                        AppUtils.saveImage(this, image)
                     } else requestStoragePermission()
                 }
                 R.id.bs_report -> showReportDialog(meme)
@@ -254,7 +254,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener, MemesU
             customView = layout
 
             positiveButton("REPORT") {
-                if (!DankMemesUtil.validated(editText)) {
+                if (!AppUtils.validated(editText)) {
                     toast("Please enter a reason to report")
                     return@positiveButton
                 }

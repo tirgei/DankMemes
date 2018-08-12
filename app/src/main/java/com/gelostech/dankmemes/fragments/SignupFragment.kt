@@ -16,10 +16,10 @@ import android.view.ViewGroup
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.activities.MainActivity
 import com.gelostech.dankmemes.commoners.BaseFragment
-import com.gelostech.dankmemes.commoners.DankMemesUtil
-import com.gelostech.dankmemes.commoners.DankMemesUtil.drawableToBitmap
-import com.gelostech.dankmemes.commoners.DankMemesUtil.getColor
-import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
+import com.gelostech.dankmemes.commoners.AppUtils
+import com.gelostech.dankmemes.commoners.AppUtils.drawableToBitmap
+import com.gelostech.dankmemes.commoners.AppUtils.getColor
+import com.gelostech.dankmemes.commoners.AppUtils.setDrawable
 import com.gelostech.dankmemes.models.UserModel
 import com.gelostech.dankmemes.utils.*
 import com.google.firebase.auth.*
@@ -106,7 +106,7 @@ class SignupFragment : BaseFragment() {
 
     private fun signUp() {
         // Check if all fields are filled
-        if (!DankMemesUtil.validated(signupUsername, signupEmail, signupPassword, signupConfirmPassword)) return
+        if (!AppUtils.validated(signupUsername, signupEmail, signupPassword, signupConfirmPassword)) return
 
         val name = signupUsername.text.toString().trim()
         val email = signupEmail.text.toString().trim()
@@ -180,7 +180,7 @@ class SignupFragment : BaseFragment() {
     // User was signed in anonymously, sign them up
     private fun linkToId() {
         // Check if all fields are filled
-        if (!DankMemesUtil.validated(signupUsername, signupEmail, signupPassword, signupConfirmPassword)) return
+        if (!AppUtils.validated(signupUsername, signupEmail, signupPassword, signupConfirmPassword)) return
 
         val name = signupUsername.text.toString().trim()
         val email = signupEmail.text.toString().trim()

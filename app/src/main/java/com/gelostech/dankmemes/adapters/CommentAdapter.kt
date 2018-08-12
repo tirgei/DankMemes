@@ -1,12 +1,10 @@
 package com.gelostech.dankmemes.adapters
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
 import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.commoners.DankMemesUtil
+import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.models.CommentModel
 import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.inflate
@@ -73,14 +71,14 @@ class CommentAdapter(onItemClickListener: OnItemClickListener): RecyclerView.Ada
         }
 
         private fun loadIcon(comment: CommentModel) {
-            if (DankMemesUtil.getBitmap(comment.authorId!!) == null)
+            if (AppUtils.getBitmap(comment.authorId!!) == null)
                 commentIcon.loadUrl(R.drawable.person)
             else
-                commentIcon.setImageBitmap(DankMemesUtil.getBitmap(comment.authorId!!))
+                commentIcon.setImageBitmap(AppUtils.getBitmap(comment.authorId!!))
 
             val avatarRef = FirebaseStorage.getInstance().reference.child("avatars").child(comment.authorId!!)
             avatarRef.downloadUrl.addOnSuccessListener {
-                DankMemesUtil.cacheBitmap(it.toString(), comment.authorId!!)
+                AppUtils.cacheBitmap(it.toString(), comment.authorId!!)
                 commentIcon.loadUrl(it.toString())
             }
         }

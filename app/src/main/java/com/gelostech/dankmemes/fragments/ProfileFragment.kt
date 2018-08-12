@@ -19,7 +19,7 @@ import com.gelostech.dankmemes.adapters.MemesAdapter
 import com.gelostech.dankmemes.callbacks.MemesUpdate
 import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.Config
-import com.gelostech.dankmemes.commoners.DankMemesUtil
+import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.models.UserModel
@@ -90,7 +90,7 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesU
 
                 val i = Intent(activity, ViewMemeActivity::class.java)
                 i.putExtra(Config.PIC_URL, user.userAvatar!!)
-                DankMemesUtil.fadeIn(activity!!)
+                AppUtils.fadeIn(activity!!)
             }
         }
     }
@@ -136,7 +136,7 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesU
 
     private fun temporarilySaveImage() {
         image = (profileImage.drawable as BitmapDrawable).bitmap
-        DankMemesUtil.saveTemporaryImage(activity!!, image)
+        AppUtils.saveTemporaryImage(activity!!, image)
     }
 
     fun getUser() : UserModel = user
@@ -152,13 +152,13 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesU
     }
 
     private fun showMeme(meme: MemeModel, image: Bitmap) {
-        DankMemesUtil.saveTemporaryImage(activity!!, image)
+        AppUtils.saveTemporaryImage(activity!!, image)
 
         val i = Intent(activity, ViewMemeActivity::class.java)
         i.putExtra(Config.PIC_URL, meme.imageUrl)
         i.putExtra("caption", meme.caption)
         startActivity(i)
-        DankMemesUtil.fadeIn(activity!!)
+        AppUtils.fadeIn(activity!!)
     }
 
     private fun showBottomSheet(meme: MemeModel, image: Bitmap) {
@@ -167,11 +167,11 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesU
         bs.listener { _, which ->
 
             when(which) {
-                R.id.bs_share -> DankMemesUtil.shareImage(activity!!, image)
+                R.id.bs_share -> AppUtils.shareImage(activity!!, image)
                 R.id.bs_delete -> deletePost(meme)
                 R.id.bs_save -> {
                     if (storagePermissionGranted()) {
-                        DankMemesUtil.saveImage(activity!!, image)
+                        AppUtils.saveImage(activity!!, image)
                     } else requestStoragePermission()
                 }
             }

@@ -14,7 +14,7 @@ import com.gelostech.dankmemes.activities.ViewMemeActivity
 import com.gelostech.dankmemes.adapters.FavesAdapter
 import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.Config
-import com.gelostech.dankmemes.commoners.DankMemesUtil
+import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
@@ -97,12 +97,12 @@ class FavesFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
     }
 
     override fun onItemClick(fave: FaveModel, image: Bitmap) {
-        DankMemesUtil.saveTemporaryImage(activity!!, image)
+        AppUtils.saveTemporaryImage(activity!!, image)
 
         val i = Intent(activity, ViewMemeActivity::class.java)
         i.putExtra(Config.PIC_URL, fave.picUrl)
         startActivity(i)
-        DankMemesUtil.fadeIn(activity!!)
+        AppUtils.fadeIn(activity!!)
     }
 
     override fun onLongItemClick(fave: FaveModel) {

@@ -12,9 +12,9 @@ import android.util.Log
 import android.view.MenuItem
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.BaseActivity
-import com.gelostech.dankmemes.commoners.DankMemesUtil
-import com.gelostech.dankmemes.commoners.DankMemesUtil.drawableToBitmap
-import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
+import com.gelostech.dankmemes.commoners.AppUtils
+import com.gelostech.dankmemes.commoners.AppUtils.drawableToBitmap
+import com.gelostech.dankmemes.commoners.AppUtils.setDrawable
 import com.gelostech.dankmemes.models.UserModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.loadUrl
@@ -53,7 +53,7 @@ class EditProfileActivity : BaseActivity() {
         supportActionBar?.title = getString(R.string.edit_profile)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        editProfilePickImage.setImageDrawable(DankMemesUtil.setDrawable(this, Ionicons.Icon.ion_camera, R.color.white, 18))
+        editProfilePickImage.setImageDrawable(AppUtils.setDrawable(this, Ionicons.Icon.ion_camera, R.color.white, 18))
 
         editProfilePickImage.setOnClickListener {
             if (storagePermissionGranted()) {
@@ -87,7 +87,7 @@ class EditProfileActivity : BaseActivity() {
 
     // User has changed profile picture
     private fun updateAvatar() {
-        if (!DankMemesUtil.validated(editProfileName, editProfileBio)) return
+        if (!AppUtils.validated(editProfileName, editProfileBio)) return
 
         editProfileButton.startAnimation()
         isUpdating = true
@@ -131,7 +131,7 @@ class EditProfileActivity : BaseActivity() {
 
     // User has updated details only, profile picture still same
     private fun updateDetails() {
-        if (!DankMemesUtil.validated(editProfileName, editProfileBio)) return
+        if (!AppUtils.validated(editProfileName, editProfileBio)) return
 
         editProfileButton.startAnimation()
         isUpdating = true

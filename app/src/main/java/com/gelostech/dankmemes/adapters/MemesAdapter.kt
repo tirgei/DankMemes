@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.commoners.DankMemesUtil
-import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
+import com.gelostech.dankmemes.commoners.AppUtils.setDrawable
 import com.gelostech.dankmemes.commoners.MyBounceInterpolator
 import com.gelostech.dankmemes.models.MemeModel
 import com.makeramen.roundedimageview.RoundedDrawable
@@ -19,9 +18,9 @@ import kotlinx.android.synthetic.main.item_meme.view.*
 import java.lang.ref.WeakReference
 import android.support.v4.content.ContextCompat
 import com.gelostech.dankmemes.callbacks.MemesUpdate
-import com.gelostech.dankmemes.commoners.DankMemesUtil.cacheBitmap
-import com.gelostech.dankmemes.commoners.DankMemesUtil.getBitmap
-import com.gelostech.dankmemes.commoners.DankMemesUtil.loadFromStorage
+import com.gelostech.dankmemes.commoners.AppUtils.cacheBitmap
+import com.gelostech.dankmemes.commoners.AppUtils.getBitmap
+import com.gelostech.dankmemes.commoners.K
 import com.gelostech.dankmemes.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
@@ -62,10 +61,21 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemeHolder {
-        return MemeHolder(parent.inflate(R.layout.item_meme), onItemClickListener, context)
+        return when(viewType) {
+            K.IMAGE -> MemeHolder(parent.inflate(R.layout.item_meme), onItemClickListener, context)
+
+            else -> MemeHolder(parent.inflate(R.layout.item_meme), onItemClickListener, context)
+        }
     }
 
     override fun getItemCount(): Int = memes.size
+
+    override fun getItemViewType(position: Int): Int {
+        return when(memes[position].type) {
+            K.IMAGE -> K.IMAGE
+            else -> return  -1
+        }
+    }
 
     override fun onBindViewHolder(holder: MemeHolder, position: Int) {
         holder.bindViews(memes[position])

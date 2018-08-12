@@ -3,6 +3,7 @@ package com.gelostech.dankmemes.models
 import java.io.Serializable
 
 data class FaveModel(
+        var type: Int = 0,
         var faveKey: String? = null,
         var picUrl: String? = null,
         var name: String? = null,

@@ -11,7 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.BaseActivity
-import com.gelostech.dankmemes.commoners.DankMemesUtil
+import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.mikepenz.ionicons_typeface_library.Ionicons
@@ -48,7 +48,7 @@ class PostActivity : BaseActivity(), View.OnClickListener {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Post new meme"
 
-        postAddImage.setImageDrawable(DankMemesUtil.setDrawable(this, Ionicons.Icon.ion_image, R.color.secondaryText, 65))
+        postAddImage.setImageDrawable(AppUtils.setDrawable(this, Ionicons.Icon.ion_image, R.color.secondaryText, 65))
         postAddImage.setOnClickListener(this)
     }
 
@@ -71,7 +71,7 @@ class PostActivity : BaseActivity(), View.OnClickListener {
         menuInflater.inflate(R.menu.menu_post_meme, menu)
 
         uploadMeme = menu?.findItem(R.id.menu_post)
-        uploadMeme?.icon = DankMemesUtil.setDrawable(this, Ionicons.Icon.ion_android_send, R.color.colorAccent, 20)
+        uploadMeme?.icon = AppUtils.setDrawable(this, Ionicons.Icon.ion_android_send, R.color.colorAccent, 20)
 
         return super.onCreateOptionsMenu(menu)
     }

@@ -61,7 +61,7 @@ fun RoundedImageView.loadUrl(url: String, placeholer: String) {
             .setDefaultRequestOptions(RequestOptions()
                     .placeholder(R.drawable.loading))
             .load(url)
-            .thumbnail(Glide.with(context).asDrawable().load(placeholer))
+            .thumbnail(Glide.with(context).asDrawable().load(placeholer).thumbnail(0.1f))
             .into(this)
 }
 

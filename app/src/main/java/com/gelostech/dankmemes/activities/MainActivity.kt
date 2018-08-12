@@ -13,7 +13,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
 
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.BaseActivity
-import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
+import com.gelostech.dankmemes.commoners.AppUtils.setDrawable
 import com.gelostech.dankmemes.fragments.FavesFragment
 import com.gelostech.dankmemes.fragments.HomeFragment
 import com.gelostech.dankmemes.fragments.ProfileFragment

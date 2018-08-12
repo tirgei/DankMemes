@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,7 +22,7 @@ import com.gelostech.dankmemes.adapters.MemesAdapter
 import com.gelostech.dankmemes.callbacks.MemesUpdate
 import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.Config
-import com.gelostech.dankmemes.commoners.DankMemesUtil
+import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.models.ReportModel
@@ -223,13 +222,13 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpda
     }
 
     private fun showMeme(meme: MemeModel, image: Bitmap) {
-        DankMemesUtil.saveTemporaryImage(activity!!, image)
+        AppUtils.saveTemporaryImage(activity!!, image)
 
         val i = Intent(activity, ViewMemeActivity::class.java)
         i.putExtra(Config.PIC_URL, meme.imageUrl)
         i.putExtra("caption", meme.caption)
         startActivity(i)
-        DankMemesUtil.fadeIn(activity!!)
+        AppUtils.fadeIn(activity!!)
     }
 
     private fun showBottomSheet(meme: MemeModel, image: Bitmap) {
@@ -242,11 +241,11 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpda
         bs.listener { _, which ->
 
             when(which) {
-                R.id.bs_share -> DankMemesUtil.shareImage(activity!!, image)
+                R.id.bs_share -> AppUtils.shareImage(activity!!, image)
                 R.id.bs_delete -> deletePost(meme)
                 R.id.bs_save -> {
                     if (storagePermissionGranted()) {
-                        DankMemesUtil.saveImage(activity!!, image)
+                        AppUtils.saveImage(activity!!, image)
                     } else requestStoragePermission()
                 }
                 R.id.bs_report -> showReportDialog(meme)
@@ -341,7 +340,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpda
             customView = layout
 
             positiveButton("REPORT") {
-                if (!DankMemesUtil.validated(editText)) {
+                if (!AppUtils.validated(editText)) {
                     activity!!.toast("Please enter a reason to report")
                     return@positiveButton
                 }

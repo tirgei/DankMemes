@@ -18,7 +18,7 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.Config
-import com.gelostech.dankmemes.commoners.DankMemesUtil
+import com.gelostech.dankmemes.commoners.AppUtils
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -107,7 +107,7 @@ class NotificationUtils(private val mContext: Context) {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            notification.color = DankMemesUtil.getColor(mContext, R.color.colorAccent)
+            notification.color = AppUtils.getColor(mContext, R.color.colorAccent)
             notification.setSmallIcon(R.drawable.ic_notif)
         } else {
             notification.setSmallIcon(R.mipmap.ic_launcher)
@@ -137,7 +137,7 @@ class NotificationUtils(private val mContext: Context) {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            notification.color = DankMemesUtil.getColor(mContext, R.color.colorAccent)
+            notification.color = AppUtils.getColor(mContext, R.color.colorAccent)
             notification.setSmallIcon(R.mipmap.ic_launcher)
         } else {
             notification.setSmallIcon(R.mipmap.ic_launcher)

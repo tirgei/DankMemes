@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.commoners.K
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.utils.inflate
 import com.gelostech.dankmemes.utils.loadUrl
@@ -50,6 +51,14 @@ class FavesAdapter(private val onItemClickListener: OnItemClickListener) : Recyc
     }
 
     override fun getItemCount(): Int = faves.size
+
+    override fun getItemViewType(position: Int): Int {
+        return when(faves[position].type) {
+            K.IMAGE -> K.IMAGE
+
+            else -> -1
+        }
+    }
 
     override fun onBindViewHolder(holder: FaveHolder, position: Int) {
         holder.bindViews(faves[position])

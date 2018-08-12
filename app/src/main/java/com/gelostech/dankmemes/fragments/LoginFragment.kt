@@ -14,14 +14,13 @@ import android.view.ViewGroup
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.activities.MainActivity
 import com.gelostech.dankmemes.commoners.BaseFragment
-import com.gelostech.dankmemes.commoners.DankMemesUtil
-import com.gelostech.dankmemes.commoners.DankMemesUtil.drawableToBitmap
-import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
+import com.gelostech.dankmemes.commoners.AppUtils
+import com.gelostech.dankmemes.commoners.AppUtils.drawableToBitmap
+import com.gelostech.dankmemes.commoners.AppUtils.setDrawable
 import com.gelostech.dankmemes.models.UserModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.replaceFragment
 import com.gelostech.dankmemes.utils.setDrawable
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
@@ -73,7 +72,7 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun signIn() {
-        if (!DankMemesUtil.validated(loginEmail, loginPassword)) return
+        if (!AppUtils.validated(loginEmail, loginPassword)) return
 
         val email = loginEmail.text.toString().trim()
         val pw = loginPassword.text.toString().trim()
@@ -113,7 +112,7 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun forgotPassword() {
-        if (!DankMemesUtil.validated(loginEmail)) return
+        if (!AppUtils.validated(loginEmail)) return
 
         val email = loginEmail.text.toString().trim()
 
@@ -157,7 +156,7 @@ class LoginFragment : BaseFragment() {
             }
 
             override fun onDataChange(p0: DataSnapshot) {
-                loginButton.doneLoadingAnimation(DankMemesUtil.getColor(activity!!, R.color.pink), signupSuccessful)
+                loginButton.doneLoadingAnimation(AppUtils.getColor(activity!!, R.color.pink), signupSuccessful)
                 val userObject = p0.getValue(UserModel::class.java)
 
                 prefs["username"] = userObject!!.userName
