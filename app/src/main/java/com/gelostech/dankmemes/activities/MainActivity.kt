@@ -14,7 +14,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
-import com.gelostech.dankmemes.fragments.CollectionsFragment
+import com.gelostech.dankmemes.fragments.FavesFragment
 import com.gelostech.dankmemes.fragments.HomeFragment
 import com.gelostech.dankmemes.fragments.ProfileFragment
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
@@ -48,7 +48,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private var editProfile: MenuItem? = null
     private lateinit var slidingDrawer: SlidingRootNav
     private lateinit var homeFragment: HomeFragment
-    private lateinit var collectionsFragment: CollectionsFragment
+    private lateinit var favesFragment: FavesFragment
     private lateinit var profileFragment: ProfileFragment
     private lateinit var allFragment: AllFragment
     private lateinit var prefs: SharedPreferences
@@ -69,9 +69,9 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
         homeFragment = HomeFragment()
         profileFragment = ProfileFragment()
-        collectionsFragment = CollectionsFragment()
+        favesFragment = FavesFragment()
         allFragment = AllFragment()
-        pages = arrayOf(homeFragment, allFragment, collectionsFragment, profileFragment)
+        pages = arrayOf(homeFragment, allFragment, favesFragment, profileFragment)
 
         setupToolbar()
         setupBottomNav()

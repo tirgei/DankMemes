@@ -19,21 +19,21 @@ import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.fragment_collections.*
+import kotlinx.android.synthetic.main.fragment_faves.*
 import org.jetbrains.anko.alert
 
-class CollectionsFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
+class FavesFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
     private lateinit var favesAdapter: FavesAdapter
     private lateinit var favesQuery: Query
 
     companion object {
-        private var TAG = CollectionsFragment::class.java.simpleName
+        private var TAG = FavesFragment::class.java.simpleName
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_collections, container, false)
+        return inflater.inflate(R.layout.fragment_faves, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

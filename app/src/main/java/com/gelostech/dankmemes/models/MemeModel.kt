@@ -3,6 +3,7 @@ package com.gelostech.dankmemes.models
 import java.io.Serializable
 
 data class MemeModel(
+        var type: Int = 0,
         var id: String? = null,
         var caption: String? = null,
         var imageUrl: String? = null,
