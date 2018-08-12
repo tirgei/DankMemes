@@ -46,7 +46,6 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpda
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var mopubAdapter: MoPubRecyclerAdapter
     private lateinit var bs: BottomSheet.Builder
-    private lateinit var bottomNavigationStateListener: HomeBottomNavigationStateListener
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var lastDocument: DocumentSnapshot
     private lateinit var loadMoreFooter: RelativeLayout
@@ -80,18 +79,6 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpda
         (homeRv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
 
         memesAdapter = MemesAdapter(activity!!, this, this)
-
-        // Hide bottom Nav on scroll
-        homeRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-                if (dy > 0) {
-                    bottomNavigationStateListener.homeHideBottomNavigation()
-                } else if (dy < 0) {
-                    bottomNavigationStateListener.homeShowBottomNavigation()
-
-                }
-            }
-        })
 
         loadMoreFooter = homeRv.loadMoreFooterView as RelativeLayout
         homeRv.setOnLoadMoreListener {
@@ -391,6 +378,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpda
     }
 
     override fun memesUpdated(position: Int) {
+        mopubAdapter.notifyItemInserted(position)
     }
 
     override fun onResume() {
@@ -403,14 +391,6 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpda
         super.onDestroy()
     }
 
-    interface HomeBottomNavigationStateListener{
-        fun homeHideBottomNavigation()
-        fun homeShowBottomNavigation()
-    }
-
-    fun bottomNavigationListener(bottomNavigationStateListener: HomeBottomNavigationStateListener) {
-        this.bottomNavigationStateListener = bottomNavigationStateListener
-    }
 
 
 }

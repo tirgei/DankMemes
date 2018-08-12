@@ -17,35 +17,31 @@ import com.gelostech.dankmemes.commoners.DankMemesUtil.setDrawable
 import com.gelostech.dankmemes.fragments.CollectionsFragment
 import com.gelostech.dankmemes.fragments.HomeFragment
 import com.gelostech.dankmemes.fragments.ProfileFragment
-import com.gelostech.dankmemes.utils.PagerAdapter
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
-import com.gelostech.dankmemes.utils.setDrawable
 import com.yarolegovich.slidingrootnav.SlidingRootNav
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
-import com.yarolegovich.slidingrootnav.callback.DragStateListener
 import kotlinx.android.synthetic.main.drawer_layout.*
 import android.content.ActivityNotFoundException
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.net.Uri
 import android.view.View
-import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.alert
 import com.gelostech.dankmemes.utils.PreferenceHelper.get
-import android.graphics.Color.parseColor
-import com.gelostech.dankmemes.commoners.DankMemesUtil
+import android.support.v4.app.Fragment
+import com.gelostech.dankmemes.fragments.AllFragment
+import com.gelostech.dankmemes.utils.*
 import com.google.firebase.messaging.FirebaseMessaging
 import com.wooplr.spotlight.SpotlightView
 
 
 
 class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
-        AHBottomNavigation.OnNavigationPositionListener, ViewPager.OnPageChangeListener,
-        HomeFragment.HomeBottomNavigationStateListener  {
+        AHBottomNavigation.OnNavigationPositionListener, ViewPager.OnPageChangeListener {
 
     private var doubleBackToExit = false
     private var newMeme: MenuItem? = null
@@ -54,12 +50,15 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private lateinit var homeFragment: HomeFragment
     private lateinit var collectionsFragment: CollectionsFragment
     private lateinit var profileFragment: ProfileFragment
+    private lateinit var allFragment: AllFragment
     private lateinit var prefs: SharedPreferences
     private lateinit var noInternetDialog: NoInternetDialog
+    private lateinit var pages: Array<Fragment>
 
     companion object {
-        private const val HOME: String = "Home"
-        private const val COLLECTIONS: String = "Favorites"
+        private const val HOME: String = "Lit"
+        private const val ALL: String = "Fresh"
+        private const val COLLECTIONS: String = "Faves"
         private const val PROFILE: String = "Profile"
     }
 
@@ -71,6 +70,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         homeFragment = HomeFragment()
         profileFragment = ProfileFragment()
         collectionsFragment = CollectionsFragment()
+        allFragment = AllFragment()
+        pages = arrayOf(homeFragment, allFragment, collectionsFragment, profileFragment)
 
         setupToolbar()
         setupBottomNav()
@@ -89,36 +90,39 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
     //Setup the bottom navigation bar
     private fun setupBottomNav() {
-        val homeIcon = setDrawable(this, Ionicons.Icon.ion_ios_home, R.color.secondaryText, 18)
-        val momentsIcon = setDrawable(this, FontAwesome.Icon.faw_folder_open2, R.color.secondaryText, 20)
-        val growthIcon = setDrawable(this, FontAwesome.Icon.faw_user2, R.color.secondaryText, 18)
+        val homeIcon = setDrawable(this, Ionicons.Icon.ion_fireball, R.color.secondaryText, 18)
+        val allIcon = setDrawable(this, Ionicons.Icon.ion_ios_list_outline, R.color.secondaryText, 18)
+        val collectionsIcon = setDrawable(this, Ionicons.Icon.ion_ios_heart_outline, R.color.secondaryText, 18)
+        val profileIcon = setDrawable(this, FontAwesome.Icon.faw_user2, R.color.secondaryText, 18)
 
         bottomNav.addItem(AHBottomNavigationItem(HOME, homeIcon))
-        bottomNav.addItem(AHBottomNavigationItem(COLLECTIONS, momentsIcon))
-        bottomNav.addItem(AHBottomNavigationItem(PROFILE, growthIcon))
+        bottomNav.addItem(AHBottomNavigationItem(ALL, allIcon))
+        bottomNav.addItem(AHBottomNavigationItem(COLLECTIONS, collectionsIcon))
+        bottomNav.addItem(AHBottomNavigationItem(PROFILE, profileIcon))
 
         bottomNav.defaultBackgroundColor = ContextCompat.getColor(this, R.color.white)
         bottomNav.inactiveColor = ContextCompat.getColor(this, R.color.inactiveColor)
         bottomNav.accentColor = ContextCompat.getColor(this, R.color.colorAccent)
-        bottomNav.isBehaviorTranslationEnabled = false
+        bottomNav.isBehaviorTranslationEnabled = true
         bottomNav.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
         bottomNav.setUseElevation(true, 5f)
 
         bottomNav.setOnTabSelectedListener(this)
         bottomNav.setOnNavigationPositionListener(this)
-        homeFragment.bottomNavigationListener(this)
+
+        addFragment(homeFragment, holder.id)
     }
 
     //Setup the main view pager
     private fun setupViewPager() {
-        val adapter = PagerAdapter(supportFragmentManager, this)
-
-        adapter.addAllFrags(homeFragment, collectionsFragment, profileFragment)
-        adapter.addAllTitles(HOME, COLLECTIONS, PROFILE)
-
-        mainViewPager.adapter = adapter
-        mainViewPager.addOnPageChangeListener(this)
-        mainViewPager.offscreenPageLimit = 2
+//        val adapter = PagerAdapter(supportFragmentManager, this)
+//
+//        adapter.addAllFrags(homeFragment, collectionsFragment, profileFragment)
+//        adapter.addAllTitles(HOME, COLLECTIONS, PROFILE)
+//
+//        mainViewPager.adapter = adapter
+//        mainViewPager.addOnPageChangeListener(this)
+//        mainViewPager.offscreenPageLimit = 2
     }
 
     //Setup drawer
@@ -264,7 +268,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     }
 
     override fun onTabSelected(position: Int, wasSelected: Boolean): Boolean {
-        mainViewPager.setCurrentItem(position, true)
+//        mainViewPager.setCurrentItem(position, true)
+        replaceFragment(pages[position], holder.id)
         newMeme?.isVisible = position == 0
         editProfile?.isVisible = position == 2
 
@@ -278,11 +283,11 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     }
 
     override fun onPositionChange(y: Int) {
-        mainViewPager?.setCurrentItem(y, true)
+//        mainViewPager?.setCurrentItem(y, true)
     }
 
     override fun onPageSelected(position: Int) {
-        bottomNav.currentItem = position
+//        bottomNav.currentItem = position
     }
 
     override fun onPageScrollStateChanged(state: Int) {
@@ -291,14 +296,6 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
 
-    }
-
-    override fun homeHideBottomNavigation() {
-        bottomNav.visibility = View.GONE
-    }
-
-    override fun homeShowBottomNavigation() {
-        bottomNav.visibility = View.VISIBLE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

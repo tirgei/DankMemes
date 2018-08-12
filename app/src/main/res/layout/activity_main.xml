@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,39 +9,20 @@
     android:background="@color/white"
     android:id="@+id/mainRoot">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/mainToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:actionBarStyle"
-        android:layout_alignParentTop="true"
-        android:background="@color/white"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_scrollFlags="scroll|enterAlways|snap"
-        android:elevation="0.5dp">
-
-        <TextView
-            android:id="@+id/mainToolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textColor="@color/textGray"
-            android:textSize="19sp"
-            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:paddingTop="5dp"
-            tools:text="Dank Memes"/>
-
-    </android.support.v7.widget.Toolbar>
-
-    <com.gelostech.dankmemes.utils.NonSwipeableViewPager
-        android:id="@+id/mainViewPager"
+    <FrameLayout
+        android:id="@+id/holder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/mainToolbar"
-        android:layout_above="@id/bottomNav"
-        android:overScrollMode="never"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <!--<com.gelostech.dankmemes.utils.NonSwipeableViewPager-->
+        <!--android:id="@+id/mainViewPager"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_below="@id/mainToolbar"-->
+        <!--android:layout_above="@id/bottomNav"-->
+        <!--android:overScrollMode="never"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
 
     <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
         android:id="@+id/bottomNav"
@@ -48,6 +30,38 @@
         app:elevation="@dimen/no_elevation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"/>
+        android:layout_gravity="bottom"/>
 
-</RelativeLayout>
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="0.3dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/mainToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:actionBarStyle"
+            android:layout_alignParentTop="true"
+            android:background="@color/white"
+            android:theme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            android:elevation="0dp">
+
+            <TextView
+                android:id="@+id/mainToolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@color/textGray"
+                android:textSize="19sp"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                tools:text="Dank Memes"/>
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+</android.support.design.widget.CoordinatorLayout>

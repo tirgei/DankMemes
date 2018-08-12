@@ -31,7 +31,7 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
 
     fun addMeme(meme: MemeModel) {
         memes.add(meme)
-        notifyItemInserted(memes.size-1)
+        //notifyItemInserted(memes.size-1)
         memesUpdate.memesUpdated(memes.size-1)
     }
 
