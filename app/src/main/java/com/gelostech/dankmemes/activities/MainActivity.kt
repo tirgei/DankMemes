@@ -300,8 +300,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         newMeme = menu?.findItem(R.id.menu_add_meme)
         editProfile = menu?.findItem(R.id.menu_edit_profile)
 
-        editProfile?.icon = setDrawable(this, Ionicons.Icon.ion_edit, R.color.textGray, 14)
-        newMeme?.icon = setDrawable(this, Ionicons.Icon.ion_plus, R.color.textGray, 14)
+        editProfile?.icon = setDrawable(this, Ionicons.Icon.ion_edit, R.color.textGray, 16)
+        newMeme?.icon = setDrawable(this, Ionicons.Icon.ion_image, R.color.textGray, 22)
 
         Handler().post {
             val view: View = findViewById(R.id.menu_add_meme)
