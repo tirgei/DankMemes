@@ -4,6 +4,7 @@ package com.gelostech.dankmemes.fragments
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
@@ -19,7 +20,6 @@ import com.gelostech.dankmemes.activities.CommentActivity
 import com.gelostech.dankmemes.activities.ProfileActivity
 import com.gelostech.dankmemes.activities.ViewMemeActivity
 import com.gelostech.dankmemes.adapters.MemesAdapter
-import com.gelostech.dankmemes.callbacks.MemesUpdate
 import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.commoners.AppUtils
@@ -41,7 +41,7 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 
 
-class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpdate {
+class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var mopubAdapter: MoPubRecyclerAdapter
     private lateinit var bs: BottomSheet.Builder
@@ -77,12 +77,16 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpda
         homeRv.itemAnimator = DefaultItemAnimator()
         (homeRv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
 
-        memesAdapter = MemesAdapter(activity!!, this, this)
+        memesAdapter = MemesAdapter(activity!!, this)
 
         loadMoreFooter = homeRv.loadMoreFooterView as RelativeLayout
         homeRv.setOnLoadMoreListener {
             loadMoreFooter.showView()
             loadMore()
+        }
+
+        homeRefresh.setOnRefreshListener {
+            Handler().postDelayed({homeRefresh?.isRefreshing = false}, 2500)
         }
 
     }
@@ -376,10 +380,6 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpda
 
     }
 
-    override fun memesUpdated(position: Int) {
-        mopubAdapter.notifyItemInserted(position)
-    }
-
     override fun onResume() {
         mopubAdapter.refreshAds(activity!!.getString(R.string.ad_unit_id_native))
         super.onResume()
@@ -389,7 +389,5 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener, MemesUpda
         mopubAdapter.destroy()
         super.onDestroy()
     }
-
-
 
 }

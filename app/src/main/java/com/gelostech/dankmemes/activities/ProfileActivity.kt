@@ -14,7 +14,6 @@ import android.widget.FrameLayout
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.adapters.MemesAdapter
-import com.gelostech.dankmemes.callbacks.MemesUpdate
 import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.commoners.AppUtils
@@ -29,7 +28,7 @@ import kotlinx.android.synthetic.main.activity_profile.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 
-class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener, MemesUpdate {
+class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var image: Bitmap
     private lateinit var profileRef: DatabaseReference
@@ -69,7 +68,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener, MemesU
         viewProfileRv.itemAnimator = DefaultItemAnimator()
         viewProfileHeader.attachTo(viewProfileRv)
 
-        memesAdapter = MemesAdapter(this, this, this)
+        memesAdapter = MemesAdapter(this, this)
         viewProfileRv.adapter = memesAdapter
 
 
@@ -281,17 +280,12 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener, MemesU
         }.show()
     }
 
-
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId) {
             android.R.id.home -> onBackPressed()
         }
 
         return true
-    }
-
-    override fun memesUpdated(position: Int) {
-
     }
 
     override fun onBackPressed() {

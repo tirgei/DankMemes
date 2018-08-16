@@ -17,7 +17,6 @@ import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.item_meme.view.*
 import java.lang.ref.WeakReference
 import android.support.v4.content.ContextCompat
-import com.gelostech.dankmemes.callbacks.MemesUpdate
 import com.gelostech.dankmemes.commoners.AppUtils.cacheBitmap
 import com.gelostech.dankmemes.commoners.AppUtils.getBitmap
 import com.gelostech.dankmemes.commoners.K
@@ -25,13 +24,12 @@ import com.gelostech.dankmemes.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 
-class MemesAdapter(private val context: Context, private val onItemClickListener: OnItemClickListener, private val memesUpdate: MemesUpdate) : RecyclerView.Adapter<MemesAdapter.MemeHolder>(){
+class MemesAdapter(private val context: Context, private val onItemClickListener: OnItemClickListener) : RecyclerView.Adapter<MemesAdapter.MemeHolder>(){
     private val memes = mutableListOf<MemeModel>()
 
     fun addMeme(meme: MemeModel) {
         memes.add(meme)
-        //notifyItemInserted(memes.size-1)
-        memesUpdate.memesUpdated(memes.size-1)
+        notifyItemInserted(memes.size-1)
     }
 
     fun updateMeme(meme: MemeModel) {

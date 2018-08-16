@@ -30,14 +30,21 @@
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-    <com.aspsine.irecyclerview.IRecyclerView
-        android:id="@+id/homeRv"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/homeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/item_meme"
-        android:overScrollMode="never"
-        app:refreshEnabled="false"
-        app:loadMoreEnabled="true"
-        app:loadMoreFooterLayout="@layout/loading"/>
+        android:layout_height="match_parent">
+
+        <com.aspsine.irecyclerview.IRecyclerView
+            android:id="@+id/homeRv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/item_meme"
+            android:overScrollMode="never"
+            app:refreshEnabled="false"
+            app:loadMoreEnabled="true"
+            app:loadMoreFooterLayout="@layout/loading"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </FrameLayout>
