@@ -11,7 +11,7 @@
     <color name="inactiveColor">#8c8c8c</color>
     <color name="feedDivider">#CCe0e0e0</color>
     <color name="pink">#ec407a</color>
-
+    <color name="black">#000000</color>
     <color name="textGray">#616161</color>
     <color name="primaryText">#212121</color>
     <color name="secondaryText">#D9757575</color>

@@ -53,12 +53,11 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private lateinit var allFragment: AllFragment
     private lateinit var prefs: SharedPreferences
     private lateinit var noInternetDialog: NoInternetDialog
-    private lateinit var pages: Array<Fragment>
 
     companion object {
         private const val HOME: String = "Lit"
         private const val ALL: String = "Fresh"
-        private const val COLLECTIONS: String = "Faves"
+        private const val FAVES: String = "Faves"
         private const val PROFILE: String = "Profile"
     }
 
@@ -71,7 +70,6 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         profileFragment = ProfileFragment()
         favesFragment = FavesFragment()
         allFragment = AllFragment()
-        pages = arrayOf(homeFragment, allFragment, favesFragment, profileFragment)
 
         setupToolbar()
         setupBottomNav()
@@ -83,9 +81,9 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     //Setup the main toolbar
     private fun setupToolbar() {
         setSupportActionBar(mainToolbar)
-        supportActionBar?.title = null
+        supportActionBar?.title = getString(R.string.app_name)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        mainToolbarTitle.text = getString(R.string.app_name)
+//        mainToolbarTitle.text = getString(R.string.app_name)
     }
 
     //Setup the bottom navigation bar
@@ -97,32 +95,30 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
         bottomNav.addItem(AHBottomNavigationItem(HOME, homeIcon))
         bottomNav.addItem(AHBottomNavigationItem(ALL, allIcon))
-        bottomNav.addItem(AHBottomNavigationItem(COLLECTIONS, collectionsIcon))
+        bottomNav.addItem(AHBottomNavigationItem(FAVES, collectionsIcon))
         bottomNav.addItem(AHBottomNavigationItem(PROFILE, profileIcon))
 
         bottomNav.defaultBackgroundColor = ContextCompat.getColor(this, R.color.white)
         bottomNav.inactiveColor = ContextCompat.getColor(this, R.color.inactiveColor)
         bottomNav.accentColor = ContextCompat.getColor(this, R.color.colorAccent)
-        bottomNav.isBehaviorTranslationEnabled = true
-        bottomNav.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW
+        bottomNav.isBehaviorTranslationEnabled = false
+        bottomNav.titleState = AHBottomNavigation.TitleState.ALWAYS_HIDE
         bottomNav.setUseElevation(true, 5f)
 
         bottomNav.setOnTabSelectedListener(this)
         bottomNav.setOnNavigationPositionListener(this)
-
-        addFragment(homeFragment, holder.id)
     }
 
     //Setup the main view pager
     private fun setupViewPager() {
-//        val adapter = PagerAdapter(supportFragmentManager, this)
-//
-//        adapter.addAllFrags(homeFragment, collectionsFragment, profileFragment)
-//        adapter.addAllTitles(HOME, COLLECTIONS, PROFILE)
-//
-//        mainViewPager.adapter = adapter
-//        mainViewPager.addOnPageChangeListener(this)
-//        mainViewPager.offscreenPageLimit = 2
+        val adapter = PagerAdapter(supportFragmentManager, this)
+
+        adapter.addAllFrags(homeFragment, allFragment, favesFragment, profileFragment)
+        adapter.addAllTitles(HOME, ALL, FAVES, PROFILE)
+
+        mainViewPager.adapter = adapter
+        mainViewPager.addOnPageChangeListener(this)
+        mainViewPager.offscreenPageLimit = 3
     }
 
     //Setup drawer
@@ -268,26 +264,26 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     }
 
     override fun onTabSelected(position: Int, wasSelected: Boolean): Boolean {
-//        mainViewPager.setCurrentItem(position, true)
-        replaceFragment(pages[position], holder.id)
+        mainViewPager.setCurrentItem(position, true)
         newMeme?.isVisible = position == 0
-        editProfile?.isVisible = position == 2
+        editProfile?.isVisible = position == 3
 
         when(position) {
-            0 -> mainToolbarTitle.text = getString(R.string.app_name)
-            1 -> mainToolbarTitle.text = COLLECTIONS
-            2 -> mainToolbarTitle.text = PROFILE
+            0 -> supportActionBar?.title/*mainToolbarTitle.text*/ = getString(R.string.app_name)
+            1 -> supportActionBar?.title/*mainToolbarTitle.text*/ = ALL
+            2 -> supportActionBar?.title/*mainToolbarTitle.text*/ = FAVES
+            3 -> supportActionBar?.title/*mainToolbarTitle.text*/ = PROFILE
         }
 
         return true
     }
 
     override fun onPositionChange(y: Int) {
-//        mainViewPager?.setCurrentItem(y, true)
+        mainViewPager?.setCurrentItem(y, true)
     }
 
     override fun onPageSelected(position: Int) {
-//        bottomNav.currentItem = position
+        bottomNav.currentItem = position
     }
 
     override fun onPageScrollStateChanged(state: Int) {
