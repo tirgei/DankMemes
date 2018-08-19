@@ -22,15 +22,15 @@ import com.gelostech.dankmemes.commoners.AppUtils.getColor
 import com.gelostech.dankmemes.commoners.AppUtils.setDrawable
 import com.gelostech.dankmemes.models.UserModel
 import com.gelostech.dankmemes.utils.*
-import com.gelostech.dankmemes.utils.PreferenceHelper.set
 import com.google.firebase.auth.*
 import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.messaging.FirebaseMessaging
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_signup.*
 import org.jetbrains.anko.toast
+import com.gelostech.dankmemes.utils.PreferenceHelper.set
+import com.google.firebase.messaging.FirebaseMessaging
 
 class SignupFragment : BaseFragment() {
     private lateinit var signupSuccessful: Bitmap

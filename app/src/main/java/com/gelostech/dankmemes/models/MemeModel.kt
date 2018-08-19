@@ -11,6 +11,7 @@ data class MemeModel(
         var commentsCount: Int? = null,
         var time: Long? = null,
         var memePoster: String? = null,
+        var memePosterAvatar: String? = null,
         var memePosterID: String? = null,
         var thumbnail: String? = null,
         var likes: MutableMap<String, Boolean> = mutableMapOf(),

@@ -1,9 +1,9 @@
 package com.gelostech.dankmemes.utils;
 
 import android.content.Context
+import android.telephony.TelephonyManager
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import android.telephony.TelephonyManager
 
 object Connectivity {
 

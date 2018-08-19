@@ -19,13 +19,13 @@ import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.models.CommentModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
-import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import com.google.firebase.database.*
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.iconics.IconicsDrawable
 import kotlinx.android.synthetic.main.activity_comment.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
+import com.gelostech.dankmemes.utils.PreferenceHelper.get
 
 class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
     private lateinit var commentAdapter: CommentAdapter
