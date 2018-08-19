@@ -56,7 +56,7 @@
 
 
     <!-- mopub setup -->
-    <string name="ad_unit_id_native">7e53b70eb06c4ad0b6d08cf8bcb79ec7</string>
+    <string name="ad_unit_id_native">11a17b188668469fb0412708c3d16813</string>
     <string name="native_icon_image">native_icon_image</string>
     <string name="native_main_image">native_main_image</string>
     <string name="learn_more">Learn More</string>
