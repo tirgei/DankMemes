@@ -8,6 +8,7 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -89,6 +90,7 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
             loadMore()
         }
 
+        allRefresh.isEnabled = false
         allRefresh.setOnRefreshListener {
             Handler().postDelayed({allRefresh?.isRefreshing = false}, 2500)
         }
@@ -98,7 +100,7 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private fun loadInitial() {
         getFirestore().collection(Config.MEMES)
                 .orderBy(Config.TIME, Query.Direction.DESCENDING)
-                .limit(12)
+                .limit(31)
                 .addSnapshotListener { p0, p1 ->
                     hasPosts()
 
@@ -146,7 +148,7 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         getFirestore().collection(Config.MEMES)
                 .orderBy(Config.TIME, Query.Direction.DESCENDING)
                 .startAfter(lastDocument)
-                .limit(12)
+                .limit(21)
                 .addSnapshotListener { p0, p1 ->
                     //hasPosts()
 
@@ -375,6 +377,10 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         }.show()
     }
 
+    fun getRecyclerView(): RecyclerView {
+        return allRv
+    }
+
     private fun hasPosts() {
         allShimmer.stopShimmerAnimation()
         allShimmer.visibility = View.GONE
@@ -384,17 +390,10 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
     }
 
-    override fun onResume() {
-        mopubAdapter.refreshAds(activity!!.getString(R.string.ad_unit_id_native))
-        super.onResume()
-    }
-
     override fun onDestroy() {
         mopubAdapter.destroy()
         super.onDestroy()
     }
-
-
 
 }
 

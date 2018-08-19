@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -85,6 +86,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
             loadMore()
         }
 
+        homeRefresh.isEnabled = false
         homeRefresh.setOnRefreshListener {
             Handler().postDelayed({homeRefresh?.isRefreshing = false}, 2500)
         }
@@ -94,7 +96,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private fun loadInitial() {
         getFirestore().collection(Config.MEMES)
                 .orderBy(Config.TIME, Query.Direction.DESCENDING)
-                .limit(12)
+                .limit(31)
                 .addSnapshotListener { p0, p1 ->
                     hasPosts()
 
@@ -142,7 +144,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         getFirestore().collection(Config.MEMES)
                 .orderBy(Config.TIME, Query.Direction.DESCENDING)
                 .startAfter(lastDocument)
-                .limit(12)
+                .limit(21)
                 .addSnapshotListener { p0, p1 ->
                     //hasPosts()
 
@@ -371,6 +373,10 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         }.show()
     }
 
+    fun getRecyclerView(): RecyclerView {
+        return homeRv
+    }
+
     private fun hasPosts() {
         homeShimmer.stopShimmerAnimation()
         homeShimmer.visibility = View.GONE
@@ -378,11 +384,6 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
     private fun noPosts() {
 
-    }
-
-    override fun onResume() {
-        mopubAdapter.refreshAds(activity!!.getString(R.string.ad_unit_id_native))
-        super.onResume()
     }
 
     override fun onDestroy() {

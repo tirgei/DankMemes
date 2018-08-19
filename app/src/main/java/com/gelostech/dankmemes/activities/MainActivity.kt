@@ -275,6 +275,9 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
             3 -> supportActionBar?.title/*mainToolbarTitle.text*/ = PROFILE
         }
 
+        if (position == 0 && wasSelected) homeFragment.getRecyclerView().smoothScrollToPosition(0)
+        if (position == 1 && wasSelected) allFragment.getRecyclerView().smoothScrollToPosition(0)
+
         return true
     }
 
