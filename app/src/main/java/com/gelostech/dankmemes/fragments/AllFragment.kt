@@ -53,6 +53,7 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var lastDocument: DocumentSnapshot
     private lateinit var loadMoreFooter: RelativeLayout
+    private var loading = false
 
     companion object {
         private var TAG = AllFragment::class.java.simpleName
@@ -86,8 +87,10 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
         loadMoreFooter = allRv.loadMoreFooterView as RelativeLayout
         allRv.setOnLoadMoreListener {
-            loadMoreFooter.showView()
-            loadMore()
+            if (!loading) {
+                loadMoreFooter.showView()
+                loadMore()
+            }
         }
 
         allRefresh.isEnabled = false
@@ -143,6 +146,7 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     }
 
     private fun loadMore() {
+        loading = true
         Log.e(TAG, "Loading from ${memesAdapter.getLastKey()}")
 
         getFirestore().collection(Config.MEMES)
@@ -151,6 +155,7 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
                 .limit(21)
                 .addSnapshotListener { p0, p1 ->
                     //hasPosts()
+                    loading = false
 
                     if (p1 != null) {
                         Log.e(TAG, "Error loading more memes: $p1")
