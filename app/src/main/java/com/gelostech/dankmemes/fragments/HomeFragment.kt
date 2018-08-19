@@ -24,12 +24,12 @@ import com.gelostech.dankmemes.adapters.MemesAdapter
 import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.commoners.AppUtils
-import com.gelostech.dankmemes.commoners.K
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.models.ReportModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
 import com.gelostech.dankmemes.utils.showView
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.database.*
 import com.google.firebase.database.Transaction
 import com.google.firebase.firestore.*
@@ -286,35 +286,37 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     }
 
     private fun favePost(id: String) {
-        getDatabaseReference().child("dank-memes").child(id).runTransaction(object : Transaction.Handler {
-            override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                val meme = mutableData.getValue<MemeModel>(MemeModel::class.java)
+        val docRef = getFirestore().collection(Config.MEMES).document(id)
 
-                if (meme!!.faves.containsKey(getUid())) {
-                    meme.faves.remove(getUid())
+        getFirestore().runTransaction {
 
-                    getDatabaseReference().child("favorites").child(getUid()).child(meme.id!!).removeValue()
+            val meme =  it[docRef].toObject(MemeModel::class.java)
+            val faves = meme!!.faves
 
-                } else  {
-                    meme.faves[getUid()] = true
+            if (faves.containsKey(getUid())) {
+                faves.remove(getUid())
 
-                    val fave = FaveModel()
-                    fave.faveKey = meme.id!!
-                    fave.commentId = meme.id!!
-                    fave.picUrl = meme.imageUrl!!
+                getFirestore().collection(Config.FAVORITES).document(getUid()).collection(Config.USER_FAVES).document(meme.id!!).delete()
+            } else  {
+                faves[getUid()] = true
 
-                    getDatabaseReference().child("favorites").child(getUid()).child(meme.id!!).setValue(fave)
-                }
+                val fave = FaveModel()
+                fave.id = meme.id!!
+                fave.imageUrl = meme.imageUrl!!
+                fave.time = meme.time!!
 
-                mutableData.value = meme
-                return Transaction.success(mutableData)
+                getFirestore().collection(Config.FAVORITES).document(getUid()).collection(Config.USER_FAVES).document(meme.id!!).set(fave)
             }
 
-            override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
+            it.update(docRef, Config.FAVES, faves)
 
-                Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
-            }
-        })
+            return@runTransaction null
+        }.addOnSuccessListener {
+            Timber.e("Meme faved")
+        }.addOnFailureListener {
+            Timber.e("Error faving meme")
+        }
+
     }
 
     private fun showReportDialog(meme: MemeModel) {
