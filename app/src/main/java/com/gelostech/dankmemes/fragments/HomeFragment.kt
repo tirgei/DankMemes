@@ -95,6 +95,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
     private fun loadInitial() {
         getFirestore().collection(Config.MEMES)
+                .whereEqualTo(Config.POSTER_ID, Config.ADMIN_ID)
                 .orderBy(Config.TIME, Query.Direction.DESCENDING)
                 .limit(31)
                 .addSnapshotListener { p0, p1 ->
@@ -142,6 +143,7 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         Log.e(TAG, "Loading from ${memesAdapter.getLastKey()}")
 
         getFirestore().collection(Config.MEMES)
+                .whereEqualTo(Config.POSTER_ID, Config.ADMIN_ID)
                 .orderBy(Config.TIME, Query.Direction.DESCENDING)
                 .startAfter(lastDocument)
                 .limit(21)
