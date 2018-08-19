@@ -18,6 +18,8 @@ object Config {
     // Firebase
     const val MEMES = "memes"
     const val TIME = "time"
+    const val LIKES_COUNT = "likesCount"
+    const val LIKES = "likes"
     const val POSTER_ID = "memePosterID"
     const val ADMIN_ID = "AEXdYtUP83MSvrb0aaIqCHN31G23"
 
