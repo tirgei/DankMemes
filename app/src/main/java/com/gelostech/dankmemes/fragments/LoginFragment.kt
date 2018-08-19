@@ -19,6 +19,7 @@ import com.gelostech.dankmemes.commoners.AppUtils.drawableToBitmap
 import com.gelostech.dankmemes.commoners.AppUtils.setDrawable
 import com.gelostech.dankmemes.models.UserModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
+import com.gelostech.dankmemes.utils.PreferenceHelper.set
 import com.gelostech.dankmemes.utils.replaceFragment
 import com.gelostech.dankmemes.utils.setDrawable
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -27,12 +28,11 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
-import com.gelostech.dankmemes.utils.PreferenceHelper.set
-import com.google.firebase.messaging.FirebaseMessaging
 
 class LoginFragment : BaseFragment() {
     private lateinit var signupSuccessful: Bitmap
