@@ -99,6 +99,12 @@ dependencies {
     implementation 'br.com.simplepass:loading-button-android:1.14.0'
     implementation 'com.github.Aspsine:IRecyclerView:0.0.7'
 
+    // Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // Crash
+    implementation 'cat.ereza:customactivityoncrash:2.2.0'
+
     // Ads libs
     // For native video. This will automatically also include native static
     implementation('com.mopub:mopub-sdk-native-video:5.1.0@aar') {
