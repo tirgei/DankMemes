@@ -247,11 +247,9 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     }
 
     private fun deletePost(meme: MemeModel) {
-        val dbRef = getDatabaseReference().child("dank-memes").child(meme.id!!)
-
         activity!!.alert("Delete this meme?") {
             positiveButton("DELETE") {
-                dbRef.removeValue()
+                getFirestore().collection(Config.MEMES).document(meme.id!!).delete()
             }
             negativeButton("CANCEL"){}
         }.show()
