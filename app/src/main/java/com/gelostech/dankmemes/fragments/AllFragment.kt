@@ -387,8 +387,8 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     }
 
     private fun hasPosts() {
-        allShimmer.stopShimmerAnimation()
-        allShimmer.visibility = View.GONE
+        allShimmer?.stopShimmerAnimation()
+        allShimmer?.visibility = View.GONE
     }
 
     private fun noPosts() {
