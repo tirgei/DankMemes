@@ -23,6 +23,7 @@ import com.gelostech.dankmemes.commoners.K
 import com.gelostech.dankmemes.utils.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
+import timber.log.Timber
 
 class MemesAdapter(private val context: Context, private val onItemClickListener: OnItemClickListener) : RecyclerView.Adapter<MemesAdapter.MemeHolder>(){
     private val memes = mutableListOf<MemeModel>()
@@ -41,6 +42,8 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
     }
 
     fun updateMeme(meme: MemeModel) {
+        Timber.e("Updating meme: ${meme.id}")
+
         for ((index, memeModel) in memes.withIndex()) {
             if (meme.id == memeModel.id) {
                 memes[index] = meme
@@ -175,12 +178,12 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
                 }
 
                 memeLike.text = "$likesCount likes"
-                comments(commentsCount!!)
+                comments(commentsCount)
 
                 if (likes.containsKey(FirebaseAuth.getInstance().currentUser!!.uid))
-                    liked(likesCount!!)
+                    liked(likesCount)
                 else
-                    notLiked(likesCount!!)
+                    notLiked(likesCount)
 
                 if (!faves.containsKey(FirebaseAuth.getInstance().currentUser!!.uid))
                     memeFave.setImageDrawable(setDrawable(c, Ionicons.Icon.ion_ios_heart_outline, R.color.secondaryText, 19))
