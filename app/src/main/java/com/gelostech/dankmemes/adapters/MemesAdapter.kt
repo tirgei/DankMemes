@@ -28,8 +28,16 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
     private val memes = mutableListOf<MemeModel>()
 
     fun addMeme(meme: MemeModel) {
-        memes.add(meme)
-        notifyItemInserted(memes.size-1)
+        if (!hasBeenAdded(meme)) {
+            if (isNewer(meme)) {
+                memes.add(0, meme)
+                notifyItemInserted(0)
+
+            } else {
+                memes.add(meme)
+                notifyItemInserted(memes.size-1)
+            }
+        }
     }
 
     fun updateMeme(meme: MemeModel) {
@@ -52,6 +60,32 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
 
         memes.removeAt(indexToRemove)
         notifyItemRemoved(indexToRemove)
+    }
+
+    private fun hasBeenAdded(meme: MemeModel):Boolean {
+        var added = false
+
+        for (m in memes) {
+            if (m.id == meme.id) {
+                added = true
+            }
+        }
+
+        return added
+    }
+
+    private fun isNewer(meme: MemeModel): Boolean {
+        var newer = false
+
+        if (memes.size > 0) {
+            val m = memes[0]
+
+            if (m.time!! < meme.time!!) {
+                newer = true
+            }
+        }
+
+        return newer
     }
 
     fun getLastKey(): String {
