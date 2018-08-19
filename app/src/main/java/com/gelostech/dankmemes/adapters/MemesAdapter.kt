@@ -243,8 +243,12 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
                     memeLike.startAnimation(anim)
                 }
 
+                memeFave.id -> {
+                    weakReference.get()!!.onItemClick(meme, 2, null)
+                    memeFave.startAnimation(anim)
+                }
+
                 memeMore.id -> weakReference.get()!!.onItemClick(meme, 1, image)
-                memeFave.id -> weakReference.get()!!.onItemClick(meme, 2, null)
                 memeComment.id -> weakReference.get()!!.onItemClick(meme, 3, null)
                 memeImage.id -> weakReference.get()!!.onItemClick(meme, 4, image)
                 userIcon.id -> weakReference.get()!!.onItemClick(meme, 5, null)
