@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -327,9 +326,8 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
                     meme.faves[getUid()] = true
 
                     val fave = FaveModel()
-                    fave.faveKey = meme.id!!
-                    fave.commentId = meme.id!!
-                    fave.picUrl = meme.imageUrl!!
+                    fave.id = meme.id!!
+                    fave.imageUrl = meme.imageUrl!!
 
                     getDatabaseReference().child("favorites").child(getUid()).child(meme.id!!).setValue(fave)
                 }

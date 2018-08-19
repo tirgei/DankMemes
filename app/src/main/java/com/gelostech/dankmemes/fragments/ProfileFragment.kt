@@ -236,9 +236,8 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
                     meme.faves[getUid()] = true
 
                     val fave = FaveModel()
-                    fave.faveKey = meme.id!!
-                    fave.commentId = meme.id!!
-                    fave.picUrl = meme.imageUrl!!
+                    fave.id = meme.id!!
+                    fave.imageUrl = meme.imageUrl!!
 
                     getDatabaseReference().child("favorites").child(getUid()).child(meme.id!!).setValue(fave)
                 }

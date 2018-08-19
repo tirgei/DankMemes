@@ -1,9 +1,6 @@
 package com.gelostech.dankmemes.adapters
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +23,7 @@ class FavesAdapter(private val onItemClickListener: OnItemClickListener) : Recyc
 
     fun updateFave(fave: FaveModel) {
         for ((index, memeModel) in faves.withIndex()) {
-            if (fave.faveKey == memeModel.faveKey) {
+            if (fave.id == memeModel.id) {
                 faves[index] = fave
                 notifyItemChanged(index, fave)
             }
@@ -37,7 +34,7 @@ class FavesAdapter(private val onItemClickListener: OnItemClickListener) : Recyc
         var indexToRemove: Int = -1
 
         for ((index, memeModel) in faves.withIndex()) {
-            if (fave.faveKey == memeModel.faveKey) {
+            if (fave.id == memeModel.id) {
                 indexToRemove = index
             }
         }
@@ -79,7 +76,7 @@ class FavesAdapter(private val onItemClickListener: OnItemClickListener) : Recyc
             this.fave = fave
 
             with(fave) {
-                memeView.loadUrl(picUrl!!)
+                memeView.loadUrl(imageUrl!!)
             }
         }
 

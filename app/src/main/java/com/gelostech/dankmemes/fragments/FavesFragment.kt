@@ -100,7 +100,7 @@ class FavesFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
         AppUtils.saveTemporaryImage(activity!!, image)
 
         val i = Intent(activity, ViewMemeActivity::class.java)
-        i.putExtra(Config.PIC_URL, fave.picUrl)
+        i.putExtra(Config.PIC_URL, fave.imageUrl)
         startActivity(i)
         AppUtils.fadeIn(activity!!)
     }
@@ -108,7 +108,7 @@ class FavesFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
     override fun onLongItemClick(fave: FaveModel) {
         activity!!.alert("Remove meme from favorites?"){
             positiveButton("REMOVE") {
-                removeFave(fave.faveKey!!)
+                removeFave(fave.id!!)
             }
             negativeButton("CANCEL") {}
         }.show()
