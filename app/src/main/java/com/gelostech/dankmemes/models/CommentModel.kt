@@ -8,5 +8,6 @@ data class CommentModel(
         var hates: Int? = null,
         var likes: Int? = null,
         var userName: String? = null,
+        var userAvatar: String? = null,
         var picKey: String? = null
 )

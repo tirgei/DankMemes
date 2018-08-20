@@ -20,6 +20,7 @@ import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.commoners.AppUtils.drawableToBitmap
 import com.gelostech.dankmemes.commoners.AppUtils.getColor
 import com.gelostech.dankmemes.commoners.AppUtils.setDrawable
+import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.models.UserModel
 import com.gelostech.dankmemes.utils.*
 import com.google.firebase.auth.*
@@ -131,11 +132,17 @@ class SignupFragment : BaseFragment() {
             return
         }
 
+        // Check username
+        if (name.toLowerCase() == "dank memes" || name.toLowerCase().contains("dank") || name.toLowerCase().contains("memes") || name.toLowerCase().contains("dank_memes") || name.toLowerCase().contains("dank_memes")) {
+            signupUsername.error = "Invalid name"
+            return
+        }
+
         // Create new user
         isCreatingAccount = true
         signupButton.startAnimation()
         getFirebaseAuth().createUserWithEmailAndPassword(email, pw)
-                .addOnCompleteListener(activity!!, {task ->
+                .addOnCompleteListener(activity!!) { task ->
                     if (task.isSuccessful) {
                         signupButton.doneLoadingAnimation(getColor(activity!!, R.color.pink), signupSuccessful)
                         Log.e(TAG, "signingIn: Success!")
@@ -143,9 +150,6 @@ class SignupFragment : BaseFragment() {
                         // update UI with the signed-in user's information
                         val user = task.result.user
                         updateUI(user)
-
-                        prefs["username"] = name
-                        prefs["email"] = email
 
                     } else {
                         try {
@@ -172,7 +176,7 @@ class SignupFragment : BaseFragment() {
                             activity?.toast("Error signing up. Please try again.")
                         }
                     }
-                })
+                }
 
 
     }
@@ -205,21 +209,24 @@ class SignupFragment : BaseFragment() {
             return
         }
 
+        // Check username
+        if (name.toLowerCase() == "dank memes" || name.toLowerCase().contains("dank") || name.toLowerCase().contains("memes") || name.toLowerCase().contains("dank_memes") || name.toLowerCase().contains("dank_memes")) {
+            signupUsername.error = "Invalid name"
+            return
+        }
+
         isCreatingAccount = true
         signupButton.startAnimation()
         val credential =  EmailAuthProvider.getCredential(email, pw)
 
         getFirebaseAuth().currentUser!!.linkWithCredential(credential)
-                .addOnCompleteListener(activity!!, {task ->
+                .addOnCompleteListener(activity!!) { task ->
                     if (task.isSuccessful) {
                         Log.e(TAG, "signingIn: Success!")
 
                         // update UI with the signed-in user's information
                         val user = task.result.user
                         updateUI(user)
-
-                        prefs["username"] = name
-                        prefs["email"] = email
 
                     } else {
                         try {
@@ -246,7 +253,7 @@ class SignupFragment : BaseFragment() {
                             activity?.toast("Error signing up. Please try again.")
                         }
                     }
-                })
+                }
 
     }
 
@@ -272,14 +279,18 @@ class SignupFragment : BaseFragment() {
 
             // Continue with the task to getBitmap the download URL
             ref.downloadUrl
-        }.addOnCompleteListener({ task ->
+        }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 newUser.userAvatar =  task.result.toString()
 
                 user.sendEmailVerification()
-                FirebaseMessaging.getInstance().subscribeToTopic("memes")
+                FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL)
                 getDatabaseReference().child("users").child(id).setValue(newUser).addOnCompleteListener {
                     signupButton.doneLoadingAnimation(getColor(activity!!, R.color.pink), signupSuccessful)
+
+                    prefs[Config.USERNAME] = newUser.userName
+                    prefs[Config.EMAIL] = newUser.userEmail
+                    prefs[Config.AVATAR] = newUser.userAvatar
 
                     activity!!.toast("Welcome ${signupUsername.text.toString().trim()}")
                     startActivity(Intent(activity!!, MainActivity::class.java))
@@ -291,7 +302,7 @@ class SignupFragment : BaseFragment() {
                 activity?.toast("Error signing up. Please try again.")
                 Log.d(TAG, "Error signing up: ${task.exception}")
             }
-        })
+        }
     }
 
 

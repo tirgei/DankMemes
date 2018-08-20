@@ -17,6 +17,7 @@ import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.commoners.AppUtils.drawableToBitmap
 import com.gelostech.dankmemes.commoners.AppUtils.setDrawable
+import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.models.UserModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.replaceFragment
@@ -33,6 +34,7 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 import com.gelostech.dankmemes.utils.PreferenceHelper.set
 import com.google.firebase.messaging.FirebaseMessaging
+import timber.log.Timber
 
 class LoginFragment : BaseFragment() {
     private lateinit var signupSuccessful: Bitmap
@@ -122,9 +124,9 @@ class LoginFragment : BaseFragment() {
             positiveButton("SEND EMAIL") {
 
                 getFirebaseAuth().sendPasswordResetEmail(email)
-                        .addOnCompleteListener(activity!!, { task ->
+                        .addOnCompleteListener(activity!!) { task ->
                             if (task.isSuccessful) {
-                                Log.e(TAG, "sendResetPassword: Success!")
+                                Timber.e("sendResetPassword: Success!")
 
                                 activity?.toast("Email sent")
                             } else {
@@ -135,11 +137,11 @@ class LoginFragment : BaseFragment() {
                                     activity?.toast("Email not sent. Please try again.")
 
                                 } catch (e: Exception) {
-                                    Log.e(TAG, "sendResetEmail: Failure - $e" )
+                                    Timber.e("sendResetEmail: Failure - $e" )
                                     activity?.toast("Email not sent. Please try again.")
                                 }
                             }
-                        })
+                        }
 
             }
 
@@ -148,7 +150,7 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun updateUI(user: FirebaseUser) {
-        FirebaseMessaging.getInstance().subscribeToTopic("memes")
+        FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL)
         val dbRef = getDatabaseReference().child("users").child(user.uid)
         dbRef.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onCancelled(p0: DatabaseError) {
@@ -159,8 +161,9 @@ class LoginFragment : BaseFragment() {
                 loginButton.doneLoadingAnimation(AppUtils.getColor(activity!!, R.color.pink), signupSuccessful)
                 val userObject = p0.getValue(UserModel::class.java)
 
-                prefs["username"] = userObject!!.userName
-                prefs["email"] = userObject.userEmail
+                prefs[Config.USERNAME] = userObject!!.userName
+                prefs[Config.EMAIL] = userObject.userEmail
+                prefs[Config.AVATAR] = userObject.userAvatar
 
                 Handler().postDelayed({
                     activity!!.toast("Welcome back ${userObject.userName}")

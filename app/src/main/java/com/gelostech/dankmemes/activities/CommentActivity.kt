@@ -16,6 +16,7 @@ import android.view.View
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.adapters.CommentAdapter
 import com.gelostech.dankmemes.commoners.BaseActivity
+import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.models.CommentModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
@@ -123,7 +124,8 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
         val commentObject = CommentModel()
         commentObject.commentKey = id
         commentObject.authorId = getUid()
-        commentObject.userName = prefs["username"]
+        commentObject.userName = prefs[Config.USERNAME]
+        commentObject.userAvatar = prefs[Config.AVATAR]
         commentObject.comment = comment
         commentObject.hates = 0
         commentObject.likes = 0
@@ -138,7 +140,7 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
                 override fun doTransaction(mutableData: MutableData): Transaction.Result {
                     val meme = mutableData.getValue<MemeModel>(MemeModel::class.java)
 
-                    meme!!.commentsCount = meme.commentsCount!! + 1
+                    meme!!.commentsCount = meme.commentsCount + 1
 
                     mutableData.value = meme
                     return Transaction.success(mutableData)

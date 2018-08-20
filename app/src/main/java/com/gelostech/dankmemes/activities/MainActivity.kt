@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.alert
 import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import android.support.v4.app.Fragment
+import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.fragments.AllFragment
 import com.gelostech.dankmemes.utils.*
 import com.google.firebase.messaging.FirebaseMessaging
@@ -136,8 +137,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         setupDrawerIcons()
         drawerClickListeners()
 
-        drawerName.text = prefs["username"]
-        drawerEmail.text = prefs["email"]
+        drawerName.text = prefs[Config.USERNAME]
+        drawerEmail.text = prefs[Config.EMAIL]
 
     }
 
@@ -357,7 +358,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
     override fun onResume() {
         super.onResume()
-        drawerName.text = prefs["username"]
+        drawerName.text = prefs[Config.USERNAME]
         refreshToken()
     }
 

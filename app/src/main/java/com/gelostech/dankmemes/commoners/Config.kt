@@ -3,7 +3,7 @@ package com.gelostech.dankmemes.commoners
 object Config {
 
     // global topic to receive app wide push notifications
-    const val TOPIC_GLOBAL = "global"
+    const val TOPIC_GLOBAL = "memes"
 
     // broadcast receiver intent filters
     const val REGISTRATION_COMPLETE = "registrationComplete"
@@ -12,6 +12,11 @@ object Config {
     // id to handle the notification in the notification tray
     const val NOTIFICATION_ID = 100
     const val NOTIFICATION_ID_BIG_IMAGE = 101
+
+    // prefs constants
+    const val EMAIL = "email"
+    const val USERNAME = "username"
+    const val AVATAR = "avatar"
 
     const val PIC_URL = "pic_url"
 

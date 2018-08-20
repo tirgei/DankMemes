@@ -12,6 +12,7 @@ import android.view.View
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.AppUtils
+import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.mikepenz.ionicons_typeface_library.Ionicons
@@ -149,7 +150,8 @@ class PostActivity : BaseActivity(), View.OnClickListener {
         meme.caption = postCaption.text.toString().trim()
         meme.likesCount = 0
         meme.commentsCount = 0
-        meme.memePoster = prefs["username"]
+        meme.memePoster = prefs[Config.USERNAME]
+        meme.memePosterAvatar = prefs[Config.AVATAR]
         meme.memePosterID = getUid()
         meme.time = System.currentTimeMillis()
 
@@ -163,7 +165,7 @@ class PostActivity : BaseActivity(), View.OnClickListener {
 
             // Continue with the task to get the download URL
             ref.downloadUrl
-        }.addOnCompleteListener({ task ->
+        }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 meme.imageUrl = task.result.toString()
 
@@ -178,7 +180,7 @@ class PostActivity : BaseActivity(), View.OnClickListener {
                 toast("Error updating profile. Please try again.")
                 Log.d(TAG, "Error updating profile: ${task.exception}")
             }
-        })
+        }
 
     }
 

@@ -15,6 +15,7 @@ import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.commoners.AppUtils.drawableToBitmap
 import com.gelostech.dankmemes.commoners.AppUtils.setDrawable
+import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.models.UserModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.loadUrl
@@ -102,7 +103,7 @@ class EditProfileActivity : BaseActivity() {
 
             // Continue with the task to get the download URL
             ref.downloadUrl
-        }.addOnCompleteListener({ task ->
+        }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val name = editProfileName.text.toString().trim()
                 val bio = editProfileBio.text.toString().trim()
@@ -112,7 +113,8 @@ class EditProfileActivity : BaseActivity() {
                 userRef.child("userBio").setValue(bio)
                 userRef.child("userAvatar").setValue(task.result.toString())
 
-                prefs["username"] = name
+                prefs[Config.USERNAME] = name
+                prefs[Config.AVATAR] = task.result.toString()
 
                 Handler().postDelayed({
                     editProfileButton.revertAnimation()
@@ -126,24 +128,30 @@ class EditProfileActivity : BaseActivity() {
                 toast("Error updating profile. Please try again.")
                 Log.d(TAG, "Error updating profile: ${task.exception}")
             }
-        })
+        }
     }
 
     // User has updated details only, profile picture still same
     private fun updateDetails() {
         if (!AppUtils.validated(editProfileName, editProfileBio)) return
 
-        editProfileButton.startAnimation()
-        isUpdating = true
-
         val name = editProfileName.text.toString().trim()
         val bio = editProfileBio.text.toString().trim()
+
+        // Check username
+        if (name.toLowerCase() == "dank memes" || name.toLowerCase().contains("dank") || name.toLowerCase().contains("memes") || name.toLowerCase().contains("dank_memes") || name.toLowerCase().contains("dank-memes")) {
+            editProfileName.error = "Invalid name"
+            return
+        }
+
+        editProfileButton.startAnimation()
+        isUpdating = true
 
         val userRef = getDatabaseReference().child("users").child(getUid())
         userRef.child("userName").setValue(name)
         userRef.child("userBio").setValue(bio)
 
-        prefs["username"] = name
+        prefs[Config.USERNAME] = name
 
         Handler().postDelayed({
             editProfileButton.revertAnimation()
