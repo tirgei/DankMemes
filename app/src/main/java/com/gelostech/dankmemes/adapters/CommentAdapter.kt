@@ -63,7 +63,12 @@ class CommentAdapter(onItemClickListener: OnItemClickListener): RecyclerView.Ada
             this.commentObject = commentObject
 
             with(commentObject) {
-                loadIcon(commentObject)
+                //loadIcon(commentObject)
+                if (userAvatar.isNullOrEmpty()) {
+                    loadIcon(commentObject)
+                } else {
+                    commentIcon.loadUrl(userAvatar!!)
+                }
                 commentUser.text = userName
                 commentText.text = comment
                 commentTime.text = TimeFormatter().getTimeStamp(timeStamp!!)

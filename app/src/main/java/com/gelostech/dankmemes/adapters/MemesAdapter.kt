@@ -159,12 +159,13 @@ class MemesAdapter(private val context: Context, private val onItemClickListener
             this.meme = meme
 
             with(meme) {
-                loadIcon(meme)
+                //loadIcon(meme)
                 //loadFromStorage(memePosterID!!, userIcon)
 
+                userIcon.loadUrl(memePosterAvatar!!)
                 userName.text = memePoster
                 memeTime.text = TimeFormatter().getTimeStamp(time!!)
-                if (caption!!.isNullOrEmpty()) {
+                if (caption.isNullOrEmpty()) {
                     memeCaption.hideView()
                 } else {
                     if (!memeCaption.isShown) memeCaption.showView()
