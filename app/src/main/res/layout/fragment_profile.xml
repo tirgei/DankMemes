@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.v7.widget.RecyclerView
+    <com.aspsine.irecyclerview.IRecyclerView
         android:id="@+id/profileRv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
-        tools:listitem="@layout/item_meme"/>
+        tools:listitem="@layout/item_meme"
+        app:refreshEnabled="false"
+        app:loadMoreEnabled="true"
+        app:loadMoreFooterLayout="@layout/loading"/>
 
     <com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader
         android:id="@+id/profileHeader"

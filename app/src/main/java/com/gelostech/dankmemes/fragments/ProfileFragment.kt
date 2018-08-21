@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.activities.CommentActivity
@@ -23,10 +24,16 @@ import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.models.UserModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
+import com.gelostech.dankmemes.utils.hideView
 import com.gelostech.dankmemes.utils.loadUrl
+import com.gelostech.dankmemes.utils.showView
 import com.google.firebase.database.*
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_profile.*
 import org.jetbrains.anko.alert
+import timber.log.Timber
 
 
 class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
@@ -34,8 +41,11 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private lateinit var image: Bitmap
     private lateinit var user: UserModel
     private lateinit var profileRef: DatabaseReference
-    private lateinit var memesQuery: Query
     private lateinit var bs: BottomSheet.Builder
+    private lateinit var loadMoreFooter: RelativeLayout
+    private var lastDocument: DocumentSnapshot? = null
+    private lateinit var query: Query
+    private var loading = false
 
     companion object {
         private val TAG = ProfileFragment::class.java.simpleName
@@ -51,13 +61,10 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
+        load(true)
 
         profileRef = getDatabaseReference().child("users").child(getUid())
-        memesQuery = getDatabaseReference().child("dank-memes").orderByChild("memePosterID").equalTo(getUid())
-
         profileRef.addValueEventListener(profileListener)
-//        memesQuery.addChildEventListener(memesChildListener)
-//        memesQuery.addValueEventListener(memesValueListener)
     }
 
     private fun initViews() {
@@ -65,15 +72,24 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         profileRv.layoutManager = LinearLayoutManager(activity!!)
         profileRv.addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
         profileRv.itemAnimator = DefaultItemAnimator()
+        (profileRv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
         profileHeader.attachTo(profileRv)
 
         memesAdapter = MemesAdapter(activity!!, this)
         profileRv.adapter = memesAdapter
+
+        loadMoreFooter = profileRv.loadMoreFooterView as RelativeLayout
+        profileRv.setOnLoadMoreListener {
+            if (!loading) {
+                loadMoreFooter.showView()
+                load(false)
+            }
+        }
     }
 
     private val profileListener = object : ValueEventListener {
         override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error loading profile: ${p0.message}")
+            Timber.e("Error loading profile: ${p0.message}")
         }
 
         override fun onDataChange(p0: DataSnapshot) {
@@ -92,45 +108,66 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
             }
         }
     }
-//
-//    private val memesValueListener = object : ValueEventListener {
-//        override fun onCancelled(p0: DatabaseError) {
-//            Log.e(TAG, "Error loading memes: ${p0.message}")
-//        }
-//
-//        override fun onDataChange(p0: DataSnapshot) {
-//            if (p0.exists()) {
-//                profileEmptyState.visibility = View.GONE
-//            } else {
-//                profileEmptyState.visibility = View.VISIBLE
-//            }
-//        }
-//    }
-//
-//    private val memesChildListener = object : ChildEventListener {
-//        override fun onCancelled(p0: DatabaseError) {
-//            Log.e(TAG, "Error loading memes: ${p0.message}")
-//        }
-//
-//        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-//            Log.e(TAG, "Meme moved: ${p0.key}")
-//        }
-//
-//        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-//            val meme = p0.getValue(MemeModel::class.java)
-//            memesAdapter.updateMeme(meme!!)
-//        }
-//
-//        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-//            val meme = p0.getValue(MemeModel::class.java)
-//            memesAdapter.addMeme(meme!!)
-//        }
-//
-//        override fun onChildRemoved(p0: DataSnapshot) {
-//            val meme = p0.getValue(MemeModel::class.java)
-//            memesAdapter.removeMeme(meme!!)
-//        }
-//    }
+
+    private fun load(initial: Boolean) {
+        query = if (lastDocument == null) {
+            getFirestore().collection(Config.MEMES)
+                    .whereEqualTo(Config.POSTER_ID, getUid())
+                    .orderBy(Config.TIME, com.google.firebase.firestore.Query.Direction.DESCENDING)
+                    .limit(15)
+        } else {
+            loading = true
+
+            getFirestore().collection(Config.MEMES)
+                    .whereEqualTo(Config.POSTER_ID, getUid())
+                    .orderBy(Config.TIME, com.google.firebase.firestore.Query.Direction.DESCENDING)
+                    .startAfter(lastDocument!!)
+                    .limit(15)
+        }
+
+        query.addSnapshotListener { p0, p1 ->
+            hasPosts()
+            loading = false
+
+            if (p1 != null) {
+                Timber.e( "Error loading initial memes: $p1")
+            }
+
+            if (p0 == null || p0.isEmpty) {
+                if (initial) noPosts()
+            } else {
+                lastDocument = p0.documents[p0.size()-1]
+
+                for (change: DocumentChange in p0.documentChanges) {
+                    Timber.e("Loading changed document")
+
+                    when(change.type) {
+                        DocumentChange.Type.ADDED -> {
+                            val meme = change.document.toObject(MemeModel::class.java)
+                            memesAdapter.addMeme(meme)
+
+                            Timber.e("Changed document: ADDED")
+                        }
+
+                        DocumentChange.Type.MODIFIED -> {
+                            val meme = change.document.toObject(MemeModel::class.java)
+                            memesAdapter.updateMeme(meme)
+
+                            Timber.e("Changed document: MODIFIED")
+                        }
+
+                        DocumentChange.Type.REMOVED -> {
+                            val meme = change.document.toObject(MemeModel::class.java)
+                            memesAdapter.removeMeme(meme)
+                        }
+
+                    }
+                }
+
+            }
+
+        }
+    }
 
     private fun temporarilySaveImage() {
         image = (profileImage.drawable as BitmapDrawable).bitmap
@@ -186,76 +223,86 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     }
 
     private fun deletePost(meme: MemeModel) {
-        val dbRef = getDatabaseReference().child("dank-memes").child(meme.id!!)
-
         activity!!.alert("Delete this meme?") {
             positiveButton("DELETE") {
-                dbRef.removeValue()
+                getFirestore().collection(Config.MEMES).document(meme.id!!).delete()
             }
             negativeButton("CANCEL"){}
         }.show()
     }
 
     private fun likePost(id: String) {
-        getDatabaseReference().child("dank-memes").child(id).runTransaction(object : Transaction.Handler {
-            override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                val meme = mutableData.getValue<MemeModel>(MemeModel::class.java)
+        val docRef = getFirestore().collection(Config.MEMES).document(id)
 
-                if (meme!!.likes.containsKey(getUid())) {
-                    meme.likesCount = meme.likesCount!! - 1
-                    meme.likes.remove(getUid())
+        getFirestore().runTransaction {
 
-                } else  {
-                    meme.likesCount = meme.likesCount!! + 1
-                    meme.likes[getUid()] = true
-                }
+            val meme =  it[docRef].toObject(MemeModel::class.java)
+            val likes = meme!!.likes
+            var likesCount = meme.likesCount
 
-                mutableData.value = meme
-                return Transaction.success(mutableData)
+            if (likes.containsKey(getUid())) {
+                likesCount -= 1
+                likes.remove(getUid())
+
+            } else  {
+                likesCount += 1
+                likes[getUid()] = true
             }
 
-            override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
+            it.update(docRef, Config.LIKES, likes)
+            it.update(docRef, Config.LIKES_COUNT, likesCount)
 
-                Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
-            }
-        })
+            return@runTransaction null
+        }.addOnSuccessListener {
+            Timber.e("Meme liked")
+        }.addOnFailureListener {
+            Timber.e("Error liking meme")
+        }
     }
 
     private fun favePost(id: String) {
-        getDatabaseReference().child("dank-memes").child(id).runTransaction(object : Transaction.Handler {
-            override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                val meme = mutableData.getValue<MemeModel>(MemeModel::class.java)
+        val docRef = getFirestore().collection(Config.MEMES).document(id)
 
-                if (meme!!.faves.containsKey(getUid())) {
-                    meme.faves.remove(getUid())
+        getFirestore().runTransaction {
 
-                    getDatabaseReference().child("favorites").child(getUid()).child(meme.id!!).removeValue()
+            val meme =  it[docRef].toObject(MemeModel::class.java)
+            val faves = meme!!.faves
 
-                } else  {
-                    meme.faves[getUid()] = true
+            if (faves.containsKey(getUid())) {
+                faves.remove(getUid())
 
-                    val fave = FaveModel()
-                    fave.id = meme.id!!
-                    fave.imageUrl = meme.imageUrl!!
+                getFirestore().collection(Config.FAVORITES).document(getUid()).collection(Config.USER_FAVES).document(meme.id!!).delete()
+            } else  {
+                faves[getUid()] = true
 
-                    getDatabaseReference().child("favorites").child(getUid()).child(meme.id!!).setValue(fave)
-                }
+                val fave = FaveModel()
+                fave.id = meme.id!!
+                fave.imageUrl = meme.imageUrl!!
+                fave.time = meme.time!!
 
-                mutableData.value = meme
-                return Transaction.success(mutableData)
+                getFirestore().collection(Config.FAVORITES).document(getUid()).collection(Config.USER_FAVES).document(meme.id!!).set(fave)
             }
 
-            override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
+            it.update(docRef, Config.FAVES, faves)
 
-                Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
-            }
-        })
+            return@runTransaction null
+        }.addOnSuccessListener {
+            Timber.e("Meme faved")
+        }.addOnFailureListener {
+            Timber.e("Error faving meme")
+        }
+    }
+
+    private fun hasPosts() {
+        profileEmptyState?.hideView()
+    }
+
+    private fun noPosts() {
+        profileEmptyState?.showView()
     }
 
     override fun onDestroy() {
         profileRef.removeEventListener(profileListener)
-//        memesQuery.removeEventListener(memesChildListener)
-//        memesQuery.removeEventListener(memesValueListener)
         super.onDestroy()
     }
 
