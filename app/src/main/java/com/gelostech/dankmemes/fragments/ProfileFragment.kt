@@ -36,7 +36,6 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private lateinit var profileRef: DatabaseReference
     private lateinit var memesQuery: Query
     private lateinit var bs: BottomSheet.Builder
-    private lateinit var bottomNavigationStateListener: ProfileBottomNavigationStateListener
 
     companion object {
         private val TAG = ProfileFragment::class.java.simpleName
@@ -57,8 +56,8 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         memesQuery = getDatabaseReference().child("dank-memes").orderByChild("memePosterID").equalTo(getUid())
 
         profileRef.addValueEventListener(profileListener)
-        memesQuery.addChildEventListener(memesChildListener)
-        memesQuery.addValueEventListener(memesValueListener)
+//        memesQuery.addChildEventListener(memesChildListener)
+//        memesQuery.addValueEventListener(memesValueListener)
     }
 
     private fun initViews() {
@@ -93,45 +92,45 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
             }
         }
     }
-
-    private val memesValueListener = object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error loading memes: ${p0.message}")
-        }
-
-        override fun onDataChange(p0: DataSnapshot) {
-            if (p0.exists()) {
-                profileEmptyState.visibility = View.GONE
-            } else {
-                profileEmptyState.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    private val memesChildListener = object : ChildEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error loading memes: ${p0.message}")
-        }
-
-        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-            Log.e(TAG, "Meme moved: ${p0.key}")
-        }
-
-        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-            val meme = p0.getValue(MemeModel::class.java)
-            memesAdapter.updateMeme(meme!!)
-        }
-
-        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-            val meme = p0.getValue(MemeModel::class.java)
-            memesAdapter.addMeme(meme!!)
-        }
-
-        override fun onChildRemoved(p0: DataSnapshot) {
-            val meme = p0.getValue(MemeModel::class.java)
-            memesAdapter.removeMeme(meme!!)
-        }
-    }
+//
+//    private val memesValueListener = object : ValueEventListener {
+//        override fun onCancelled(p0: DatabaseError) {
+//            Log.e(TAG, "Error loading memes: ${p0.message}")
+//        }
+//
+//        override fun onDataChange(p0: DataSnapshot) {
+//            if (p0.exists()) {
+//                profileEmptyState.visibility = View.GONE
+//            } else {
+//                profileEmptyState.visibility = View.VISIBLE
+//            }
+//        }
+//    }
+//
+//    private val memesChildListener = object : ChildEventListener {
+//        override fun onCancelled(p0: DatabaseError) {
+//            Log.e(TAG, "Error loading memes: ${p0.message}")
+//        }
+//
+//        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+//            Log.e(TAG, "Meme moved: ${p0.key}")
+//        }
+//
+//        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+//            val meme = p0.getValue(MemeModel::class.java)
+//            memesAdapter.updateMeme(meme!!)
+//        }
+//
+//        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+//            val meme = p0.getValue(MemeModel::class.java)
+//            memesAdapter.addMeme(meme!!)
+//        }
+//
+//        override fun onChildRemoved(p0: DataSnapshot) {
+//            val meme = p0.getValue(MemeModel::class.java)
+//            memesAdapter.removeMeme(meme!!)
+//        }
+//    }
 
     private fun temporarilySaveImage() {
         image = (profileImage.drawable as BitmapDrawable).bitmap
@@ -255,18 +254,10 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
     override fun onDestroy() {
         profileRef.removeEventListener(profileListener)
-        memesQuery.removeEventListener(memesChildListener)
-        memesQuery.removeEventListener(memesValueListener)
+//        memesQuery.removeEventListener(memesChildListener)
+//        memesQuery.removeEventListener(memesValueListener)
         super.onDestroy()
     }
 
-    interface ProfileBottomNavigationStateListener{
-        fun profileHideBottomNavigation()
-        fun profileShowBottomNavigation()
-    }
-
-    fun bottomNavigationListener(bottomNavigationStateListener: ProfileBottomNavigationStateListener) {
-        this.bottomNavigationStateListener = bottomNavigationStateListener
-    }
 
 }
