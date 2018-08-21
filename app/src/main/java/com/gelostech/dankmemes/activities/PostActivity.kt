@@ -142,7 +142,7 @@ class PostActivity : BaseActivity(), View.OnClickListener {
         if (!imageSelected) return
 
         showLoading("Posting meme...")
-        val id = getDatabaseReference().child("dank-memes").push().key
+        val id = getFirestore().collection(Config.MEMES).document().id
 
         // Create new meme object
         val meme = MemeModel()
@@ -155,7 +155,7 @@ class PostActivity : BaseActivity(), View.OnClickListener {
         meme.memePosterID = getUid()
         meme.time = System.currentTimeMillis()
 
-        val ref = getStorageReference().child("memes").child(getUid()).child(id!!)
+        val ref = getStorageReference().child("memes").child(getUid()).child(id)
         val uploadTask = ref.putFile(imageUri!!)
         uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
@@ -169,16 +169,19 @@ class PostActivity : BaseActivity(), View.OnClickListener {
             if (task.isSuccessful) {
                 meme.imageUrl = task.result.toString()
 
-                getDatabaseReference().child("dank-memes").child(id).setValue(meme).addOnCompleteListener {
-                    hideLoading()
-                    toast("Meme posted!")
-                    showSelectImage()
-                    postCaption.setText("")
-                }
-
+                getFirestore().collection(Config.MEMES).document(id).set(meme)
+                        .addOnSuccessListener {
+                            hideLoading()
+                            toast("Meme posted!")
+                            showSelectImage()
+                        }
+                        .addOnFailureListener {
+                            hideLoading()
+                            toast("Error uploading meme. Please try again")
+                        }
             } else {
-                toast("Error updating profile. Please try again.")
-                Log.d(TAG, "Error updating profile: ${task.exception}")
+                toast("Error uploading meme. Please try again.")
+                Log.d(TAG, "Error uploading profile: ${task.exception}")
             }
         }
 
@@ -201,6 +204,7 @@ class PostActivity : BaseActivity(), View.OnClickListener {
 
         postSelectImage.visibility = View.GONE
         postAddImage.visibility = View.VISIBLE
+        postCaption.setText("")
     }
 
     override fun onBackPressed() {
