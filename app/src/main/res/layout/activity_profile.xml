@@ -24,12 +24,15 @@
         android:layout_width="match_parent"
         android:layout_below="@id/viewProfileToolbar">
 
-        <android.support.v7.widget.RecyclerView
+        <com.aspsine.irecyclerview.IRecyclerView
             android:id="@+id/viewProfileRv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never"
-            tools:listitem="@layout/item_meme"/>
+            tools:listitem="@layout/item_meme"
+            app:refreshEnabled="false"
+            app:loadMoreEnabled="true"
+            app:loadMoreFooterLayout="@layout/loading"/>
 
         <com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader
             android:id="@+id/viewProfileHeader"
