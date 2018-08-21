@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.activities.ViewMemeActivity
 import com.gelostech.dankmemes.adapters.FavesAdapter
@@ -18,13 +19,21 @@ import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
-import com.google.firebase.database.*
+import com.gelostech.dankmemes.utils.hideView
+import com.gelostech.dankmemes.utils.showView
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_faves.*
 import org.jetbrains.anko.alert
+import timber.log.Timber
 
 class FavesFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
     private lateinit var favesAdapter: FavesAdapter
-    private lateinit var favesQuery: Query
+    private lateinit var loadMoreFooter: RelativeLayout
+    private var lastDocument: DocumentSnapshot? = null
+    private lateinit var query: Query
+    private var loading = false
 
     companion object {
         private var TAG = FavesFragment::class.java.simpleName
@@ -39,60 +48,80 @@ class FavesFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-
-        favesQuery = getDatabaseReference().child("favorites").child(getUid())
-        favesQuery.addValueEventListener(favesValueListener)
-        favesQuery.addChildEventListener(favesChildListener)
-
+        load(true)
     }
 
     private fun initViews() {
-        collectionsRv.setHasFixedSize(true)
-        collectionsRv.layoutManager = GridLayoutManager(activity!!, 3)
-        collectionsRv.addItemDecoration(RecyclerFormatter.GridItemDecoration(activity!!, R.dimen.grid_layout_margin))
+        favesRv.setHasFixedSize(true)
+        favesRv.layoutManager = GridLayoutManager(activity!!, 3)
+        favesRv.addItemDecoration(RecyclerFormatter.GridItemDecoration(activity!!, R.dimen.grid_layout_margin))
 
         favesAdapter = FavesAdapter(this)
-        collectionsRv.adapter = favesAdapter
-    }
+        favesRv.adapter = favesAdapter
 
-    private val favesValueListener = object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error fetching faves: ${p0.message}")
-        }
-
-        override fun onDataChange(p0: DataSnapshot) {
-            if (p0.exists()) {
-                collectionsEmptyState.visibility = View.GONE
-                collectionsRv.visibility = View.VISIBLE
-            } else {
-                collectionsRv.visibility = View.GONE
-                collectionsEmptyState.visibility = View.VISIBLE
+        loadMoreFooter = favesRv.loadMoreFooterView as RelativeLayout
+        favesRv.setOnLoadMoreListener {
+            if (!loading) {
+                loadMoreFooter.showView()
+                load(false)
             }
         }
     }
 
-    private val favesChildListener = object : ChildEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error fetching faves: ${p0.message}")
+    private fun load(initial: Boolean) {
+        query = if (lastDocument == null) {
+            getFirestore().collection(Config.FAVORITES).document(getUid()).collection(Config.USER_FAVES)
+                    .orderBy(Config.TIME, Query.Direction.DESCENDING)
+                    .limit(15)
+        } else {
+            loading = true
+
+            getFirestore().collection(Config.FAVORITES).document(getUid()).collection(Config.USER_FAVES)
+                    .orderBy(Config.TIME, Query.Direction.DESCENDING)
+                    .startAfter(lastDocument!!)
+                    .limit(15)
         }
 
-        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-            Log.e(TAG, "Fave moved: ${p0.key}")
-        }
+        query.addSnapshotListener { p0, p1 ->
+            hasPosts()
+            loading = false
 
-        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-            val fave = p0.getValue(FaveModel::class.java)
-            favesAdapter.updateFave(fave!!)
-        }
+            if (p1 != null) {
+                Timber.e("Error loading faves: $p1")
+            }
 
-        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-            val fave = p0.getValue(FaveModel::class.java)
-            favesAdapter.addFave(fave!!)
-        }
+            if (p0 == null || p0.isEmpty) {
+                if (initial) {
+                    noPosts()
+                }
+            } else {
+                lastDocument = p0.documents[p0.size()-1]
 
-        override fun onChildRemoved(p0: DataSnapshot) {
-            val fave = p0.getValue(FaveModel::class.java)
-            favesAdapter.removeFave(fave!!)
+                for (change: DocumentChange in p0.documentChanges) {
+                    Timber.e("Loading changed document")
+
+                    when(change.type) {
+                        DocumentChange.Type.ADDED -> {
+                            val fave = change.document.toObject(FaveModel::class.java)
+                            favesAdapter.addFave(fave)
+                        }
+
+                        DocumentChange.Type.MODIFIED -> {
+                            val fave = change.document.toObject(FaveModel::class.java)
+                            favesAdapter.updateFave(fave)
+                        }
+
+                        DocumentChange.Type.REMOVED -> {
+                            val fave = change.document.toObject(FaveModel::class.java)
+                            favesAdapter.removeFave(fave)
+                        }
+
+
+                    }
+                }
+
+            }
+
         }
     }
 
@@ -115,27 +144,35 @@ class FavesFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
     }
 
     private fun removeFave(id: String) {
-        getDatabaseReference().child("dank-memes").child(id).runTransaction(object : Transaction.Handler {
-            override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                val meme = mutableData.getValue<MemeModel>(MemeModel::class.java)
+        val docRef = getFirestore().collection(Config.MEMES).document(id)
 
-                meme!!.faves.remove(getUid())
-                getDatabaseReference().child("favorites").child(getUid()).child(meme.id!!).removeValue()
+        getFirestore().runTransaction {
 
-                mutableData.value = meme
-                return Transaction.success(mutableData)
-            }
+            val meme =  it[docRef].toObject(MemeModel::class.java)
+            val faves = meme!!.faves
 
-            override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
+            faves.remove(getUid())
+            getFirestore().collection(Config.FAVORITES).document(getUid()).collection(Config.USER_FAVES).document(meme.id!!).delete()
 
-                Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
-            }
-        })
+            it.update(docRef, Config.FAVES, faves)
+
+            return@runTransaction null
+        }.addOnSuccessListener {
+            Timber.e("Meme faved")
+        }.addOnFailureListener {
+            Timber.e("Error faving meme")
+        }
+
     }
 
-    override fun onDestroy() {
-        favesQuery.removeEventListener(favesValueListener)
-        favesQuery.removeEventListener(favesChildListener)
-        super.onDestroy()
+    private fun hasPosts() {
+        collectionsEmptyState?.hideView()
+        favesRv?.showView()
     }
+
+    private fun noPosts() {
+        favesRv?.hideView()
+        collectionsEmptyState?.showView()
+    }
+
 }

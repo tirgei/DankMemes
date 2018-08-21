@@ -17,8 +17,10 @@ class FavesAdapter(private val onItemClickListener: OnItemClickListener) : Recyc
     private val faves = mutableListOf<FaveModel>()
 
     fun addFave(fave: FaveModel) {
-        faves.add(fave)
-        notifyItemInserted(faves.size-1)
+        if (!hasBeenAdded(fave)) {
+            faves.add(fave)
+            notifyItemInserted(faves.size-1)
+        }
     }
 
     fun updateFave(fave: FaveModel) {
@@ -41,6 +43,18 @@ class FavesAdapter(private val onItemClickListener: OnItemClickListener) : Recyc
 
         faves.removeAt(indexToRemove)
         notifyItemRemoved(indexToRemove)
+    }
+
+    private fun hasBeenAdded(fave: FaveModel):Boolean {
+        var added = false
+
+        for (f in faves) {
+            if (f.id == fave.id) {
+                added = true
+            }
+        }
+
+        return added
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FaveHolder {
