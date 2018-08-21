@@ -40,6 +40,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
     private lateinit var profileRef: DatabaseReference
     private lateinit var bs: BottomSheet.Builder
     private lateinit var name: String
+    private lateinit var userId: String
     private lateinit var loadMoreFooter: RelativeLayout
     private var lastDocument: DocumentSnapshot? = null
     private lateinit var query: com.google.firebase.firestore.Query
@@ -53,7 +54,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        val userId = intent.getStringExtra("userId")
+        userId = intent.getStringExtra("userId")
 
         initViews()
         load(true)
@@ -91,14 +92,14 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
     private fun load(initial: Boolean) {
         query = if (lastDocument == null) {
             getFirestore().collection(Config.MEMES)
-                    .whereEqualTo(Config.POSTER_ID, getUid())
+                    .whereEqualTo(Config.POSTER_ID, userId)
                     .orderBy(Config.TIME, com.google.firebase.firestore.Query.Direction.DESCENDING)
                     .limit(15)
         } else {
             loading = true
 
             getFirestore().collection(Config.MEMES)
-                    .whereEqualTo(Config.POSTER_ID, getUid())
+                    .whereEqualTo(Config.POSTER_ID, userId)
                     .orderBy(Config.TIME, com.google.firebase.firestore.Query.Direction.DESCENDING)
                     .startAfter(lastDocument!!)
                     .limit(15)
