@@ -25,16 +25,10 @@ class LoginActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val user = FirebaseAuth.getInstance().currentUser
-
         signUpFragment = SignupFragment()
         loginFragment = LoginFragment()
 
-        if (user != null && user.isAnonymous) {
-            addFragment(signUpFragment, loginHolder.id)
-        } else {
-            addFragment(loginFragment, loginHolder.id)
-        }
+        addFragment(loginFragment, loginHolder.id)
 
         requestStoragePermission()
     }
@@ -42,10 +36,13 @@ class LoginActivity : BaseActivity() {
     private fun checkIfLoggedIn() {
         val user = FirebaseAuth.getInstance().currentUser
 
-        if (user != null) {
+        if (user != null && !user.isAnonymous) {
             startActivity(Intent(this, MainActivity::class.java))
             overridePendingTransition(0,0)
             finish()
+
+        } else if (user!= null && user.isAnonymous) {
+            addFragment(signUpFragment, loginHolder.id)
         }
     }
 
