@@ -23,8 +23,12 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import org.jetbrains.anko.toast
+import android.app.ProgressDialog
+
+
 
 open class BaseFragment : Fragment() {
+    lateinit var progressDialog: ProgressDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -75,5 +79,18 @@ open class BaseFragment : Fragment() {
         return user!!.uid
     }
 
+
+    fun showLoading(message: String) {
+        progressDialog = ProgressDialog(activity)
+        progressDialog.setCancelable(false)
+        progressDialog.setMessage(message)
+        progressDialog.show()
+    }
+
+    fun hideLoading() {
+        if (progressDialog.isShowing) {
+            progressDialog.dismiss()
+        }
+    }
 
 }
