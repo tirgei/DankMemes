@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.activity_comment.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 import com.gelostech.dankmemes.utils.PreferenceHelper.get
+import timber.log.Timber
 
 class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
     private lateinit var commentAdapter: CommentAdapter
@@ -73,7 +74,7 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
 
     private val commentsValueListener = object : ValueEventListener {
         override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error loading comments: ${p0.message}")
+            Timber.e("Error loading comments: ${p0.message}")
         }
 
         override fun onDataChange(p0: DataSnapshot) {
@@ -89,11 +90,11 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
 
     private val commentsChildListener = object : ChildEventListener {
         override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error loading comments: ${p0.message}")
+            Timber.e("Error loading comments: ${p0.message}")
         }
 
         override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-            Log.e(TAG, "Comment moved: ${p0.key}")
+            Timber.e("Comment moved: ${p0.key}")
 
         }
 
@@ -135,22 +136,7 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
         getDatabaseReference().child("comments").child(memeId).child(id!!).setValue(commentObject).addOnSuccessListener {
             commentET.setText("")
             playNotificationSound()
-
-            getDatabaseReference().child("dank-memes").child(memeId).runTransaction(object : Transaction.Handler {
-                override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                    val meme = mutableData.getValue<MemeModel>(MemeModel::class.java)
-
-                    meme!!.commentsCount = meme.commentsCount + 1
-
-                    mutableData.value = meme
-                    return Transaction.success(mutableData)
-                }
-
-                override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
-
-                    Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
-                }
-            })
+            updateCommentsCount(true)
         }
 
     }
@@ -193,22 +179,31 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
     private fun deleteComment(id: String) {
         getDatabaseReference().child("comments").child(memeId).child(id).removeValue().addOnCompleteListener {
             toast("Comment deleted")
+            updateCommentsCount(false)
+        }
+    }
 
-            getDatabaseReference().child("dank-memes").child(memeId).runTransaction(object : Transaction.Handler {
-                override fun doTransaction(mutableData: MutableData): Transaction.Result {
-                    val meme = mutableData.getValue<MemeModel>(MemeModel::class.java)
+    private fun updateCommentsCount(add: Boolean) {
+        val docRef = getFirestore().collection(Config.MEMES).document(memeId)
 
-                    meme!!.commentsCount = meme.commentsCount!! - 1
+        getFirestore().runTransaction {
 
-                    mutableData.value = meme
-                    return Transaction.success(mutableData)
-                }
+            val meme =  it[docRef].toObject(MemeModel::class.java)
+            var comments = meme!!.commentsCount
 
-                override fun onComplete(databaseError: DatabaseError?, b: Boolean, dataSnapshot: DataSnapshot?) {
+            if (add) {
+                comments += 1
+            } else {
+                comments -= 1
+            }
 
-                    Log.d(javaClass.simpleName, "postTransaction:onComplete: $databaseError")
-                }
-            })
+            it.update(docRef, Config.COMMENTS_COUNT, comments)
+
+            return@runTransaction null
+        }.addOnSuccessListener {
+            Timber.e("Comments count updated")
+        }.addOnFailureListener {
+            Timber.e("Error updating comments count")
         }
     }
 

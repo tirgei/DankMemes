@@ -26,6 +26,7 @@ object Config {
     const val USER_FAVES = "user-favorites"
     const val TIME = "time"
     const val LIKES_COUNT = "likesCount"
+    const val COMMENTS_COUNT = "commentsCount"
     const val LIKES = "likes"
     const val FAVES = "faves"
     const val POSTER_ID = "memePosterID"
