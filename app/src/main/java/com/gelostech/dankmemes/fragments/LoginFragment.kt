@@ -22,9 +22,6 @@ import com.gelostech.dankmemes.models.UserModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.replaceFragment
 import com.gelostech.dankmemes.utils.setDrawable
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -33,8 +30,19 @@ import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 import com.gelostech.dankmemes.utils.PreferenceHelper.set
+import com.gelostech.dankmemes.utils.TimeFormatter
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.SignInButton
 import com.google.firebase.messaging.FirebaseMessaging
 import timber.log.Timber
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.*
+import com.google.firebase.iid.FirebaseInstanceId
+
 
 class LoginFragment : BaseFragment() {
     private lateinit var signupSuccessful: Bitmap
@@ -43,6 +51,7 @@ class LoginFragment : BaseFragment() {
 
     companion object {
         private val TAG = LoginFragment::class.java.simpleName
+        private const val GOOGLE_SIGN_IN = 123
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -61,6 +70,7 @@ class LoginFragment : BaseFragment() {
 
         loginEmail.setDrawable(setDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.secondaryText, 18))
         loginPassword.setDrawable(setDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.secondaryText, 18))
+        googleLogin.setSize(SignInButton.SIZE_WIDE)
 
         loginRegister.setOnClickListener {
             if (!isLoggingIn)
@@ -69,6 +79,7 @@ class LoginFragment : BaseFragment() {
                 activity!!.toast("Please wait...")
         }
 
+        googleLogin.setOnClickListener { googleLogin() }
         loginButton.setOnClickListener { signIn() }
         loginForgotPassword.setOnClickListener { if (!isLoggingIn) forgotPassword() else activity!!.toast("Please wait...")}
     }
@@ -82,9 +93,9 @@ class LoginFragment : BaseFragment() {
         isLoggingIn = true
         loginButton.startAnimation()
         getFirebaseAuth().signInWithEmailAndPassword(email, pw)
-                .addOnCompleteListener(activity!!, { task ->
+                .addOnCompleteListener(activity!!) { task ->
                     if (task.isSuccessful) {
-                        Log.e(TAG, "signingIn: Success!")
+                        Timber.e("signingIn: Success!")
 
                         // update UI with the signed-in user's information
                         val user = task.result.user
@@ -105,12 +116,25 @@ class LoginFragment : BaseFragment() {
                         } catch (e: Exception) {
                             isLoggingIn = false
                             loginButton.revertAnimation()
-                            Log.e(TAG, "signingIn: Failure - ${e.localizedMessage}" )
+                            Timber.e( "signingIn: Failure - ${e.localizedMessage}" )
                             activity?.toast("Error signing in. Please try again.")
                         }
                     }
-                })
+                }
 
+    }
+
+    private fun googleLogin() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.web_key))
+                .requestEmail()
+                .build()
+
+        val mGoogleSignInClient = GoogleSignIn.getClient(activity!!, gso)
+
+        showLoading("Signing in...")
+        val signInIntent = mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent, GOOGLE_SIGN_IN)
     }
 
     private fun forgotPassword() {
@@ -165,6 +189,8 @@ class LoginFragment : BaseFragment() {
                 prefs[Config.EMAIL] = userObject.userEmail
                 prefs[Config.AVATAR] = userObject.userAvatar
 
+                hideLoading()
+
                 Handler().postDelayed({
                     activity!!.toast("Welcome back ${userObject.userName}")
 
@@ -175,6 +201,78 @@ class LoginFragment : BaseFragment() {
             }
         })
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if (requestCode == GOOGLE_SIGN_IN) {
+            hideLoading()
+            val  task = GoogleSignIn.getSignedInAccountFromIntent(data);
+
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)
+                firebaseAuthWithGoogle(account)
+            } catch (e: ApiException) {
+                Timber.e("Google sign in failed")
+
+                activity!!.toast("Error signing in. Try again")
+            }
+        }
+
+    }
+
+    private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
+        showLoading("Checking account...")
+        val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
+
+        getFirebaseAuth().signInWithCredential(credential)
+                .addOnCompleteListener(activity!!) { p0 ->
+                    if (p0.isSuccessful) {
+                        val isNew = p0.result.additionalUserInfo.isNewUser
+
+                        if (isNew) {
+                            val user = getFirebaseAuth().currentUser!!
+                            createUser(user)
+
+                        } else {
+                            val user = getFirebaseAuth().currentUser!!
+                            updateUI(user)
+                        }
+
+                    } else {
+                        activity!!.toast("Error signing in. Try again")
+                    }
+                }
+
+    }
+
+    private fun createUser(user: FirebaseUser) {
+        val newUser = UserModel()
+        newUser.userName = user.displayName
+        newUser.userEmail = user.email
+        newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())
+        newUser.userToken = FirebaseInstanceId.getInstance().token
+        newUser.userId = user.uid
+        newUser.userBio = activity?.getString(R.string.new_user_bio)
+        newUser.userAvatar = user.photoUrl?.toString()
+
+        user.sendEmailVerification()
+
+        FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL)
+        getDatabaseReference().child("users").child(user.uid).setValue(newUser).addOnCompleteListener {
+
+            prefs[Config.USERNAME] = newUser.userName
+            prefs[Config.EMAIL] = newUser.userEmail
+            prefs[Config.AVATAR] = newUser.userAvatar
+
+            hideLoading()
+
+            activity!!.toast("Welcome ${user.displayName}")
+            startActivity(Intent(activity!!, MainActivity::class.java))
+            activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+            activity!!.finish()
+        }
     }
 
     // Check if user has initiated logging in process. If in process, disable back button

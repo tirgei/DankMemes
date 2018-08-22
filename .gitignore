@@ -77,3 +77,4 @@ Thumbs.db
 /keystore.properties
 app/libs/
 keystore.properties
+/app/src/main/res/values/keys.xml

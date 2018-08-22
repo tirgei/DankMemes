@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/loginIcon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="50dp"
             android:contentDescription="@string/image"
@@ -40,8 +40,9 @@
             android:layout_marginLeft="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginRight="30dp"
+            android:layout_marginBottom="30dp"
             android:orientation="vertical"
-            android:layout_centerInParent="true">
+            android:layout_above="@id/loginRegisterLayout">
 
             <EditText
                 android:id="@+id/loginEmail"
@@ -86,6 +87,13 @@
                 android:text="@string/forgot_password"
                 android:textSize="13sp"
                 android:textColor="@color/secondaryText"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center_horizontal"/>
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/googleLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_gravity="center_horizontal"/>
 

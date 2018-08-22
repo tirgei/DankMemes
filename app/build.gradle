@@ -86,6 +86,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-invites:16.0.1'
     implementation 'com.google.firebase:firebase-crash:16.0.1'
     implementation 'com.google.firebase:firebase-firestore:17.0.2'
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
 
     //views libs
     implementation 'com.hendraanggrian:socialview-core:0.18'
