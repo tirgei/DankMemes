@@ -34,6 +34,7 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun checkIfLoggedIn() {
+        signUpFragment = SignupFragment()
         val user = FirebaseAuth.getInstance().currentUser
 
         if (user != null && !user.isAnonymous) {
