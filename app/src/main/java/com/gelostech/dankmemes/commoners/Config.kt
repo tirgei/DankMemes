@@ -17,6 +17,7 @@ object Config {
     const val EMAIL = "email"
     const val USERNAME = "username"
     const val AVATAR = "avatar"
+    const val LOGGED_IN = "logged_in"
 
     const val PIC_URL = "pic_url"
 

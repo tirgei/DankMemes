@@ -26,6 +26,7 @@ class PostActivity : BaseActivity(), View.OnClickListener {
     private var imageUri: Uri? = null
     private var imageSelected = false
     private var uploadMeme: MenuItem? = null
+    private var loggedIn = false;
     private lateinit var prefs: SharedPreferences
 
     companion object {
@@ -41,6 +42,7 @@ class PostActivity : BaseActivity(), View.OnClickListener {
         checkIfShareAction()
 
         prefs = PreferenceHelper.defaultPrefs(this)
+        loggedIn = prefs[Config.LOGGED_IN, false]
     }
 
     private fun initViews() {
@@ -134,6 +136,11 @@ class PostActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun postMeme() {
+        if (!loggedIn) {
+            toast("Please login first")
+            return
+        }
+
         if (imageUri == null) {
             toast("Please select a meme...")
             return

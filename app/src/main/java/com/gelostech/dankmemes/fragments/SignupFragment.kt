@@ -295,6 +295,7 @@ class SignupFragment : BaseFragment() {
                     activity!!.toast("Welcome ${signupUsername.text.toString().trim()}")
                     startActivity(Intent(activity!!, MainActivity::class.java))
                     activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+                    prefs[Config.LOGGED_IN] = true
                     activity!!.finish()
                 }
             } else {

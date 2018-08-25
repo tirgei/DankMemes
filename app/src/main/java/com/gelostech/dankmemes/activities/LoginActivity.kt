@@ -20,10 +20,9 @@ class LoginActivity : BaseActivity() {
     private lateinit var loginFragment: LoginFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        checkIfLoggedIn()
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        checkIfLoggedIn()
 
         signUpFragment = SignupFragment()
         loginFragment = LoginFragment()

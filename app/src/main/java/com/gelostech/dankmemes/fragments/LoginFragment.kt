@@ -196,6 +196,7 @@ class LoginFragment : BaseFragment() {
 
                     startActivity(Intent(activity!!, MainActivity::class.java))
                     activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+                    prefs[Config.LOGGED_IN] = true
                     activity!!.finish()
                 }, 400)
             }
