@@ -187,6 +187,7 @@ class PostActivity : BaseActivity(), View.OnClickListener {
                             toast("Error uploading meme. Please try again")
                         }
             } else {
+                hideLoading()
                 toast("Error uploading meme. Please try again.")
                 Log.d(TAG, "Error uploading profile: ${task.exception}")
             }
