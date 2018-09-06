@@ -8,8 +8,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:scaleType="centerCrop"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"/>
@@ -32,12 +32,12 @@
         android:textColor="@color/timeColor"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@id/avatar"
-        android:textSize="11sp"/>
+        android:textSize="@dimen/notif_time"/>
 
     <ImageView
         android:id="@+id/meme"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:scaleType="centerCrop"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"/>
