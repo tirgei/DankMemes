@@ -14,9 +14,6 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.AppUtils.setDrawable
-import com.gelostech.dankmemes.fragments.FavesFragment
-import com.gelostech.dankmemes.fragments.HomeFragment
-import com.gelostech.dankmemes.fragments.ProfileFragment
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.activity_main.*
@@ -32,9 +29,8 @@ import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.alert
 import com.gelostech.dankmemes.utils.PreferenceHelper.get
-import android.support.v4.app.Fragment
 import com.gelostech.dankmemes.commoners.Config
-import com.gelostech.dankmemes.fragments.AllFragment
+import com.gelostech.dankmemes.fragments.*
 import com.gelostech.dankmemes.utils.*
 import com.google.firebase.messaging.FirebaseMessaging
 import com.wooplr.spotlight.SpotlightView
@@ -52,6 +48,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private lateinit var favesFragment: FavesFragment
     private lateinit var profileFragment: ProfileFragment
     private lateinit var allFragment: AllFragment
+    private lateinit var notifFragment: NotificationsFragment
     private lateinit var prefs: SharedPreferences
     private lateinit var noInternetDialog: NoInternetDialog
 
@@ -60,6 +57,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         private const val ALL: String = "Fresh"
         private const val FAVES: String = "Faves"
         private const val PROFILE: String = "Profile"
+        private const val NOTIFICATIONS = "Notifications"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +71,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         profileFragment = ProfileFragment()
         favesFragment = FavesFragment()
         allFragment = AllFragment()
+        notifFragment = NotificationsFragment()
 
         setupToolbar()
         setupBottomNav()
@@ -93,12 +92,14 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private fun setupBottomNav() {
         val homeIcon = setDrawable(this, Ionicons.Icon.ion_fireball, R.color.secondaryText, 18)
         val allIcon = setDrawable(this, Ionicons.Icon.ion_ios_list_outline, R.color.secondaryText, 18)
-        val collectionsIcon = setDrawable(this, Ionicons.Icon.ion_ios_heart_outline, R.color.secondaryText, 18)
+        val collectionsIcon = setDrawable(this, Ionicons.Icon.ion_ios_heart, R.color.secondaryText, 18)
+        val notificationsIcon = setDrawable(this, Ionicons.Icon.ion_ios_bell, R.color.secondaryText, 18)
         val profileIcon = setDrawable(this, FontAwesome.Icon.faw_user2, R.color.secondaryText, 18)
 
         bottomNav.addItem(AHBottomNavigationItem(HOME, homeIcon))
-        bottomNav.addItem(AHBottomNavigationItem(ALL, allIcon))
+//        bottomNav.addItem(AHBottomNavigationItem(ALL, allIcon))
         bottomNav.addItem(AHBottomNavigationItem(FAVES, collectionsIcon))
+        bottomNav.addItem(AHBottomNavigationItem(NOTIFICATIONS, notificationsIcon))
         bottomNav.addItem(AHBottomNavigationItem(PROFILE, profileIcon))
 
         bottomNav.defaultBackgroundColor = ContextCompat.getColor(this, R.color.white)
@@ -116,8 +117,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private fun setupViewPager() {
         val adapter = PagerAdapter(supportFragmentManager, this)
 
-        adapter.addAllFrags(homeFragment, allFragment, favesFragment, profileFragment)
-        adapter.addAllTitles(HOME, ALL, FAVES, PROFILE)
+        adapter.addAllFrags(/*homeFragment, */allFragment, favesFragment, notifFragment, profileFragment)
+        adapter.addAllTitles(HOME, /*ALL,*/ FAVES, NOTIFICATIONS, PROFILE)
 
         mainViewPager.adapter = adapter
         mainViewPager.addOnPageChangeListener(this)
@@ -273,8 +274,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
         when(position) {
             0 -> supportActionBar?.title/*mainToolbarTitle.text*/ = getString(R.string.app_name)
-            1 -> supportActionBar?.title/*mainToolbarTitle.text*/ = ALL
-            2 -> supportActionBar?.title/*mainToolbarTitle.text*/ = FAVES
+            1 -> supportActionBar?.title/*mainToolbarTitle.text*/ = /*ALL*/ FAVES
+            2 -> supportActionBar?.title/*mainToolbarTitle.text*/ = NOTIFICATIONS
             3 -> supportActionBar?.title/*mainToolbarTitle.text*/ = PROFILE
         }
 
