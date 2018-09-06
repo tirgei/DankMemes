@@ -28,6 +28,28 @@ class NotificationsAdapter(private val callback:NotificationsCallback) : Recycle
         }
     }
 
+    fun updateNotif(notification: NotificationModel) {
+        for ((index, n) in notifications.withIndex()) {
+            if (n.id == notification.id) {
+                notifications[index] = notification
+                notifyItemChanged(index, notification)
+            }
+        }
+    }
+
+    fun removeNotif(removedNotif: NotificationModel) {
+        var indexToRemove = -1
+
+        for ((index, notif) in notifications.withIndex()) {
+            if (notif.id == removedNotif.id) {
+                indexToRemove = index
+            }
+        }
+
+        notifications.removeAt(indexToRemove)
+        notifyItemRemoved(indexToRemove)
+    }
+
     private fun hasBeenAdded(notification: NotificationModel): Boolean {
         var added = false
 

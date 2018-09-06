@@ -1,9 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.NotificationsFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.NotificationsFragment"
+    android:background="@color/white">
 
+    <RelativeLayout
+        android:id="@+id/notifsEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
 
-</FrameLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/feed"
+            android:contentDescription="@string/image"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/secondaryText"
+            android:layout_below="@id/collectionsEmptyStateImage"
+            android:text="No notifications received yet"/>
+
+    </RelativeLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/notifRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <com.aspsine.irecyclerview.IRecyclerView
+            android:id="@+id/notifRv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/item_notification"
+            android:overScrollMode="never"
+            app:refreshEnabled="false"
+            app:loadMoreEnabled="true"
+            app:loadMoreFooterLayout="@layout/loading"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</RelativeLayout>
