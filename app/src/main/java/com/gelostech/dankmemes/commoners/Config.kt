@@ -20,11 +20,14 @@ object Config {
     const val LOGGED_IN = "logged_in"
 
     const val PIC_URL = "pic_url"
+    const val MEME_ID = "meme_id"
 
     // Firebase
     const val MEMES = "memes"
     const val FAVORITES = "favorites"
     const val USER_FAVES = "user-favorites"
+    const val NOTIFICATIONS = "notifications"
+    const val USER_NOTIFS = "user-notifications"
     const val TIME = "time"
     const val LIKES_COUNT = "likesCount"
     const val COMMENTS_COUNT = "commentsCount"
