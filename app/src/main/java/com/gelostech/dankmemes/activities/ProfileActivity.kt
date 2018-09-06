@@ -171,6 +171,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
                 temporarilySaveImage()
                 val i = Intent(this@ProfileActivity, ViewMemeActivity::class.java)
                 i.putExtra(Config.PIC_URL, user.userAvatar!!)
+                startActivity(i)
                 AppUtils.fadeIn(this@ProfileActivity)
             }
         }
