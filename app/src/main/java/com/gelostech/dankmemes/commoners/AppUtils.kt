@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.media.MediaScannerConnection
@@ -15,7 +16,11 @@ import android.os.Build
 import android.os.Environment
 import android.os.StrictMode
 import android.support.v4.content.ContextCompat
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -301,6 +306,14 @@ object AppUtils {
 
     fun fadeIn(activity: Activity) {
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+    fun highLightName(context: Context, title: String, start: Int, length: Int): SpannableString {
+        val newName = SpannableString(title)
+        newName.setSpan(StyleSpan(Typeface.BOLD), start, length, 0)
+        newName.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.black)), start, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        return newName
     }
 
 
