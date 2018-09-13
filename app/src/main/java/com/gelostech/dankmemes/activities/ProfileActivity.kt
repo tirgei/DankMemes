@@ -189,11 +189,13 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
     }
 
     private fun showMeme(meme: MemeModel, image: Bitmap) {
-        val i = Intent(this, ViewMemeActivity::class.java)
         AppUtils.saveTemporaryImage(this, image)
+
+        val i = Intent(this, ViewMemeActivity::class.java)
+        i.putExtra(Config.PIC_URL, meme.imageUrl)
         i.putExtra("caption", meme.caption)
         startActivity(i)
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        AppUtils.fadeIn(this)
     }
 
     private fun showBottomSheet(meme: MemeModel, image: Bitmap) {
