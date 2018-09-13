@@ -34,7 +34,7 @@ import com.gelostech.dankmemes.fragments.*
 import com.gelostech.dankmemes.utils.*
 import com.google.firebase.messaging.FirebaseMessaging
 import com.wooplr.spotlight.SpotlightView
-
+import timber.log.Timber
 
 
 class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
@@ -44,7 +44,6 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private var newMeme: MenuItem? = null
     private var editProfile: MenuItem? = null
     private lateinit var slidingDrawer: SlidingRootNav
-    private lateinit var homeFragment: HomeFragment
     private lateinit var favesFragment: FavesFragment
     private lateinit var profileFragment: ProfileFragment
     private lateinit var allFragment: AllFragment
@@ -53,8 +52,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private lateinit var noInternetDialog: NoInternetDialog
 
     companion object {
-        private const val HOME: String = "Lit"
-        private const val ALL: String = "Fresh"
+        private const val HOME: String = "Dank Memes"
         private const val FAVES: String = "Faves"
         private const val PROFILE: String = "Profile"
         private const val NOTIFICATIONS = "Notifications"
@@ -67,7 +65,6 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         NotificationUtils(this).clearNotifications()
         prefs = PreferenceHelper.defaultPrefs(this)
 
-        homeFragment = HomeFragment()
         profileFragment = ProfileFragment()
         favesFragment = FavesFragment()
         allFragment = AllFragment()
@@ -85,19 +82,16 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         setSupportActionBar(mainToolbar)
         supportActionBar?.title = getString(R.string.app_name)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-//        mainToolbarTitle.text = getString(R.string.app_name)
     }
 
     //Setup the bottom navigation bar
     private fun setupBottomNav() {
         val homeIcon = setDrawable(this, Ionicons.Icon.ion_fireball, R.color.secondaryText, 18)
-        val allIcon = setDrawable(this, Ionicons.Icon.ion_ios_list_outline, R.color.secondaryText, 18)
         val collectionsIcon = setDrawable(this, Ionicons.Icon.ion_ios_heart, R.color.secondaryText, 18)
         val notificationsIcon = setDrawable(this, Ionicons.Icon.ion_ios_bell, R.color.secondaryText, 18)
         val profileIcon = setDrawable(this, FontAwesome.Icon.faw_user2, R.color.secondaryText, 18)
 
         bottomNav.addItem(AHBottomNavigationItem(HOME, homeIcon))
-//        bottomNav.addItem(AHBottomNavigationItem(ALL, allIcon))
         bottomNav.addItem(AHBottomNavigationItem(FAVES, collectionsIcon))
         bottomNav.addItem(AHBottomNavigationItem(NOTIFICATIONS, notificationsIcon))
         bottomNav.addItem(AHBottomNavigationItem(PROFILE, profileIcon))
@@ -117,8 +111,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private fun setupViewPager() {
         val adapter = PagerAdapter(supportFragmentManager, this)
 
-        adapter.addAllFrags(/*homeFragment, */allFragment, favesFragment, notifFragment, profileFragment)
-        adapter.addAllTitles(HOME, /*ALL,*/ FAVES, NOTIFICATIONS, PROFILE)
+        adapter.addAllFrags(allFragment, favesFragment, notifFragment, profileFragment)
+        adapter.addAllTitles(HOME, FAVES, NOTIFICATIONS, PROFILE)
 
         mainViewPager.adapter = adapter
         mainViewPager.addOnPageChangeListener(this)
@@ -273,14 +267,17 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         editProfile?.isVisible = position == 3
 
         when(position) {
-            0 -> supportActionBar?.title/*mainToolbarTitle.text*/ = getString(R.string.app_name)
-            1 -> supportActionBar?.title/*mainToolbarTitle.text*/ = /*ALL*/ FAVES
-            2 -> supportActionBar?.title/*mainToolbarTitle.text*/ = NOTIFICATIONS
-            3 -> supportActionBar?.title/*mainToolbarTitle.text*/ = PROFILE
+            0 -> supportActionBar?.title = getString(R.string.app_name)
+            1 -> supportActionBar?.title = FAVES
+            2 -> supportActionBar?.title = NOTIFICATIONS
+            3 -> supportActionBar?.title = PROFILE
         }
 
-        if (position == 0 && wasSelected) homeFragment.getRecyclerView()?.smoothScrollToPosition(0)
-        if (position == 1 && wasSelected) allFragment.getRecyclerView()?.smoothScrollToPosition(0)
+        try {
+            if (position == 0 && wasSelected) allFragment.getRecyclerView().smoothScrollToPosition(0)
+        } catch (e: Exception) {
+            Timber.e("Error scrolling to top: ${e.localizedMessage}")
+        }
 
         return true
     }
