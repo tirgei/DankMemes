@@ -365,9 +365,12 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     override fun onBackPressed() {
         if (slidingDrawer.isMenuOpened) {
             slidingDrawer.closeMenu(true)
+
         } else {
             if (doubleBackToExit) {
                 super.onBackPressed()
+                finish()
+
             } else {
                 toast("Tap back again to exit")
 
