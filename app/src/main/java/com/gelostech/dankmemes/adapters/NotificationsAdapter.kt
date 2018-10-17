@@ -106,6 +106,10 @@ class NotificationsAdapter(private val callback:NotificationsCallback) : Recycle
                 1 -> {
                     setCommentNotif(notification.username!!, notification.description!!)
                 }
+
+                else -> {
+                    holderComment(notification.username!!, notification.description!!)
+                }
             }
 
             avatar.setOnClickListener { callback.onNotificationClicked(avatar, notification) }
@@ -121,6 +125,12 @@ class NotificationsAdapter(private val callback:NotificationsCallback) : Recycle
 
         private fun setCommentNotif(user: String, comment: String) {
             val notif = "$user commented: $comment"
+
+            description.text = AppUtils.highLightName(view.context, notif, 0, user.length)
+        }
+
+        private fun holderComment(user: String, desc: String) {
+            val notif = "$user $desc"
 
             description.text = AppUtils.highLightName(view.context, notif, 0, user.length)
         }
