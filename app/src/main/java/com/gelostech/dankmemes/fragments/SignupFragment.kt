@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.fragment_signup.*
 import org.jetbrains.anko.toast
 import com.gelostech.dankmemes.utils.PreferenceHelper.set
 import com.google.firebase.messaging.FirebaseMessaging
+import timber.log.Timber
 
 class SignupFragment : BaseFragment() {
     private lateinit var signupSuccessful: Bitmap
@@ -249,7 +250,7 @@ class SignupFragment : BaseFragment() {
                         } catch (e: Exception) {
                             isCreatingAccount = false
                             signupButton.revertAnimation()
-                            Log.e(TAG, "signingIn: Failure - $e}" )
+                            Timber.e("signingIn: Failure - $e}" )
                             activity?.toast("Error signing up. Please try again.")
                         }
                     }
@@ -291,22 +292,20 @@ class SignupFragment : BaseFragment() {
                     prefs[Config.USERNAME] = newUser.userName
                     prefs[Config.EMAIL] = newUser.userEmail
                     prefs[Config.AVATAR] = newUser.userAvatar
+                    prefs[Config.LOGGED_IN] = true
 
                     activity!!.toast("Welcome ${signupUsername.text.toString().trim()}")
                     startActivity(Intent(activity!!, MainActivity::class.java))
                     activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-                    prefs[Config.LOGGED_IN] = true
                     activity!!.finish()
                 }
             } else {
                 signupButton.revertAnimation()
                 activity?.toast("Error signing up. Please try again.")
-                Log.d(TAG, "Error signing up: ${task.exception}")
+                Timber.e("Error signing up: ${task.exception}")
             }
         }
     }
-
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

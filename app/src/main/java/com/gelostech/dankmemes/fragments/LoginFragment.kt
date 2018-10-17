@@ -151,8 +151,8 @@ class LoginFragment : BaseFragment() {
                         .addOnCompleteListener(activity!!) { task ->
                             if (task.isSuccessful) {
                                 Timber.e("sendResetPassword: Success!")
-
                                 activity?.toast("Email sent")
+
                             } else {
                                 try {
                                     throw task.exception!!
@@ -188,6 +188,7 @@ class LoginFragment : BaseFragment() {
                 prefs[Config.USERNAME] = userObject!!.userName
                 prefs[Config.EMAIL] = userObject.userEmail
                 prefs[Config.AVATAR] = userObject.userAvatar
+                prefs[Config.LOGGED_IN] = true
 
                 hideLoading()
 
@@ -196,7 +197,6 @@ class LoginFragment : BaseFragment() {
 
                     startActivity(Intent(activity!!, MainActivity::class.java))
                     activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-                    prefs[Config.LOGGED_IN] = true
                     activity!!.finish()
                 }, 400)
             }
