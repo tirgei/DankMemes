@@ -369,12 +369,10 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
         } else {
             if (doubleBackToExit) {
-                super.onBackPressed()
-                finish()
+                finishAffinity()
 
             } else {
                 toast("Tap back again to exit")
-
                 doubleBackToExit = true
 
                 Handler().postDelayed({doubleBackToExit = false}, 1500)
