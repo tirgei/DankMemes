@@ -104,14 +104,14 @@ class HomeFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private fun load() {
         query = if (lastDocument == null) {
             getFirestore().collection(Config.MEMES)
-                    .whereEqualTo(Config.POSTER_ID, Config.ADMIN_ID)
+                    .whereEqualTo(Config.POSTER_ID, activity!!.getString(R.string.admin_key))
                     .orderBy(Config.TIME, Query.Direction.DESCENDING)
                     .limit(31)
         } else {
             loading = true
 
             getFirestore().collection(Config.MEMES)
-                    .whereEqualTo(Config.POSTER_ID, Config.ADMIN_ID)
+                    .whereEqualTo(Config.POSTER_ID, activity!!.getString(R.string.admin_key))
                     .orderBy(Config.TIME, Query.Direction.DESCENDING)
                     .startAfter(lastDocument!!)
                     .limit(21)

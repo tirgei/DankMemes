@@ -61,6 +61,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        updateLastActive()
 
         NotificationUtils(this).clearNotifications()
         prefs = PreferenceHelper.defaultPrefs(this)

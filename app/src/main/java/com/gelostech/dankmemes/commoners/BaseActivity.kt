@@ -7,6 +7,7 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import com.gelostech.dankmemes.utils.TimeFormatter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -91,5 +92,14 @@ open class BaseActivity : AppCompatActivity() {
     fun refreshToken() {
         val token = FirebaseInstanceId.getInstance().token
         getDatabaseReference().child("users").child(getUid()).child("userToken").setValue(token)
+    }
+
+    fun updateLastActive() {
+        getDatabaseReference()
+                .child(Config.METADATA)
+                .child(Config.LAST_ACTIVE)
+                .child(TimeFormatter().getFullYear(System.currentTimeMillis()))
+                .child(getUid())
+                .setValue(TimeFormatter().getTime(System.currentTimeMillis()))
     }
 }

@@ -15,6 +15,7 @@ class TimeFormatter {
     private var detailFormat = SimpleDateFormat("dd MMM, h:mm a", Locale.getDefault())
     private var simpleYearFormat = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
     private var normalYearFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    private var fullYearFormat = SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault())
     private var saveFormat = SimpleDateFormat("yyyyMMdd-mmss", Locale.getDefault())
 
     fun getTimeStamp(time: Long): String {
@@ -69,6 +70,10 @@ class TimeFormatter {
 
     fun getNormalYear(millis: Long): String {
         return normalYearFormat.format(millis)
+    }
+
+    fun getFullYear(millis: Long): String {
+        return fullYearFormat.format(millis)
     }
 
     fun getSaveFormat(millis: Long): String {

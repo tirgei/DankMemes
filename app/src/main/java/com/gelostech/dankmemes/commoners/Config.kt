@@ -34,6 +34,7 @@ object Config {
     const val LIKES = "likes"
     const val FAVES = "faves"
     const val POSTER_ID = "memePosterID"
-    const val ADMIN_ID = "AEXdYtUP83MSvrb0aaIqCHN31G23"
+    const val METADATA = "metadata"
+    const val LAST_ACTIVE = "last-active"
 
 }
