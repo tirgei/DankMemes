@@ -130,14 +130,14 @@ class NotificationsFragment : BaseFragment(), NotificationsCallback {
     }
 
     override fun onNotificationClicked(view: View, notification: NotificationModel) {
-//        when(view.id) {
-//            R.id.avatar -> {
-//                val i = Intent(activity, ProfileActivity::class.java)
-//                i.putExtra("userId", notification.userId)
-//                startActivity(i)
-//                AppUtils.animateEnterRight(activity!!)
-//            }
-//
+        when(view.id) {
+            R.id.avatar -> {
+                val i = Intent(activity, ProfileActivity::class.java)
+                i.putExtra("userId", notification.userId)
+                startActivity(i)
+                AppUtils.animateEnterRight(activity!!)
+            }
+
 //            R.id.root -> {
 //                if (notification.type == 1) {
 //                    val i = Intent(activity, CommentActivity::class.java)
@@ -159,8 +159,8 @@ class NotificationsFragment : BaseFragment(), NotificationsCallback {
 //                startActivity(i)
 //                AppUtils.animateEnterRight(activity!!)
 //            }
-//
-//        }
+
+        }
     }
 
     private fun noNotifs() {
