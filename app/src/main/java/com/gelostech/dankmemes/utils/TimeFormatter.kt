@@ -9,14 +9,14 @@ import java.util.*
 
 class TimeFormatter {
 
-    private var timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
-    private var weekFormat = SimpleDateFormat("EEE, h:mm a", Locale.getDefault())
-    private var fullFormat = SimpleDateFormat("EEE, MMM d, yyyy h:mm a", Locale.getDefault())
-    private var detailFormat = SimpleDateFormat("dd MMM, h:mm a", Locale.getDefault())
-    private var simpleYearFormat = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
-    private var normalYearFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    private var fullYearFormat = SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault())
-    private var saveFormat = SimpleDateFormat("yyyyMMdd-mmss", Locale.getDefault())
+    private var timeFormat = SimpleDateFormat("h:mm a", Locale.US)
+    private var weekFormat = SimpleDateFormat("EEE, h:mm a", Locale.US)
+    private var fullFormat = SimpleDateFormat("EEE, MMM d, yyyy h:mm a", Locale.US)
+    private var detailFormat = SimpleDateFormat("dd MMM, h:mm a", Locale.US)
+    private var simpleYearFormat = SimpleDateFormat("d/M/yyyy", Locale.US)
+    private var normalYearFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+    private var fullYearFormat = SimpleDateFormat("dd-MMM-yyyy", Locale.US)
+    private var saveFormat = SimpleDateFormat("yyyyMMdd-mmss", Locale.US)
 
     fun getTimeStamp(time: Long): String {
         val currentTime = System.currentTimeMillis()
