@@ -77,6 +77,7 @@ dependencies {
     implementation "org.jetbrains.anko:anko-design:$anko_version"
 
     //images libs
+    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.github.bumptech.glide:glide:4.7.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
@@ -89,16 +90,16 @@ dependencies {
     implementation 'com.mikepenz:actionitembadge:3.3.2@aar'
 
     //firebase
-    implementation 'com.google.firebase:firebase-storage:16.0.1'
-    implementation 'com.google.firebase:firebase-auth:16.0.3'
-    implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.google.firebase:firebase-database:16.0.1'
-    implementation 'com.google.firebase:firebase-messaging:17.3.0'
-    implementation 'com.google.firebase:firebase-invites:16.0.3'
-    implementation 'com.google.firebase:firebase-crash:16.2.0'
-    implementation 'com.google.firebase:firebase-firestore:17.1.0'
-    implementation 'com.google.android.gms:play-services-auth:16.0.0'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation 'com.google.firebase:firebase-storage:16.0.5'
+    implementation 'com.google.firebase:firebase-auth:16.1.0'
+    implementation 'com.google.firebase:firebase-database:16.0.6'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+    implementation 'com.google.firebase:firebase-invites:16.1.0'
+    implementation 'com.google.firebase:firebase-crash:16.2.1'
+    implementation 'com.google.firebase:firebase-firestore:18.0.1'
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
 
     //views libs
     implementation 'com.hendraanggrian:socialview-core:0.18'
