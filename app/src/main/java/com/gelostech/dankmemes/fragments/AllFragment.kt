@@ -180,7 +180,7 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     override fun onItemClick(meme: MemeModel, viewID: Int, image: Bitmap?) {
         when(viewID) {
             0 -> likePost(meme.id!!)
-            1 -> showBottomSheet(meme, image!!)
+            1 -> showBottomsheetAdmin(meme, image!!)
             2 -> favePost(meme.id!!)
             3 -> showComments(meme)
             4 -> showMeme(meme, image!!)
@@ -230,6 +230,25 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
         }.show()
 
+    }
+
+    private fun showBottomsheetAdmin(meme: MemeModel, image: Bitmap) {
+        bs = BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_admin)
+
+        bs.listener { _, which ->
+
+            when(which) {
+                R.id.bs_share -> AppUtils.shareImage(activity!!, image)
+                R.id.bs_delete -> deletePost(meme)
+                R.id.bs_save -> {
+                    if (storagePermissionGranted()) {
+                        AppUtils.saveImage(activity!!, image)
+                    } else requestStoragePermission()
+                }
+                R.id.bs_report -> showReportDialog(meme)
+            }
+
+        }.show()
     }
 
     private fun showComments(meme: MemeModel) {
