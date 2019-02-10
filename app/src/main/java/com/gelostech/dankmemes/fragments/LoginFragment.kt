@@ -98,7 +98,7 @@ class LoginFragment : BaseFragment() {
                         Timber.e("signingIn: Success!")
 
                         // update UI with the signed-in user's information
-                        val user = task.result.user
+                        val user = task.result?.user!!
                         updateUI(user!!)
                     } else {
                         try {
@@ -212,7 +212,7 @@ class LoginFragment : BaseFragment() {
 
             try {
                 // Google Sign In was successful, authenticate with Firebase
-                val account = task.getResult(ApiException::class.java)
+                val account = task.getResult(ApiException::class.java)!!
                 firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
                 Timber.e("Google sign in failed")
@@ -230,7 +230,7 @@ class LoginFragment : BaseFragment() {
         getFirebaseAuth().signInWithCredential(credential)
                 .addOnCompleteListener(activity!!) { p0 ->
                     if (p0.isSuccessful) {
-                        val isNew = p0.result.additionalUserInfo.isNewUser
+                        val isNew = p0.result?.additionalUserInfo?.isNewUser!!
 
                         if (isNew) {
                             val user = getFirebaseAuth().currentUser!!

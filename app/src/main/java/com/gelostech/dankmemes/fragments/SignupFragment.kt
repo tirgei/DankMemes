@@ -149,7 +149,7 @@ class SignupFragment : BaseFragment() {
                         Log.e(TAG, "signingIn: Success!")
 
                         // update UI with the signed-in user's information
-                        val user = task.result.user
+                        val user = task.result?.user!!
                         updateUI(user)
 
                     } else {
@@ -226,7 +226,7 @@ class SignupFragment : BaseFragment() {
                         Log.e(TAG, "signingIn: Success!")
 
                         // update UI with the signed-in user's information
-                        val user = task.result.user
+                        val user = task.result?.user!!
                         updateUI(user)
 
                     } else {
