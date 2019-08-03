@@ -1,16 +1,14 @@
 package com.gelostech.dankmemes.activities
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.view.MenuItem
+import androidx.core.content.ContextCompat
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.commoners.BaseActivity
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.*
-import com.google.firebase.auth.FirebaseAuth
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.activity_meme.*

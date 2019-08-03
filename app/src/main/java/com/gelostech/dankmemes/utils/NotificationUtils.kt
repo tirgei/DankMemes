@@ -14,8 +14,8 @@ import android.util.Patterns
 import android.text.TextUtils
 import android.content.Intent
 import android.net.Uri
-import android.support.v4.app.NotificationCompat
-import android.support.v4.content.ContextCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.commoners.AppUtils

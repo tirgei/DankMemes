@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".activities.CommentActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/commentToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
         app:titleTextColor="@color/textGray"
         android:elevation="0.5dp"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/commentsRv"
         android:layout_below="@id/commentToolbar"
         android:layout_above="@id/commentDivider"

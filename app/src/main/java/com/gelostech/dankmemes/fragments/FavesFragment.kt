@@ -4,18 +4,17 @@ package com.gelostech.dankmemes.fragments
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import androidx.recyclerview.widget.GridLayoutManager
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.activities.ViewMemeActivity
 import com.gelostech.dankmemes.adapters.FavesAdapter
+import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.commoners.BaseFragment
 import com.gelostech.dankmemes.commoners.Config
-import com.gelostech.dankmemes.commoners.AppUtils
 import com.gelostech.dankmemes.models.FaveModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
@@ -34,10 +33,6 @@ class FavesFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
     private var lastDocument: DocumentSnapshot? = null
     private lateinit var query: Query
     private var loading = false
-
-    companion object {
-        private var TAG = FavesFragment::class.java.simpleName
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

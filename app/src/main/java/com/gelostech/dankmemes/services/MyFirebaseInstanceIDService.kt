@@ -1,8 +1,8 @@
 package com.gelostech.dankmemes.services
 
 import android.content.Intent
-import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.google.firebase.auth.FirebaseAuth

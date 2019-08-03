@@ -1,18 +1,14 @@
 package com.gelostech.dankmemes.services
 
-import android.app.Notification
 import android.content.Context
 import android.content.Intent
-import org.json.JSONException
-import android.text.TextUtils
-import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
-import com.gelostech.dankmemes.activities.MainActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.utils.NotificationUtils
-import org.json.JSONObject
-import com.google.firebase.messaging.RemoteMessage
 import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
+import org.json.JSONObject
 
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {

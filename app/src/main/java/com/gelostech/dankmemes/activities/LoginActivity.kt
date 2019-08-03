@@ -1,7 +1,6 @@
 package com.gelostech.dankmemes.activities
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import com.gelostech.dankmemes.R
@@ -10,7 +9,6 @@ import com.gelostech.dankmemes.fragments.LoginFragment
 import com.gelostech.dankmemes.fragments.SignupFragment
 import com.gelostech.dankmemes.utils.addFragment
 import com.google.firebase.auth.FirebaseAuth
-import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.toast
 

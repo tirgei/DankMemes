@@ -1,7 +1,7 @@
 package com.gelostech.dankmemes.commoners
 
+import androidx.multidex.MultiDexApplication
 import com.google.firebase.database.FirebaseDatabase
-import android.support.multidex.MultiDexApplication
 import cat.ereza.customactivityoncrash.config.CaocConfig
 import com.gelostech.dankmemes.R
 import timber.log.Timber

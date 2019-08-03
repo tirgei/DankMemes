@@ -6,13 +6,12 @@ import android.content.SharedPreferences
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.adapters.CommentAdapter
 import com.gelostech.dankmemes.commoners.BaseActivity
@@ -20,13 +19,13 @@ import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.models.CommentModel
 import com.gelostech.dankmemes.models.MemeModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
+import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import com.google.firebase.database.*
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.iconics.IconicsDrawable
 import kotlinx.android.synthetic.main.activity_comment.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
-import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import timber.log.Timber
 
 class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
@@ -34,10 +33,6 @@ class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
     private lateinit var memeId: String
     private lateinit var commentsQuery: Query
     private lateinit var prefs: SharedPreferences
-
-    companion object {
-        private var TAG = CommentActivity::class.java.simpleName
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

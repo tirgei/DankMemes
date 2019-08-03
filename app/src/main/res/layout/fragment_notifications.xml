@@ -32,7 +32,7 @@
 
     </RelativeLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/notifRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -48,6 +48,6 @@
             app:loadMoreEnabled="true"
             app:loadMoreFooterLayout="@layout/loading"/>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

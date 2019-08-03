@@ -2,7 +2,6 @@ package com.gelostech.dankmemes.adapters
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -16,7 +15,8 @@ import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.item_meme.view.*
 import java.lang.ref.WeakReference
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.gelostech.dankmemes.commoners.AppUtils.cacheBitmap
 import com.gelostech.dankmemes.commoners.AppUtils.getBitmap
 import com.gelostech.dankmemes.commoners.K

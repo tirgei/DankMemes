@@ -4,16 +4,12 @@ package com.gelostech.dankmemes.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
-
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.activities.CommentActivity
-import com.gelostech.dankmemes.activities.MemeActivity
 import com.gelostech.dankmemes.activities.ProfileActivity
 import com.gelostech.dankmemes.adapters.NotificationsAdapter
 import com.gelostech.dankmemes.callbacks.NotificationsCallback
