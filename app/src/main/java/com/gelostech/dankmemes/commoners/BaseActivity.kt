@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.gelostech.dankmemes.utils.TimeFormatter
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -22,6 +23,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration
+import timber.log.Timber
 
 
 open class BaseActivity : AppCompatActivity() {
@@ -29,8 +31,13 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(this))
         progressDialog = ProgressDialog(this)
+
+        MobileAds.initialize(this) {
+            Timber.e("Admob initialized: %s", it.toString())
+        }
     }
 
     // User hasn't requested storage permission; request them to allow
@@ -83,13 +90,16 @@ open class BaseActivity : AppCompatActivity() {
     // Get user ID
     fun getUid(): String {
         val user = FirebaseAuth.getInstance().currentUser
-
         return user!!.uid
     }
 
     fun refreshToken() {
-        val token = FirebaseInstanceId.getInstance().token
-        getDatabaseReference().child("users").child(getUid()).child("userToken").setValue(token)
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+            if (it.isSuccessful) {
+                val token = it.result?.token
+                getDatabaseReference().child("users").child(getUid()).child("userToken").setValue(token)
+            }
+        }
     }
 
     fun updateLastActive() {

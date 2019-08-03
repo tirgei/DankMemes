@@ -6,9 +6,14 @@ import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.gelostech.dankmemes.commoners.Config
 import com.gelostech.dankmemes.utils.NotificationUtils
+import com.gelostech.dankmemes.utils.PreferenceHelper
+import com.gelostech.dankmemes.utils.PreferenceHelper.set
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
+import timber.log.Timber
 
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -17,6 +22,29 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     companion object {
         private val TAG = MyFirebaseMessagingService::class.java.simpleName
+    }
+
+    override fun onNewToken(p0: String?) {
+        Timber.e("Token refreshed: %s", p0)
+
+        p0?.let {
+            // save in prefs
+            val prefs = PreferenceHelper.defaultPrefs(this)
+            prefs["userToken"] = it
+
+            // sending reg id to your server
+            val userID = FirebaseAuth.getInstance().currentUser?.uid
+            if (userID != null) {
+                val dbRef = FirebaseDatabase.getInstance().reference
+                dbRef.child("users").child(userID).child("userToken").setValue(it)
+            }
+
+            // Notify UI that registration has completed, so the progress indicator can be hidden.
+            val registrationComplete = Intent(Config.REGISTRATION_COMPLETE)
+            registrationComplete.putExtra("token", it)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete)
+        }
+
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
