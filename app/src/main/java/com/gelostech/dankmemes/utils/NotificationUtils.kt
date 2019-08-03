@@ -17,8 +17,6 @@ import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.commoners.Config
-import com.gelostech.dankmemes.commoners.AppUtils
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -113,7 +111,7 @@ class NotificationUtils(private val mContext: Context) {
             notification.setSmallIcon(R.mipmap.ic_launcher)
         }
 
-        notificationManager.notify(Config.NOTIFICATION_ID, notification.build())
+        notificationManager.notify(Constants.NOTIFICATION_ID, notification.build())
     }
 
     private fun showBigNotification(bitmap: Bitmap, mBuilder: NotificationCompat.Builder, icon: Int, title: String, message: String, timeStamp: String, resultPendingIntent: PendingIntent, alarmSound: Uri) {
@@ -143,7 +141,7 @@ class NotificationUtils(private val mContext: Context) {
             notification.setSmallIcon(R.mipmap.ic_launcher)
         }
 
-        notificationManager.notify(Config.NOTIFICATION_ID_BIG_IMAGE, notification.build())
+        notificationManager.notify(Constants.NOTIFICATION_ID_BIG_IMAGE, notification.build())
     }
 
     /**
