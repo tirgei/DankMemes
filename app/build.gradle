@@ -4,9 +4,15 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
 apply plugin: 'kotlin-kapt'
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def keystoreProperties = null
+
+// Check if keystore file exists
+if (rootProject.file("keystore.properties").exists()) {
+    def keystorePropertiesFile = keystoreProperties = rootProject.file("keystore.properties")
+    keystoreProperties = new Properties()
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+} else
+    keystoreProperties = null
 
 android {
 
@@ -15,20 +21,26 @@ android {
 
     signingConfigs {
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+            if (keystoreProperties != null) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
 
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
+
         applicationId "com.gelostech.dankmemes"
+
         minSdkVersion 17
         targetSdkVersion 28
+
         versionCode 11
         versionName "4.0.2"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         signingConfig signingConfigs.release
