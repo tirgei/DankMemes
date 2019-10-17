@@ -23,6 +23,9 @@ jobs:
           name: Decode google-services json file
           command: echo $ENCODED_GOOGLE_SERVICES | base64 --decode >> app/google-services.json
       - run:
+          name: Decode API keys
+          command: echo $ENCODED_API_KEYS | base64 --decode >> app/src/main/res/values/keys.xml
+      - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
       - save_cache:
