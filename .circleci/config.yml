@@ -20,6 +20,9 @@ jobs:
           name: Update keystore path
           command: sed -i 's|home/.*|$KEYSTORE_PATH|' keystore.properties
       - run:
+          name: Decode google_services.json
+          command: echo $ENCODED_GOOGLE_SERVICES | base64 --decode >> app/google_services.json
+      - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
       - save_cache:
