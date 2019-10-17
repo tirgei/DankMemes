@@ -93,7 +93,7 @@
                 android:inputType="textMultiLine"
                 android:hint="@string/bio"/>
 
-            <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+            <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
                 android:id="@+id/editProfileButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -95,7 +95,7 @@
                android:textSize="13sp"
                android:inputType="textPassword"/>
 
-           <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+           <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
                android:id="@+id/signupButton"
                android:layout_width="match_parent"
                android:layout_height="wrap_content"

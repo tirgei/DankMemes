@@ -322,7 +322,7 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
     private fun showReportDialog(meme: MemeModel) {
         val editText = EditText(activity)
-        val layout = FrameLayout(activity)
+        val layout = FrameLayout(activity!!)
         layout.setPaddingRelative(45,15,45,0)
         layout.addView(editText)
 
