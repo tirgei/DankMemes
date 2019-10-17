@@ -10,8 +10,15 @@ jobs:
       - checkout
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      - run: echo $ENCODED_KEYSTORE | base64 --decode >> keystore.properties
-      - run: echo 'export keystore.properties' >> $BASH_ENV
+      - run:
+          name: Decode keystore
+          command: echo $ENCODED_KEYSTORE | base64 --decode >> $KEYSTORE_NAME
+      - run:
+          name: Decode keystore.properties
+          command: echo $ENCODED_KEYSTORE_PROPERTIES | base64 --decode >> keystore.properties
+      - run:
+          name: Update keystore path
+          command: sed -i 's|home/.*|$KEYSTORE_PATH|' keystore.properties
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
