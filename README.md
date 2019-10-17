@@ -1,6 +1,6 @@
 # Dank Memes
 [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=true)](http://www.apache.org/licenses/LICENSE-2.0)
-[![CircleCI](https://circleci.com/gh/tirgei/DankMemes.svg?style=svg)](https://circleci.com/gh/tirgei/DankMemes)
+[![CircleCI](https://circleci.com/gh/tirgei/DankMemes/tree/development.svg?style=svg)](https://circleci.com/gh/tirgei/DankMemes/tree/development)
 
 This is a social media app for sharing memes (funny pictures).
 
