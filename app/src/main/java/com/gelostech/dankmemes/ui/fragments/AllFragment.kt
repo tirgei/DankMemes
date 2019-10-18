@@ -163,7 +163,7 @@ class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         val myRenderer = MoPubStaticNativeAdRenderer(myViewBinder)
         mopubAdapter.registerAdRenderer(myRenderer)
         allRv.adapter = mopubAdapter
-        if (isConnected()) mopubAdapter.loadAds(activity!!.getString(R.string.ad_unit_id_native))
+        if (isConnected()) mopubAdapter.loadAds(activity!!.getString(R.string.mopup_native_ad))
 
     }
 

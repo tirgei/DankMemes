@@ -127,7 +127,7 @@ class LoginFragment : BaseFragment() {
 
     private fun googleLogin() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.web_key))
+                .requestIdToken(getString(R.string.google_signin_key))
                 .requestEmail()
                 .build()
 
