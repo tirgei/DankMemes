@@ -22,19 +22,19 @@ You can then import the project to your Android Studio then head to your [Fireba
 
 - Create a new **Dank Memes** project.
 
-<img src="screenshots/1.png" width="300" >
+<img src="screenshots/1.png" width=500" >
 
 - Enable Email/ Google sign in
 
-<img src="screenshots/2.png" width="300" >
+<img src="screenshots/2.png" width="500" >
 
 - Add a new Android project under `Project Settings` menu
 
-<img src="screenshots/3.png" width="300" >
+<img src="screenshots/3.png" width="500" >
 
 - Fill in the project details then download the `google-services.json` file and place it in `app/` directory
 
-<img src="screenshots/4.png" width="300" >
+<img src="screenshots/4.png" width="500" >
 
 - Create a `keys.xml` file in the `app/src/main/res/values/` directory where we will place our API keys. The following are required:
 ```
