@@ -40,14 +40,15 @@ You can then import the project to your Android Studio then head to your [Fireba
 ```
 // Google Sign in key
 <string name="google_signin_key">YOUR_GOOGLE_SIGN_IN_KEY</string>
+```
 
-// For native ads, the following are required
-
+For native ads, the following are required
+```
 // Admob
 <string name="admob_app_id">YOUR_ADMOB_APP_ID</string>
 <string name="admob_native_test_ad">YOUR_ADMOB_TEST_AD_ID</string>
 
-// [Mopub](https://www.mopub.com)
+// Mopub
 <string name="mopub_native_ad">YOUR_MOPUB_AD_ID</string>
 ```
 
