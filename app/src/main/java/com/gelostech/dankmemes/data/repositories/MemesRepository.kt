@@ -17,7 +17,7 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
 
     private val db = firestoreDatabase.collection(Constants.MEMES)
 
-    private val initialQuery = db.orderBy(Constants.TIME, Query.Direction.DESCENDING)
+    private val initialQuery = db.orderBy(Constants.TIME, Query.Direction.DESCENDING).limit(Constants.MEMES_COUNT)
     private var nextQuery: Query? = null
 
     fun fetchMemes(onSuccess: (List<Meme>) -> Unit) {
@@ -50,7 +50,7 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
 
     private fun handleFetchedData(querySnapshot: QuerySnapshot): List<Meme> {
         val lastFetchedMeme = querySnapshot.documents[querySnapshot.size()-1]
-        nextQuery = initialQuery.startAfter(lastFetchedMeme).limit(Constants.MEMES_COUNT)
+        nextQuery = initialQuery.startAfter(lastFetchedMeme)
 
         return querySnapshot.map { snapshot ->
             snapshot.toObject(Meme::class.java)
