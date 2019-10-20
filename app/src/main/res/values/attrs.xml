@@ -5,4 +5,9 @@
     <attr name="dividerColor" format="color"/>
     <attr name="backgroundCardColor" format="color"/>
     <attr name="iconPlaceholder" format="integer"/>
+
+    <declare-styleable name="FaveRoundImageView">
+        <attr name="onKeyLongPress" format="string"/>
+    </declare-styleable>
+
 </resources>

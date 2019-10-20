@@ -16,9 +16,9 @@ import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.AppUtils.drawableToBitmap
 import com.gelostech.dankmemes.utils.AppUtils.setDrawable
 import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.UserModel
+import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.utils.PreferenceHelper
-import com.gelostech.dankmemes.utils.loadUrl
+import com.gelostech.dankmemes.utils.load
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -79,9 +79,9 @@ class EditProfileActivity : BaseActivity() {
     }
 
     private fun loadProfile() {
-        val user = intent.getSerializableExtra("user") as UserModel
+        val user = intent.getSerializableExtra("user") as User
 
-        editProfileImage.loadUrl(user.userAvatar!!)
+        editProfileImage.load(user.userAvatar!!, R.drawable.person)
         editProfileName.setText(user.userName)
         editProfileBio.setText(user.userBio)
     }

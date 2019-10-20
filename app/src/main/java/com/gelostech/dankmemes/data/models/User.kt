@@ -2,7 +2,7 @@ package com.gelostech.dankmemes.data.models
 
 import java.io.Serializable
 
-data class UserModel(
+data class User(
         var userId: String? = null,
         var userName: String? = null,
         var userToken: String? = null,

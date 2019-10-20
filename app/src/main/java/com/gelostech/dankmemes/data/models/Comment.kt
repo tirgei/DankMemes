@@ -1,6 +1,6 @@
 package com.gelostech.dankmemes.data.models
 
-data class CommentModel(
+data class Comment(
         var commentKey: String? = null,
         var authorId: String? = null,
         var timeStamp: Long? = null,
@@ -10,4 +10,6 @@ data class CommentModel(
         var userName: String? = null,
         var userAvatar: String? = null,
         var picKey: String? = null
-)
+) {
+    fun equals(comment: Comment): Boolean = this.commentKey == comment.commentKey
+}

@@ -1,10 +1,8 @@
 package com.gelostech.dankmemes.ui.callbacks
 
 import android.view.View
-import com.gelostech.dankmemes.data.models.NotificationModel
+import com.gelostech.dankmemes.data.models.Notification
 
 interface NotificationsCallback {
-
-    fun onNotificationClicked(view: View, notification: NotificationModel)
-
+    fun onNotificationClicked(view: View, notification: Notification)
 }

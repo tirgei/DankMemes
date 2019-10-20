@@ -21,7 +21,7 @@ import com.gelostech.dankmemes.utils.AppUtils.drawableToBitmap
 import com.gelostech.dankmemes.utils.AppUtils.getColor
 import com.gelostech.dankmemes.utils.AppUtils.setDrawable
 import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.UserModel
+import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.utils.*
 import com.google.firebase.auth.*
 import com.google.firebase.iid.FirebaseInstanceId
@@ -262,7 +262,7 @@ class SignupFragment : BaseFragment() {
         val token = FirebaseInstanceId.getInstance().token
         val id = user.uid
 
-        val newUser = UserModel()
+        val newUser = User()
         newUser.userName = signupUsername.text.toString().trim()
         newUser.userEmail = user.email
         newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())
@@ -324,7 +324,7 @@ class SignupFragment : BaseFragment() {
                 val resultUri = result.uri
                 Log.e(TAG, "Avatar: $resultUri")
 
-                signupAvatar?.loadUrl(resultUri.toString())
+                signupAvatar?.load(resultUri.toString(), R.drawable.person)
                 imageUri = resultUri
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {

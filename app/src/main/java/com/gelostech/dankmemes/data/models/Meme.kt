@@ -2,8 +2,7 @@ package com.gelostech.dankmemes.data.models
 
 import java.io.Serializable
 
-data class MemeModel(
-        var type: Int = 0,
+data class Meme(
         var id: String? = null,
         var caption: String? = null,
         var imageUrl: String? = null,
@@ -16,4 +15,8 @@ data class MemeModel(
         var thumbnail: String? = null,
         var likes: MutableMap<String, Boolean> = mutableMapOf(),
         var faves: MutableMap<String, Boolean> = mutableMapOf()
-): Serializable
+): Serializable {
+    fun equals(meme: Meme): Boolean {
+        return this.id == meme.id
+    }
+}

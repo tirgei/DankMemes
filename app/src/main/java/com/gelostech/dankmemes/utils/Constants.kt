@@ -13,9 +13,6 @@ object Constants {
     const val NOTIFICATION_ID = 100
     const val NOTIFICATION_ID_BIG_IMAGE = 101
 
-    // Feed types
-    const val FEED_TYPE_MEME_IMAGE = 0
-
     // Prefs constants
     const val EMAIL = "email"
     const val USERNAME = "username"

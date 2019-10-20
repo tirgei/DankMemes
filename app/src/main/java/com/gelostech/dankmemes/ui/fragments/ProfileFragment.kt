@@ -19,26 +19,29 @@ import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.AppUtils
-import com.gelostech.dankmemes.data.models.FaveModel
-import com.gelostech.dankmemes.data.models.MemeModel
-import com.gelostech.dankmemes.data.models.UserModel
+import com.gelostech.dankmemes.data.models.Fave
+import com.gelostech.dankmemes.data.models.Meme
+import com.gelostech.dankmemes.data.models.User
+import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.utils.RecyclerFormatter
 import com.gelostech.dankmemes.utils.hideView
-import com.gelostech.dankmemes.utils.loadUrl
+import com.gelostech.dankmemes.utils.load
 import com.gelostech.dankmemes.utils.showView
 import com.google.firebase.database.*
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
+import com.makeramen.roundedimageview.RoundedDrawable
+import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.fragment_profile.*
 import org.jetbrains.anko.alert
 import timber.log.Timber
 
 
-class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
+class ProfileFragment : BaseFragment() {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var image: Bitmap
-    private lateinit var user: UserModel
+    private lateinit var user: User
     private lateinit var profileRef: DatabaseReference
     private lateinit var bs: BottomSheet.Builder
     private lateinit var loadMoreFooter: RelativeLayout
@@ -63,15 +66,17 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     }
 
     private fun initViews() {
-        profileRv.setHasFixedSize(true)
-        profileRv.layoutManager = LinearLayoutManager(activity!!)
-        profileRv.addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
-        profileRv.itemAnimator = DefaultItemAnimator()
-        (profileRv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
-        profileHeader.attachTo(profileRv)
+        memesAdapter = MemesAdapter(memesCallback)
 
-        memesAdapter = MemesAdapter(activity!!, this)
-        profileRv.adapter = memesAdapter
+        profileRv.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(activity)
+            addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
+            itemAnimator = DefaultItemAnimator()
+            (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
+            loadMoreFooterView as RelativeLayout
+            adapter = memesAdapter
+        }
 
         loadMoreFooter = profileRv.loadMoreFooterView as RelativeLayout
         profileRv.setOnLoadMoreListener {
@@ -88,11 +93,11 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         }
 
         override fun onDataChange(p0: DataSnapshot) {
-            user = p0.getValue(UserModel::class.java)!!
+            user = p0.getValue(User::class.java)!!
 
             profileName.text = user.userName
             profileBio.text = user.userBio
-            profileImage.loadUrl(user.userAvatar!!)
+            profileImage.load(user.userAvatar!!, R.drawable.person)
 
             profileImage.setOnClickListener {
                 temporarilySaveImage()
@@ -138,21 +143,21 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
                     when(change.type) {
                         DocumentChange.Type.ADDED -> {
-                            val meme = change.document.toObject(MemeModel::class.java)
+                            val meme = change.document.toObject(Meme::class.java)
                             memesAdapter.addMeme(meme)
 
                             Timber.e("Changed document: ADDED")
                         }
 
                         DocumentChange.Type.MODIFIED -> {
-                            val meme = change.document.toObject(MemeModel::class.java)
+                            val meme = change.document.toObject(Meme::class.java)
                             memesAdapter.updateMeme(meme)
 
                             Timber.e("Changed document: MODIFIED")
                         }
 
                         DocumentChange.Type.REMOVED -> {
-                            val meme = change.document.toObject(MemeModel::class.java)
+                            val meme = change.document.toObject(Meme::class.java)
                             memesAdapter.removeMeme(meme)
                         }
 
@@ -169,19 +174,29 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         AppUtils.saveTemporaryImage(activity!!, image)
     }
 
-    fun getUser() : UserModel = user
+    fun getUser() : User = user
 
-    override fun onItemClick(meme: MemeModel, viewID: Int, image: Bitmap?) {
-        when(viewID) {
-            0 -> likePost(meme.id!!)
-            1 -> showBottomSheet(meme, image!!)
-            2 -> favePost(meme.id!!)
-            3 -> showComments(meme)
-            4 -> showMeme(meme, image!!)
+    private val memesCallback = object : MemesCallback {
+        override fun onMemeClicked(view: View, meme: Meme) {
+            val memeId = meme.id!!
+
+            // Get bitmap of shown meme
+            val imageBitmap = when(view) {
+                is RoundedImageView -> (view.drawable as RoundedDrawable).sourceBitmap
+                else -> null
+            }
+
+            when(view.id) {
+                R.id.memeMore -> showBottomSheet(meme, imageBitmap!!)
+                R.id.memeLike -> likePost(memeId)
+                R.id.memeComment -> showComments(memeId)
+                R.id.memeFave -> favePost(memeId)
+                else -> showMeme(meme, imageBitmap!!)
+            }
         }
     }
 
-    private fun showMeme(meme: MemeModel, image: Bitmap) {
+    private fun showMeme(meme: Meme, image: Bitmap) {
         AppUtils.saveTemporaryImage(activity!!, image)
 
         val i = Intent(activity, ViewMemeActivity::class.java)
@@ -191,7 +206,7 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
         AppUtils.fadeIn(activity!!)
     }
 
-    private fun showBottomSheet(meme: MemeModel, image: Bitmap) {
+    private fun showBottomSheet(meme: Meme, image: Bitmap) {
         bs = BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_me)
 
         bs.listener { _, which ->
@@ -210,14 +225,14 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
     }
 
-    private fun showComments(meme: MemeModel) {
+    private fun showComments(memeId: String) {
         val i = Intent(activity, CommentActivity::class.java)
-        i.putExtra("memeId", meme.id)
+        i.putExtra("memeId", memeId)
         startActivity(i)
         activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
     }
 
-    private fun deletePost(meme: MemeModel) {
+    private fun deletePost(meme: Meme) {
         activity!!.alert("Delete this meme?") {
             positiveButton("DELETE") {
                 getFirestore().collection(Constants.MEMES).document(meme.id!!).delete()
@@ -231,7 +246,7 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
         getFirestore().runTransaction {
 
-            val meme =  it[docRef].toObject(MemeModel::class.java)
+            val meme =  it[docRef].toObject(Meme::class.java)
             val likes = meme!!.likes
             var likesCount = meme.likesCount
 
@@ -260,7 +275,7 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
 
         getFirestore().runTransaction {
 
-            val meme =  it[docRef].toObject(MemeModel::class.java)
+            val meme =  it[docRef].toObject(Meme::class.java)
             val faves = meme!!.faves
 
             if (faves.containsKey(getUid())) {
@@ -270,7 +285,7 @@ class ProfileFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
             } else  {
                 faves[getUid()] = true
 
-                val fave = FaveModel()
+                val fave = Fave()
                 fave.id = meme.id!!
                 fave.imageUrl = meme.imageUrl!!
                 fave.time = meme.time!!
