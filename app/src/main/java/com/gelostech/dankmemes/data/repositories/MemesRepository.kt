@@ -34,6 +34,20 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
         }
     }
 
+    fun fetchMemesByUser(userId: String, onSuccess: (List<Meme>) -> Unit) {
+        if (nextQuery != null) {
+            nextQuery!!.whereEqualTo(Constants.POSTER_ID, userId).get()
+                    .addOnSuccessListener { querySnapshot ->
+                        onSuccess(handleFetchedData(querySnapshot))
+                    }
+        } else {
+            initialQuery.whereEqualTo(Constants.POSTER_ID, userId).get()
+                    .addOnSuccessListener { querySnapshot ->
+                        onSuccess(handleFetchedData(querySnapshot))
+                    }
+        }
+    }
+
     private fun handleFetchedData(querySnapshot: QuerySnapshot): List<Meme> {
         val lastFetchedMeme = querySnapshot.documents[querySnapshot.size()-1]
         nextQuery = initialQuery.startAfter(lastFetchedMeme).limit(Constants.MEMES_COUNT)
