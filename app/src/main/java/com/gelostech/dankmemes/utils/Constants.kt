@@ -38,5 +38,7 @@ object Constants {
     const val METADATA = "metadata"
     const val LAST_ACTIVE = "last-active"
     const val REPORTS = "reports"
+    const val USERS = "users"
+    const val AVATARS = "avatars"
 
 }
