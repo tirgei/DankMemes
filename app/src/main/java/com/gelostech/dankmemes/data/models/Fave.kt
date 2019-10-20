@@ -2,10 +2,9 @@ package com.gelostech.dankmemes.data.models
 
 import java.io.Serializable
 
-data class Fave(
+data class FaveModel(
+        var type: Int = 0,
         var id: String? = null,
         var imageUrl: String? = null,
         var time: Long? = null
-): Serializable {
-    fun equals(fave: Fave): Boolean = this.id == fave.id
-}
+): Serializable

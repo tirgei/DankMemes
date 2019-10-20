@@ -23,10 +23,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import org.jetbrains.anko.toast
 import android.app.ProgressDialog
-import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
-import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.utils.MyBounceInterpolator
 
 
 open class BaseFragment : Fragment() {
@@ -93,14 +90,6 @@ open class BaseFragment : Fragment() {
         if (progressDialog.isShowing) {
             progressDialog.dismiss()
         }
-    }
-
-    fun animateView(view: View) {
-        val anim = AnimationUtils.loadAnimation(context, R.anim.bounce)
-        val bounceInterpolator = MyBounceInterpolator(0.2, 20.0)
-        anim.interpolator = bounceInterpolator
-
-        view.startAnimation(anim)
     }
 
 }

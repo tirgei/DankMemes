@@ -1,72 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:id="@+id/root">
 
-    <data>
-        <import type="com.gelostech.dankmemes.R"/>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avatar"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:scaleType="centerCrop"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"/>
 
-        <variable
-            name="notification"
-            type="com.gelostech.dankmemes.data.models.Notification" />
-
-        <variable
-            name="callback"
-            type="com.gelostech.dankmemes.ui.callbacks.NotificationsCallback" />
-
-        <variable
-            name="timeFormatter"
-            type="com.gelostech.dankmemes.utils.TimeFormatter" />
-    </data>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:onClick="@{(v) -> callback.onNotificationClicked(v, notification)}">
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:textSize="13.5sp"
+        android:layout_toEndOf="@id/avatar"
+        android:layout_toStartOf="@id/meme"/>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/avatar"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:scaleType="centerCrop"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            bind:image="@{notification.userAvatar}"
-            bind:placeholder="@{R.drawable.person}"
-            android:onClick="@{(v) -> callback.onNotificationClicked(v, notification)}"/>
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/description"
+        android:textColor="@color/timeColor"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/avatar"
+        android:textSize="@dimen/notif_time"/>
 
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:textSize="13.5sp"
-            android:layout_toEndOf="@id/avatar"
-            android:layout_toStartOf="@id/meme"
-            bind:notification="@{notification}"/>
+    <ImageView
+        android:id="@+id/meme"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerCrop"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"/>
 
-        <TextView
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/description"
-            android:textColor="@color/timeColor"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@id/avatar"
-            android:textSize="@dimen/notif_time"
-            android:text="@{timeFormatter.getTimeStamp(safeUnbox(notification.time))}"/>
-
-        <ImageView
-            android:id="@+id/meme"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:scaleType="centerCrop"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            bind:image="@{notification.imageUrl}"
-            bind:placeholder="@{R.drawable.loading}"
-            android:onClick="@{(v) -> callback.onNotificationClicked(v, notification)}"/>
-
-    </RelativeLayout>
-</layout>
+</RelativeLayout>

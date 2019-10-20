@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.models.Item
 import com.gelostech.dankmemes.utils.inflate
-import com.gelostech.dankmemes.utils.legacyInflate
 import com.google.android.gms.ads.formats.MediaView
 import com.google.android.gms.ads.formats.UnifiedNativeAd
 import com.google.android.gms.ads.formats.UnifiedNativeAdView
@@ -35,8 +34,8 @@ class AdAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            AD -> AdHolder(parent.legacyInflate(R.layout.item_native_ad))
-            else -> ItemHolder(parent.legacyInflate(R.layout.basic_layout))
+            AD -> AdHolder(parent.inflate(R.layout.item_native_ad))
+            else -> ItemHolder(parent.inflate(R.layout.basic_layout))
         }
     }
 

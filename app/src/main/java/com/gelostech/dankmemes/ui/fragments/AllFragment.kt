@@ -23,32 +23,28 @@ import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.Fave
-import com.gelostech.dankmemes.data.models.Meme
-import com.gelostech.dankmemes.data.models.Report
-import com.gelostech.dankmemes.ui.callbacks.MemesCallback
+import com.gelostech.dankmemes.data.models.FaveModel
+import com.gelostech.dankmemes.data.models.MemeModel
+import com.gelostech.dankmemes.data.models.ReportModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
 import com.gelostech.dankmemes.utils.showView
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
-import com.makeramen.roundedimageview.RoundedDrawable
-import com.makeramen.roundedimageview.RoundedImageView
 import com.mopub.nativeads.MoPubNativeAdPositioning
 import com.mopub.nativeads.MoPubRecyclerAdapter
 import com.mopub.nativeads.MoPubStaticNativeAdRenderer
 import com.mopub.nativeads.ViewBinder
 import kotlinx.android.synthetic.main.fragment_all.*
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
 import timber.log.Timber
 
-class AllFragment : BaseFragment() {
+class AllFragment : BaseFragment(), MemesAdapter.OnItemClickListener {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var mopubAdapter: MoPubRecyclerAdapter
     private lateinit var bs: BottomSheet.Builder
+    private lateinit var layoutManager: LinearLayoutManager
     private lateinit var loadMoreFooter: RelativeLayout
     private lateinit var query: Query
     private var lastDocument: DocumentSnapshot? = null
@@ -70,18 +66,17 @@ class AllFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        memesAdapter = MemesAdapter(memesCallback)
+        layoutManager = LinearLayoutManager(activity)
 
-        allRv.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(activity)
-            addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
-            itemAnimator = DefaultItemAnimator()
-            (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
-            loadMoreFooterView as RelativeLayout
-            adapter = memesAdapter
-        }
+        allRv.setHasFixedSize(true)
+        allRv.layoutManager = layoutManager
+        allRv.addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
+        allRv.itemAnimator = DefaultItemAnimator()
+        (allRv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
 
+        memesAdapter = MemesAdapter(activity!!, this)
+
+        loadMoreFooter = allRv.loadMoreFooterView as RelativeLayout
         allRv.setOnLoadMoreListener {
             if (!loading) {
                 loadMoreFooter.showView()
@@ -128,17 +123,17 @@ class AllFragment : BaseFragment() {
 
                     when(change.type) {
                         DocumentChange.Type.ADDED -> {
-                            val meme = change.document.toObject(Meme::class.java)
+                            val meme = change.document.toObject(MemeModel::class.java)
                             memesAdapter.addMeme(meme)
                         }
 
                         DocumentChange.Type.MODIFIED -> {
-                            val meme = change.document.toObject(Meme::class.java)
+                            val meme = change.document.toObject(MemeModel::class.java)
                             memesAdapter.updateMeme(meme)
                         }
 
                         DocumentChange.Type.REMOVED -> {
-                            val meme = change.document.toObject(Meme::class.java)
+                            val meme = change.document.toObject(MemeModel::class.java)
                             memesAdapter.removeMeme(meme)
                         }
 
@@ -172,48 +167,28 @@ class AllFragment : BaseFragment() {
 
     }
 
-    private val memesCallback = object : MemesCallback {
-        override fun onMemeClicked(view: View, meme: Meme) {
-            val memeId = meme.id!!
+    override fun onItemClick(meme: MemeModel, viewID: Int, image: Bitmap?) {
+        when(viewID) {
+            0 -> likePost(meme.id!!)
+            1 -> showBottomsheetAdmin(meme, image!!)
+            2 -> favePost(meme.id!!)
+            3 -> showComments(meme)
+            4 -> showMeme(meme, image!!)
+            5 -> showProfile(meme)
 
-            when(view.id) {
-                R.id.memeComment -> showComments(memeId)
-                R.id.memeIcon, R.id.memeUser -> showProfile(memeId)
-                R.id.memeFave -> favePost(memeId)
-
-                R.id.memeLike -> {
-                    animateView(view)
-                    likePost(memeId)
-                }
-
-                else -> {
-                    doAsync {
-                        // Get bitmap of shown meme
-                        val imageBitmap = when(view.id) {
-                            R.id.memeImage, R.id.memeMore -> AppUtils.loadBitmapFromUrl(activity!!, meme.imageUrl!!)
-                            else -> null
-                        }
-
-                        uiThread {
-                            if (view.id == R.id.memeMore) showBottomsheetAdmin(meme, imageBitmap!!)
-                            else showMeme(meme, imageBitmap!!)
-                        }
-                    }
-                }
-            }
         }
     }
 
-    private fun showProfile(userId: String) {
-        if (userId != getUid()) {
+    private fun showProfile(meme: MemeModel) {
+        if (meme.memePosterID != getUid()) {
             val i = Intent(activity, ProfileActivity::class.java)
-            i.putExtra("userId", userId)
+            i.putExtra("userId", meme.memePosterID)
             startActivity(i)
             activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
         }
     }
 
-    private fun showMeme(meme: Meme, image: Bitmap) {
+    private fun showMeme(meme: MemeModel, image: Bitmap) {
         AppUtils.saveTemporaryImage(activity!!, image)
 
         val i = Intent(activity, ViewMemeActivity::class.java)
@@ -223,7 +198,7 @@ class AllFragment : BaseFragment() {
         AppUtils.fadeIn(activity!!)
     }
 
-    private fun showBottomSheet(meme: Meme, image: Bitmap) {
+    private fun showBottomSheet(meme: MemeModel, image: Bitmap) {
         bs = if (getUid() != meme.memePosterID) {
             BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet)
         } else {
@@ -247,7 +222,7 @@ class AllFragment : BaseFragment() {
 
     }
 
-    private fun showBottomsheetAdmin(meme: Meme, image: Bitmap) {
+    private fun showBottomsheetAdmin(meme: MemeModel, image: Bitmap) {
         bs = BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_admin)
 
         bs.listener { _, which ->
@@ -266,14 +241,14 @@ class AllFragment : BaseFragment() {
         }.show()
     }
 
-    private fun showComments(memeId: String) {
+    private fun showComments(meme: MemeModel) {
         val i = Intent(activity, CommentActivity::class.java)
-        i.putExtra("memeId", memeId)
+        i.putExtra("memeId", meme.id)
         startActivity(i)
         activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
     }
 
-    private fun deletePost(meme: Meme) {
+    private fun deletePost(meme: MemeModel) {
         activity!!.alert("Delete this meme?") {
             positiveButton("DELETE") {
                 getFirestore().collection(Constants.MEMES).document(meme.id!!).delete()
@@ -287,7 +262,7 @@ class AllFragment : BaseFragment() {
 
         getFirestore().runTransaction {
 
-            val meme =  it[docRef].toObject(Meme::class.java)
+            val meme =  it[docRef].toObject(MemeModel::class.java)
             val likes = meme!!.likes
             var likesCount = meme.likesCount
 
@@ -316,7 +291,7 @@ class AllFragment : BaseFragment() {
 
         getFirestore().runTransaction {
 
-            val meme =  it[docRef].toObject(Meme::class.java)
+            val meme =  it[docRef].toObject(MemeModel::class.java)
             val faves = meme!!.faves
 
             if (faves.containsKey(getUid())) {
@@ -326,7 +301,7 @@ class AllFragment : BaseFragment() {
             } else  {
                 faves[getUid()] = true
 
-                val fave = Fave()
+                val fave = FaveModel()
                 fave.id = meme.id!!
                 fave.imageUrl = meme.imageUrl!!
                 fave.time = meme.time!!
@@ -345,7 +320,7 @@ class AllFragment : BaseFragment() {
 
     }
 
-    private fun showReportDialog(meme: Meme) {
+    private fun showReportDialog(meme: MemeModel) {
         val editText = EditText(activity)
         val layout = FrameLayout(activity!!)
         layout.setPaddingRelative(45,15,45,0)
@@ -363,7 +338,7 @@ class AllFragment : BaseFragment() {
                 val key = getDatabaseReference().child("reports").push().key
                 val reason = editText.text.toString().trim()
 
-                val report = Report()
+                val report = ReportModel()
                 report.id = key
                 report.memeId = meme.id
                 report.memePosterId = meme.memePosterID

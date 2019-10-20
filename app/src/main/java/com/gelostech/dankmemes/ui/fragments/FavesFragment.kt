@@ -15,22 +15,19 @@ import com.gelostech.dankmemes.ui.adapters.FavesAdapter
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.Fave
-import com.gelostech.dankmemes.data.models.Meme
-import com.gelostech.dankmemes.ui.callbacks.FavesCallback
+import com.gelostech.dankmemes.data.models.FaveModel
+import com.gelostech.dankmemes.data.models.MemeModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
 import com.gelostech.dankmemes.utils.hideView
 import com.gelostech.dankmemes.utils.showView
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
-import com.makeramen.roundedimageview.RoundedDrawable
-import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.fragment_faves.*
 import org.jetbrains.anko.alert
 import timber.log.Timber
 
-class FavesFragment : BaseFragment() {
+class FavesFragment : BaseFragment(), FavesAdapter.OnItemClickListener{
     private lateinit var favesAdapter: FavesAdapter
     private lateinit var loadMoreFooter: RelativeLayout
     private var lastDocument: DocumentSnapshot? = null
@@ -50,14 +47,12 @@ class FavesFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        favesAdapter = FavesAdapter(favesCallback)
+        favesRv.setHasFixedSize(true)
+        favesRv.layoutManager = GridLayoutManager(activity!!, 3)
+        favesRv.addItemDecoration(RecyclerFormatter.GridItemDecoration(activity!!, R.dimen.grid_layout_margin))
 
-        favesRv.apply {
-            setHasFixedSize(true)
-            layoutManager = GridLayoutManager(activity!!, 3)
-            addItemDecoration(RecyclerFormatter.GridItemDecoration(activity!!, R.dimen.grid_layout_margin))
-            adapter = favesAdapter
-        }
+        favesAdapter = FavesAdapter(this)
+        favesRv.adapter = favesAdapter
 
         loadMoreFooter = favesRv.loadMoreFooterView as RelativeLayout
         favesRv.setOnLoadMoreListener {
@@ -102,17 +97,17 @@ class FavesFragment : BaseFragment() {
 
                     when(change.type) {
                         DocumentChange.Type.ADDED -> {
-                            val fave = change.document.toObject(Fave::class.java)
+                            val fave = change.document.toObject(FaveModel::class.java)
                             favesAdapter.addFave(fave)
                         }
 
                         DocumentChange.Type.MODIFIED -> {
-                            val fave = change.document.toObject(Fave::class.java)
+                            val fave = change.document.toObject(FaveModel::class.java)
                             favesAdapter.updateFave(fave)
                         }
 
                         DocumentChange.Type.REMOVED -> {
-                            val fave = change.document.toObject(Fave::class.java)
+                            val fave = change.document.toObject(FaveModel::class.java)
                             favesAdapter.removeFave(fave)
                         }
 
@@ -125,26 +120,19 @@ class FavesFragment : BaseFragment() {
         }
     }
 
-    private val favesCallback = object : FavesCallback {
-        override fun onFaveClick(view: RoundedImageView, meme: Fave, longClick: Boolean) {
-            if (longClick) handleLongClick(meme.id!!)
-            else handleClick(meme.imageUrl!!, (view.drawable as RoundedDrawable).sourceBitmap)
-        }
-    }
-
-    private fun handleClick(imageUrl: String, image: Bitmap) {
+    override fun onItemClick(fave: FaveModel, image: Bitmap) {
         AppUtils.saveTemporaryImage(activity!!, image)
 
         val i = Intent(activity, ViewMemeActivity::class.java)
-        i.putExtra(Constants.PIC_URL, imageUrl)
+        i.putExtra(Constants.PIC_URL, fave.imageUrl)
         startActivity(i)
         AppUtils.fadeIn(activity!!)
     }
 
-    private fun handleLongClick(faveId: String) {
+    override fun onLongItemClick(fave: FaveModel) {
         activity!!.alert("Remove meme from favorites?"){
             positiveButton("REMOVE") {
-                removeFave(faveId)
+                removeFave(fave.id!!)
             }
             negativeButton("CANCEL") {}
         }.show()
@@ -155,7 +143,7 @@ class FavesFragment : BaseFragment() {
 
         getFirestore().runTransaction {
 
-            val meme =  it[docRef].toObject(Meme::class.java)
+            val meme =  it[docRef].toObject(MemeModel::class.java)
             val faves = meme!!.faves
 
             faves.remove(getUid())

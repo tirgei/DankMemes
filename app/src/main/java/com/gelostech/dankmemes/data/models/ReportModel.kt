@@ -1,6 +1,6 @@
 package com.gelostech.dankmemes.data.models
 
-data class Report(
+data class ReportModel(
         var id: String? = null,
         var memeId: String? = null,
         var memeUrl: String? = null,

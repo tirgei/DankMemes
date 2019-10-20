@@ -1,180 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<layout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/tools">
-
-    <data>
-        <import type="com.gelostech.dankmemes.R"/>
-
-        <variable
-            name="meme"
-            type="com.gelostech.dankmemes.data.models.Meme" />
-
-        <variable
-            name="callback"
-            type="com.gelostech.dankmemes.ui.callbacks.MemesCallback" />
-
-        <variable
-            name="timeFormatter"
-            type="com.gelostech.dankmemes.utils.TimeFormatter" />
-    </data>
+    android:animateLayoutChanges="true"
+    android:padding="10dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        android:padding="10dp"
-        android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}">
+        android:id="@+id/memeTop"
+        android:layout_marginTop="5dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/memeTop"
-            android:layout_marginTop="5dp">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/memeIcon"
+            android:layout_width="@dimen/notif_icon"
+            android:layout_height="@dimen/notif_icon"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/person"/>
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/memeIcon"
-                android:layout_width="@dimen/notif_icon"
-                android:layout_height="@dimen/notif_icon"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:src="@drawable/person"
-                bind:image="@{meme.memePosterAvatar}"
-                bind:placeholder="@{R.drawable.person}"
-                android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"/>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:layout_toEndOf="@+id/memeIcon"
-                android:layout_toStartOf="@id/memeMore"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_centerVertical="true">
-
-                <TextView
-                    android:id="@+id/memeUser"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/feed_user"
-                    android:textStyle="bold"
-                    android:textColor="@color/textGray"
-                    tools:text="Vincent Tirgei"
-                    bind:text="@{meme.memePoster}"
-                    android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"/>
-
-                <TextView
-                    android:id="@+id/memeTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/timeColor"
-                    android:textSize="@dimen/notif_time"
-                    android:layout_marginTop="1dp"
-                    tools:text="3 minutes ago"
-                    bind:text="@{timeFormatter.getTimeStamp(safeUnbox(meme.time))}"/>
-
-            </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/memeMore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="2dp"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/more_options"
-                android:layout_centerVertical="true"
-                android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"/>
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/memeCaption"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="5"
-            android:ellipsize="end"
-            android:layout_below="@id/memeTop"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/textGray"
-            android:textSize="@dimen/feed_user"
-            tools:text="Do y'all agree with this?"
-            bind:visibility="@{meme.caption != null &amp;&amp; meme.caption != `` &amp;&amp; meme.caption != ` `}"
-            android:text="@{meme.caption}"/>
-
-        <com.makeramen.roundedimageview.RoundedImageView
-            android:id="@+id/memeImage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/memeCaption"
-            android:layout_marginTop="10dp"
-            android:contentDescription="@string/image"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true"
-            app:riv_corner_radius="2dp"
-            bind:image="@{meme.imageUrl}"
-            bind:placeholder="@{R.drawable.loading}"
-            bind:thumbnail="@{meme.thumbnail}"
-            android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/memeImage"
-            android:layout_marginTop="15dp"
-            android:animateLayoutChanges="true"
-            android:layout_marginBottom="5dp">
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:layout_toEndOf="@+id/memeIcon"
+            android:layout_toStartOf="@id/memeMore"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true">
 
             <TextView
-                android:id="@+id/memeLike"
+                android:id="@+id/memeUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:drawablePadding="5dp"
-                android:textSize="12sp"
-                android:gravity="center_vertical"
-                tools:text="2 likes"
-                bind:likeStatus="@{meme.likes}"
-                android:text="@{(meme.likesCount > 0 ? meme.likesCount + ` ` : ``) + (meme.likesCount > 1 ? `likes` : `like`)}"
-                android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"/>
+                android:textSize="@dimen/feed_user"
+                android:textStyle="bold"
+                android:textColor="@color/textGray"
+                tools:text="Vincent Tirgei"/>
 
             <TextView
-                android:id="@+id/memeComment"
+                android:id="@+id/memeTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_toEndOf="@id/memeLike"
-                android:layout_centerVertical="true"
-                android:drawablePadding="5dp"
-                android:textSize="12sp"
-                android:gravity="center_vertical"
-                tools:text="34 comments"
-                android:text="@{(meme.commentsCount > 0 ? meme.commentsCount + ` ` : ``) + (meme.commentsCount > 1 ? `comments` : `comment`)}"
-                android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"/>
+                android:textColor="@color/timeColor"
+                android:textSize="@dimen/notif_time"
+                android:layout_marginTop="1dp"
+                tools:text="3 minutes ago"/>
 
-            <ImageButton
-                android:id="@+id/memeFave"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="15dp"
-                android:background="@android:color/transparent"
-                android:layout_centerVertical="true"
-                android:contentDescription="@string/fave"
-                bind:faveStatus="@{meme.faves}"
-                android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"/>
+        </LinearLayout>
 
-        </RelativeLayout>
+        <ImageButton
+            android:id="@+id/memeMore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="2dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/more_options"
+            android:layout_centerVertical="true"/>
 
     </RelativeLayout>
 
-</layout>
+    <TextView
+        android:id="@+id/memeCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="5"
+        android:ellipsize="end"
+        android:layout_below="@id/memeTop"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/textGray"
+        android:textSize="@dimen/feed_user"
+        tools:text="Do y'all agree with this?"/>
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/memeImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/memeCaption"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/image"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        app:riv_corner_radius="2dp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/memeImage"
+        android:layout_marginTop="15dp"
+        android:animateLayoutChanges="true"
+        android:layout_marginBottom="5dp">
+
+        <TextView
+            android:id="@+id/memeLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:drawablePadding="5dp"
+            android:textSize="12sp"
+            android:gravity="center_vertical"
+            tools:text="2 likes"/>
+
+        <TextView
+            android:id="@+id/memeComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@id/memeLike"
+            android:layout_centerVertical="true"
+            android:drawablePadding="5dp"
+            android:textSize="12sp"
+            android:gravity="center_vertical"
+            tools:text="34 comments"/>
+
+        <ImageButton
+            android:id="@+id/memeFave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15dp"
+            android:background="@android:color/transparent"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/fave"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -18,7 +18,7 @@ import com.gelostech.dankmemes.utils.AppUtils.drawableToBitmap
 import com.gelostech.dankmemes.utils.AppUtils.setDrawable
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.User
+import com.gelostech.dankmemes.data.models.UserModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.PreferenceHelper.set
 import com.gelostech.dankmemes.utils.TimeFormatter
@@ -184,7 +184,7 @@ class LoginFragment : BaseFragment() {
 
             override fun onDataChange(p0: DataSnapshot) {
                 loginButton.doneLoadingAnimation(AppUtils.getColor(activity!!, R.color.pink), signupSuccessful)
-                val userObject = p0.getValue(User::class.java)
+                val userObject = p0.getValue(UserModel::class.java)
 
                 prefs[Constants.USERNAME] = userObject!!.userName
                 prefs[Constants.EMAIL] = userObject.userEmail
@@ -250,7 +250,7 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun createUser(user: FirebaseUser) {
-        val newUser = User()
+        val newUser = UserModel()
         newUser.userName = user.displayName
         newUser.userEmail = user.email
         newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())

@@ -16,9 +16,8 @@ import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.ui.adapters.CommentAdapter
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.Comment
-import com.gelostech.dankmemes.data.models.Meme
-import com.gelostech.dankmemes.ui.callbacks.CommentsCallback
+import com.gelostech.dankmemes.data.models.CommentModel
+import com.gelostech.dankmemes.data.models.MemeModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import com.google.firebase.database.*
@@ -29,7 +28,7 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 import timber.log.Timber
 
-class CommentActivity : BaseActivity() {
+class CommentActivity : BaseActivity(), CommentAdapter.OnItemClickListener {
     private lateinit var commentAdapter: CommentAdapter
     private lateinit var memeId: String
     private lateinit var commentsQuery: Query
@@ -53,21 +52,17 @@ class CommentActivity : BaseActivity() {
 
     private fun initViews() {
         setSupportActionBar(commentToolbar)
-        supportActionBar?.apply {
-            setDisplayShowHomeEnabled(true)
-            setDisplayHomeAsUpEnabled(true)
-            title = "Comments"
-        }
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Comments"
+
         sendComment.setImageDrawable(IconicsDrawable(this).icon(FontAwesome.Icon.faw_paper_plane).color(ContextCompat.getColor(this, R.color.colorAccent)).sizeDp(22))
 
-        commentAdapter = CommentAdapter(commentsCallback)
-
-        commentsRv.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(this@CommentActivity)
-            itemAnimator = DefaultItemAnimator()
-            adapter = commentAdapter
-        }
+        commentsRv.setHasFixedSize(true)
+        commentsRv.layoutManager = LinearLayoutManager(this)
+        commentsRv.itemAnimator = DefaultItemAnimator()
+        commentAdapter = CommentAdapter( this)
+        commentsRv.adapter = commentAdapter
 
         sendComment.setOnClickListener { addComment() }
     }
@@ -103,12 +98,12 @@ class CommentActivity : BaseActivity() {
         }
 
         override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-            val comment = p0.getValue(Comment::class.java)
+            val comment = p0.getValue(CommentModel::class.java)
             commentAdapter.addComment(comment!!)
         }
 
         override fun onChildRemoved(p0: DataSnapshot) {
-            val comment = p0.getValue(Comment::class.java)
+            val comment = p0.getValue(CommentModel::class.java)
             commentAdapter.removeComment(comment!!)
         }
     }
@@ -122,7 +117,7 @@ class CommentActivity : BaseActivity() {
         val id = getDatabaseReference().child("comments").push().key
         val comment = commentET.text.toString().trim()
 
-        val commentObject = Comment()
+        val commentObject = CommentModel()
         commentObject.commentKey = id
         commentObject.authorId = getUid()
         commentObject.userName = prefs[Constants.USERNAME]
@@ -149,25 +144,20 @@ class CommentActivity : BaseActivity() {
         return true
     }
 
-    private val commentsCallback = object : CommentsCallback {
-        override fun onCommentClicked(view: View, comment: Comment, longClick: Boolean) {
-            if (longClick) handleLongClick(comment)
-            else {
-                if (view.id == R.id.commentIcon) handleClick(comment)
+    override fun onItemClick(comment: CommentModel, viewId: Int) {
+        when(viewId) {
+            0 -> {
+                if (comment.authorId != getUid()) {
+                    val i = Intent(this, ProfileActivity::class.java)
+                    i.putExtra("userId", comment.authorId)
+                    startActivity(i)
+                    overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+                }
             }
         }
     }
 
-    private fun handleClick (comment: Comment) {
-        if (comment.authorId != getUid()) {
-            val i = Intent(this, ProfileActivity::class.java)
-            i.putExtra("userId", comment.authorId)
-            startActivity(i)
-            overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-        }
-    }
-
-    private fun handleLongClick (comment: Comment) {
+    override fun onLongItemClick(comment: CommentModel) {
         if (comment.authorId == getUid()) {
             alert {
                 message = "Remove this comment?"
@@ -193,7 +183,7 @@ class CommentActivity : BaseActivity() {
 
         getFirestore().runTransaction {
 
-            val meme =  it[docRef].toObject(Meme::class.java)
+            val meme =  it[docRef].toObject(MemeModel::class.java)
             var comments = meme!!.commentsCount
 
             if (add) {

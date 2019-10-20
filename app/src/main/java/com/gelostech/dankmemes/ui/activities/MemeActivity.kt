@@ -7,7 +7,7 @@ import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.Meme
+import com.gelostech.dankmemes.data.models.MemeModel
 import com.gelostech.dankmemes.utils.*
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
@@ -42,10 +42,10 @@ class MemeActivity : BaseActivity() {
             }
 
             if (documentSnapshot != null && documentSnapshot.exists()) {
-                val meme = documentSnapshot.toObject(Meme::class.java)!!
+                val meme = documentSnapshot.toObject(MemeModel::class.java)!!
 
                 with(meme) {
-                    memeIcon.load(memePosterAvatar!!, R.drawable.person)
+                    memeIcon.loadUrl(memePosterAvatar!!)
                     memeUser.text = memePoster
                     memeTime.text = TimeFormatter().getTimeStamp(time!!)
 
@@ -57,9 +57,9 @@ class MemeActivity : BaseActivity() {
                     }
 
                     if (thumbnail.isNullOrEmpty()) {
-                        memeImage.load(imageUrl!!, R.drawable.loading)
+                        memeImage.loadUrl(imageUrl!!)
                     } else {
-                        memeImage.load(imageUrl!!, R.drawable.loading, thumbnail!!)
+                        memeImage.loadUrl(imageUrl!!, thumbnail!!)
                     }
 
                     comments(commentsCount)

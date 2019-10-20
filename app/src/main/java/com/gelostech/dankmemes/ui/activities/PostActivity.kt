@@ -13,7 +13,7 @@ import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.Meme
+import com.gelostech.dankmemes.data.models.MemeModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
@@ -152,7 +152,7 @@ class PostActivity : BaseActivity(), View.OnClickListener {
         val id = getFirestore().collection(Constants.MEMES).document().id
 
         // Create new meme object
-        val meme = Meme()
+        val meme = MemeModel()
         meme.id = id
         meme.caption = postCaption.text.toString().trim()
         meme.likesCount = 0

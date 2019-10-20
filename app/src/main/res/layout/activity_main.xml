@@ -34,7 +34,7 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <com.gelostech.nonswipableviewpager.NonSwipeableViewPager
+    <com.gelostech.dankmemes.utils.NonSwipeableViewPager
         android:id="@+id/mainViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

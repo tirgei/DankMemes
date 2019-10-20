@@ -1,80 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="5dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:id="@+id/commentRoot">
 
-    <data>
-        <import type="com.gelostech.dankmemes.R"/>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/commentIcon"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/person"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"/>
 
-        <variable
-            name="comment"
-            type="com.gelostech.dankmemes.data.models.Comment" />
-
-        <variable
-            name="callback"
-            type="com.gelostech.dankmemes.ui.callbacks.CommentsCallback" />
-
-        <variable
-            name="timeFormatter"
-            type="com.gelostech.dankmemes.utils.TimeFormatter" />
-    </data>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:id="@+id/commentRoot"
-        bind:comment="@{comment}"
-        bind:callback="@{callback}">
+        android:orientation="vertical"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@id/commentIcon"
+        android:layout_toRightOf="@id/commentIcon">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/commentIcon"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/person"
-            android:layout_alignParentStart="true"
-            bind:image="@{comment.userAvatar}"
-            bind:placeholder="@{R.drawable.person}"
-            android:onClick="@{(v) -> callback.onCommentClicked(v, comment, false)}"/>
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/commentUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="10dp"
-            android:layout_toEndOf="@id/commentIcon">
+            android:textSize="@dimen/feed_user"
+            android:textColor="@color/textGray"/>
 
-            <TextView
-                android:id="@+id/commentUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/feed_user"
-                android:textColor="@color/textGray"
-                android:text="@{comment.userName}"/>
+        <TextView
+            android:id="@+id/commentText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/secondaryText"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:textSize="@dimen/album_title"/>
 
-            <TextView
-                android:id="@+id/commentText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/secondaryText"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:textSize="@dimen/album_title"
-                android:text="@{comment.comment}"/>
+        <TextView
+            android:id="@+id/commentTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:textColor="@color/secondaryText"/>
 
-            <TextView
-                android:id="@+id/commentTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="11sp"
-                android:textColor="@color/secondaryText"
-                android:text="@{timeFormatter.getTimeStamp(safeUnbox(comment.timeStamp))}"/>
+    </LinearLayout>
 
-        </LinearLayout>
 
-    </RelativeLayout>
-</layout>
-
+</RelativeLayout>
