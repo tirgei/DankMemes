@@ -40,5 +40,8 @@ object Constants {
     const val REPORTS = "reports"
     const val USERS = "users"
     const val AVATARS = "avatars"
+    const val USER_NAME = "userName"
+    const val USER_BIO = "userBio"
+    const val USER_AVATAR = "userAvatar"
 
 }

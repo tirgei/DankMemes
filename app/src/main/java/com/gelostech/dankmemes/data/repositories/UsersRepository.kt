@@ -130,4 +130,33 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
         })
     }
 
+    fun updateUserAvatar(userId: String, avatarUri: Uri, onSuccess: (String) -> Unit) {
+        val storageDb = storageReference.child(Constants.AVATARS).child(userId)
+
+        val uploadTask = storageDb.putFile(avatarUri)
+        uploadTask.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                throw task.exception!!
+            }
+
+            // Continue with the task to get the download URL
+            storageDb.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                onSuccess(task.result.toString())
+            } else {
+
+            }
+        }
+    }
+
+    fun updateUserDetails(userId: String, username: String, bio: String, avatar: String?, updated: (Boolean) -> Unit) {
+        val userReference = db.child(userId)
+        userReference.child(Constants.USER_NAME).setValue(username)
+        userReference.child(Constants.USER_BIO).setValue(bio)
+        avatar?.let { userReference.child(Constants.USER_AVATAR).setValue(it) }
+
+        updated(true)
+    }
+
 }
