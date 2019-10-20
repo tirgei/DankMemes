@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
@@ -17,13 +18,14 @@ import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.FaveModel
-import com.gelostech.dankmemes.data.models.MemeModel
-import com.gelostech.dankmemes.data.models.ReportModel
-import com.gelostech.dankmemes.data.models.UserModel
+import com.gelostech.dankmemes.data.models.Fave
+import com.gelostech.dankmemes.data.models.Meme
+import com.gelostech.dankmemes.data.models.Report
+import com.gelostech.dankmemes.data.models.User
+import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.utils.RecyclerFormatter
 import com.gelostech.dankmemes.utils.hideView
-import com.gelostech.dankmemes.utils.loadUrl
+import com.gelostech.dankmemes.utils.load
 import com.gelostech.dankmemes.utils.showView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -31,12 +33,14 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
+import com.makeramen.roundedimageview.RoundedDrawable
+import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 import timber.log.Timber
 
-class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
+class ProfileActivity : BaseActivity() {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var image: Bitmap
     private lateinit var profileRef: DatabaseReference
@@ -71,15 +75,18 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = getString(R.string.profile)
 
-        viewProfileRv.setHasFixedSize(true)
-        viewProfileRv.layoutManager = LinearLayoutManager(this)
-        viewProfileRv.addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(this))
-        viewProfileRv.itemAnimator = DefaultItemAnimator()
-        (viewProfileRv.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
-        viewProfileHeader.attachTo(viewProfileRv)
+        memesAdapter = MemesAdapter(memesCallback)
 
-        memesAdapter = MemesAdapter(this, this)
-        viewProfileRv.adapter = memesAdapter
+        viewProfileRv.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(this@ProfileActivity)
+            addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(this@ProfileActivity))
+            itemAnimator = DefaultItemAnimator()
+            (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
+            loadMoreFooterView as RelativeLayout
+            adapter = memesAdapter
+        }
+        viewProfileHeader.attachTo(viewProfileRv)
 
         loadMoreFooter = viewProfileRv.loadMoreFooterView as RelativeLayout
         viewProfileRv.setOnLoadMoreListener {
@@ -125,21 +132,21 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
 
                     when(change.type) {
                         DocumentChange.Type.ADDED -> {
-                            val meme = change.document.toObject(MemeModel::class.java)
+                            val meme = change.document.toObject(Meme::class.java)
                             memesAdapter.addMeme(meme)
 
                             Timber.e("Changed document: ADDED")
                         }
 
                         DocumentChange.Type.MODIFIED -> {
-                            val meme = change.document.toObject(MemeModel::class.java)
+                            val meme = change.document.toObject(Meme::class.java)
                             memesAdapter.updateMeme(meme)
 
                             Timber.e("Changed document: MODIFIED")
                         }
 
                         DocumentChange.Type.REMOVED -> {
-                            val meme = change.document.toObject(MemeModel::class.java)
+                            val meme = change.document.toObject(Meme::class.java)
                             memesAdapter.removeMeme(meme)
                         }
 
@@ -162,12 +169,12 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         }
 
         override fun onDataChange(p0: DataSnapshot) {
-            val user = p0.getValue(UserModel::class.java)!!
+            val user = p0.getValue(User::class.java)!!
             name = user.userName!!
 
             viewProfileName.text = user.userName
             viewProfileBio.text = user.userBio
-            viewProfileImage.loadUrl(user.userAvatar!!)
+            viewProfileImage.load(user.userAvatar!!, R.drawable.person)
 
             viewProfileImage.setOnClickListener {
                 temporarilySaveImage()
@@ -179,18 +186,27 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         }
     }
 
-    override fun onItemClick(meme: MemeModel, viewID: Int, image: Bitmap?) {
-        when(viewID) {
-            0 -> likePost(meme.id!!)
-            1 -> showBottomSheet(meme, image!!)
-            2 -> favePost(meme.id!!)
-            3 -> showComments(meme)
-            4 -> showMeme(meme, image!!)
+    private val memesCallback = object : MemesCallback {
+        override fun onMemeClicked(view: View, meme: Meme) {
+            val memeId = meme.id!!
 
+            // Get bitmap of shown meme
+            val imageBitmap = when(view) {
+                is RoundedImageView -> (view.drawable as RoundedDrawable).sourceBitmap
+                else -> null
+            }
+
+            when(view.id) {
+                R.id.memeMore -> showBottomSheet(meme, imageBitmap!!)
+                R.id.memeLike -> likePost(memeId)
+                R.id.memeComment -> showComments(memeId)
+                R.id.memeFave -> favePost(memeId)
+                else -> showMeme(meme, imageBitmap!!)
+            }
         }
     }
 
-    private fun showMeme(meme: MemeModel, image: Bitmap) {
+    private fun showMeme(meme: Meme, image: Bitmap) {
         AppUtils.saveTemporaryImage(this, image)
 
         val i = Intent(this, ViewMemeActivity::class.java)
@@ -200,7 +216,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         AppUtils.fadeIn(this)
     }
 
-    private fun showBottomSheet(meme: MemeModel, image: Bitmap) {
+    private fun showBottomSheet(meme: Meme, image: Bitmap) {
         bs = BottomSheet.Builder(this).sheet(R.menu.main_bottomsheet)
 
         bs.listener { _, which ->
@@ -219,9 +235,9 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
 
     }
 
-    private fun showComments(meme: MemeModel) {
+    private fun showComments(memeId: String) {
         val i = Intent(this, CommentActivity::class.java)
-        i.putExtra("memeId", meme.id)
+        i.putExtra("memeId", memeId)
         startActivity(i)
         overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
     }
@@ -231,7 +247,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
 
         getFirestore().runTransaction {
 
-            val meme =  it[docRef].toObject(MemeModel::class.java)
+            val meme =  it[docRef].toObject(Meme::class.java)
             val likes = meme!!.likes
             var likesCount = meme.likesCount
 
@@ -260,7 +276,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
 
         getFirestore().runTransaction {
 
-            val meme =  it[docRef].toObject(MemeModel::class.java)
+            val meme =  it[docRef].toObject(Meme::class.java)
             val faves = meme!!.faves
 
             if (faves.containsKey(getUid())) {
@@ -270,7 +286,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
             } else  {
                 faves[getUid()] = true
 
-                val fave = FaveModel()
+                val fave = Fave()
                 fave.id = meme.id!!
                 fave.imageUrl = meme.imageUrl!!
                 fave.time = meme.time!!
@@ -288,7 +304,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
         }
     }
 
-    private fun showReportDialog(meme: MemeModel) {
+    private fun showReportDialog(meme: Meme) {
         val editText = EditText(this)
         val layout = FrameLayout(this)
         layout.setPaddingRelative(45,15,45,0)
@@ -306,7 +322,7 @@ class ProfileActivity : BaseActivity(), MemesAdapter.OnItemClickListener {
                 val key = getDatabaseReference().child("reports").push().key
                 val reason = editText.text.toString().trim()
 
-                val report = ReportModel()
+                val report = Report()
                 report.id = key
                 report.memeId = meme.id
                 report.memePosterId = meme.memePosterID

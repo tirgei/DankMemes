@@ -1,32 +1,27 @@
 package com.gelostech.dankmemes.ui.adapters
 
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.utils.AppUtils
-import com.gelostech.dankmemes.data.models.CommentModel
+import com.gelostech.dankmemes.data.models.Comment
+import com.gelostech.dankmemes.databinding.ItemCommentBinding
+import com.gelostech.dankmemes.ui.callbacks.CommentsCallback
 import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.inflate
-import com.gelostech.dankmemes.utils.loadUrl
-import com.google.firebase.storage.FirebaseStorage
-import kotlinx.android.synthetic.main.item_comment.view.*
-import java.lang.ref.WeakReference
 
-class CommentAdapter(onItemClickListener: OnItemClickListener): RecyclerView.Adapter<CommentAdapter.CommentHolder>() {
-    private val comments = mutableListOf<CommentModel>()
-    private val onItemClickListener = onItemClickListener;
+class CommentAdapter(val callback: CommentsCallback): RecyclerView.Adapter<CommentAdapter.CommentHolder>() {
+    private val comments = mutableListOf<Comment>()
 
-    fun addComment(comment: CommentModel) {
+    fun addComment(comment: Comment) {
         comments.add(comment)
         notifyItemInserted(comments.size - 1)
     }
 
-    fun removeComment(comment: CommentModel) {
+    fun removeComment(comment: Comment) {
         var indexToRemove: Int = -1
 
         for ((index, commentModel) in comments.withIndex()) {
-            if (comment.commentKey == commentModel.commentKey) {
+            if (commentModel.equals(comment)) {
                 indexToRemove = index
             }
         }
@@ -36,76 +31,25 @@ class CommentAdapter(onItemClickListener: OnItemClickListener): RecyclerView.Ada
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentHolder {
-        return CommentHolder(parent.inflate(R.layout.item_comment), onItemClickListener)
+        return CommentHolder(parent.inflate(R.layout.item_comment), callback)
     }
 
     override fun getItemCount(): Int = comments.size
 
     override fun onBindViewHolder(holder: CommentHolder, position: Int) {
-        holder.bindView(comments[position])
+        holder.bind(comments[position])
     }
 
-    class CommentHolder(itemView: View, onItemClickListener: OnItemClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
-        private val commentRoot = itemView.commentRoot
-        private val commentIcon = itemView.commentIcon
-        private val commentUser = itemView.commentUser
-        private val commentText = itemView.commentText
-        private val commentTime = itemView.commentTime
-        private val weakReference = WeakReference<OnItemClickListener>(onItemClickListener)
-        private lateinit var commentObject: CommentModel
+    class CommentHolder(private val binding: ItemCommentBinding, private val callback: CommentsCallback):
+            RecyclerView.ViewHolder(binding.root) {
 
-        init {
-            commentIcon.setOnClickListener(this)
-            commentRoot.setOnLongClickListener(this)
+        fun bind(comment: Comment) {
+            binding.comment = comment
+            binding.callback = callback
+            binding.timeFormatter = TimeFormatter()
         }
 
-        fun bindView(commentObject: CommentModel) {
-            this.commentObject = commentObject
-
-            with(commentObject) {
-                //loadIcon(commentObject)
-                if (userAvatar.isNullOrEmpty()) {
-                    loadIcon(commentObject)
-                } else {
-                    commentIcon.loadUrl(userAvatar!!)
-                }
-                commentUser.text = userName
-                commentText.text = comment
-                commentTime.text = TimeFormatter().getTimeStamp(timeStamp!!)
-            }
-        }
-
-        private fun loadIcon(comment: CommentModel) {
-            if (AppUtils.getBitmap(comment.authorId!!) == null)
-                commentIcon.loadUrl(R.drawable.person)
-            else
-                commentIcon.setImageBitmap(AppUtils.getBitmap(comment.authorId!!))
-
-            val avatarRef = FirebaseStorage.getInstance().reference.child("avatars").child(comment.authorId!!)
-            avatarRef.downloadUrl.addOnSuccessListener {
-                AppUtils.cacheBitmap(it.toString(), comment.authorId!!)
-                commentIcon.loadUrl(it.toString())
-            }
-        }
-
-        override fun onClick(v: View?) {
-            when(v?.id) {
-                commentIcon.id -> weakReference.get()!!.onItemClick(commentObject, 0)
-            }
-        }
-
-        override fun onLongClick(v: View?): Boolean {
-            when(v?.id) {
-                commentRoot.id -> weakReference.get()!!.onLongItemClick(commentObject)
-            }
-
-            return true
-        }
     }
 
-    interface OnItemClickListener{
-        fun onItemClick(comment: CommentModel, viewId: Int)
-        fun onLongItemClick(comment: CommentModel)
-    }
 
 }

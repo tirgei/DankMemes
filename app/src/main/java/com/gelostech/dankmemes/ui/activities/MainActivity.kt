@@ -32,6 +32,7 @@ import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.ui.fragments.*
 import com.gelostech.dankmemes.utils.*
+import com.gelostech.pageradapter.PagerAdapter
 import com.google.firebase.messaging.FirebaseMessaging
 import com.wooplr.spotlight.SpotlightView
 import timber.log.Timber
@@ -112,7 +113,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private fun setupViewPager() {
         val adapter = PagerAdapter(supportFragmentManager, this)
 
-        adapter.addAllFrags(allFragment, favesFragment, notifFragment, profileFragment)
+        adapter.addAllFragments(allFragment, favesFragment, notifFragment, profileFragment)
         adapter.addAllTitles(HOME, FAVES, NOTIFICATIONS, PROFILE)
 
         mainViewPager.adapter = adapter

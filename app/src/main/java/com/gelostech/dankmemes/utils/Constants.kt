@@ -13,9 +13,6 @@ object Constants {
     const val NOTIFICATION_ID = 100
     const val NOTIFICATION_ID_BIG_IMAGE = 101
 
-    // Feed types
-    const val FEED_TYPE_MEME_IMAGE = 0
-
     // Prefs constants
     const val EMAIL = "email"
     const val USERNAME = "username"
@@ -26,6 +23,7 @@ object Constants {
     const val MEME_ID = "meme_id"
 
     // Firebase
+    const val MEMES_COUNT = 25L
     const val MEMES = "memes"
     const val FAVORITES = "favorites"
     const val USER_FAVES = "user-favorites"
@@ -39,5 +37,6 @@ object Constants {
     const val POSTER_ID = "memePosterID"
     const val METADATA = "metadata"
     const val LAST_ACTIVE = "last-active"
+    const val REPORTS = "reports"
 
 }

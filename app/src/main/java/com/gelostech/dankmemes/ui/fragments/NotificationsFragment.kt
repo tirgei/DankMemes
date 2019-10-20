@@ -16,7 +16,7 @@ import com.gelostech.dankmemes.ui.callbacks.NotificationsCallback
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.NotificationModel
+import com.gelostech.dankmemes.data.models.Notification
 import com.gelostech.dankmemes.utils.RecyclerFormatter
 import com.gelostech.dankmemes.utils.hideView
 import com.gelostech.dankmemes.utils.showView
@@ -102,17 +102,17 @@ class NotificationsFragment : BaseFragment(), NotificationsCallback {
                     when(change.type) {
 
                         DocumentChange.Type.ADDED -> {
-                            val notif = change.document.toObject(NotificationModel::class.java)
+                            val notif = change.document.toObject(Notification::class.java)
                             adapter.addNotification(notif)
                         }
 
                         DocumentChange.Type.MODIFIED -> {
-                            val notif = change.document.toObject(NotificationModel::class.java)
+                            val notif = change.document.toObject(Notification::class.java)
                             adapter.updateNotif(notif)
                         }
 
                         DocumentChange.Type.REMOVED -> {
-                            val notif = change.document.toObject(NotificationModel::class.java)
+                            val notif = change.document.toObject(Notification::class.java)
                             adapter.removeNotif(notif)
                         }
 
@@ -125,7 +125,7 @@ class NotificationsFragment : BaseFragment(), NotificationsCallback {
 
     }
 
-    override fun onNotificationClicked(view: View, notification: NotificationModel) {
+    override fun onNotificationClicked(view: View, notification: Notification) {
         when(view.id) {
             R.id.avatar -> {
                 val i = Intent(activity, ProfileActivity::class.java)
@@ -133,29 +133,6 @@ class NotificationsFragment : BaseFragment(), NotificationsCallback {
                 startActivity(i)
                 AppUtils.animateEnterRight(activity!!)
             }
-
-//            R.id.root -> {
-//                if (notification.type == 1) {
-//                    val i = Intent(activity, CommentActivity::class.java)
-//                    i.putExtra("memeId", notification.memeId)
-//                    startActivity(i)
-//                    AppUtils.animateEnterRight(activity!!)
-//
-//                } else {
-//                    val i = Intent(activity, MemeActivity::class.java)
-//                    i.putExtra(Constants.MEME_ID, notification.memeId)
-//                    startActivity(i)
-//                    AppUtils.animateEnterRight(activity!!)
-//                }
-//            }
-//
-//            R.id.meme -> {
-//                val i = Intent(activity, MemeActivity::class.java)
-//                i.putExtra(Constants.MEME_ID, notification.memeId)
-//                startActivity(i)
-//                AppUtils.animateEnterRight(activity!!)
-//            }
-
         }
     }
 

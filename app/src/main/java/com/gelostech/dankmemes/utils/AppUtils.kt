@@ -25,6 +25,9 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.gelostech.dankmemes.R
 import com.google.firebase.storage.FirebaseStorage
 import com.mikepenz.iconics.IconicsDrawable
@@ -51,6 +54,14 @@ object AppUtils {
      */
     fun setDrawable(context: Context, icon: IIcon, color: Int, size: Int): Drawable {
         return IconicsDrawable(context).icon(icon).color(ContextCompat.getColor(context, color)).sizeDp(size)
+    }
+
+    fun loadBitmapFromUrl(context: Context, url: String): Bitmap {
+        return Glide.with(context)
+                .asBitmap()
+                .load(url)
+                .submit()
+                .get()
     }
 
     fun getColor(context: Context, color: Int): Int {
