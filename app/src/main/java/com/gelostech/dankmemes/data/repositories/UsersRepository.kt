@@ -1,6 +1,7 @@
 package com.gelostech.dankmemes.data.repositories
 
 import android.net.Uri
+import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.utils.Constants
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -18,46 +19,46 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
 
     private val db = firebaseDatabase.child(Constants.USERS)
 
-    fun linkAnonymousUserToCredentials(email: String, password: String, onSuccess: (FirebaseUser) -> Unit) {
+    fun linkAnonymousUserToCredentials(email: String, password: String, onResult: (Result<FirebaseUser>) -> Unit) {
         val credential = EmailAuthProvider.getCredential(email, password)
         val authResult = firebaseAuth.currentUser!!.linkWithCredential(credential)
-        handleRegisterUser(authResult) { firebaseUser -> onSuccess(firebaseUser) }
+        handleRegisterUser(authResult) { result -> onResult(result) }
     }
 
-    fun registerUser(email: String, password: String, onSuccess: (FirebaseUser) -> Unit) {
+    fun registerUser(email: String, password: String, onResult: (Result<FirebaseUser>) -> Unit) {
         val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password)
-        handleRegisterUser(authResult) { firebaseUser -> onSuccess(firebaseUser) }
+        handleRegisterUser(authResult) { result -> onResult(result) }
     }
 
-    private fun handleRegisterUser(authResult: Task<AuthResult>, onSuccess: (FirebaseUser) -> Unit) {
+    private fun handleRegisterUser(authResult: Task<AuthResult>, onResult: (Result<FirebaseUser>) -> Unit) {
         authResult.addOnCompleteListener { task ->
             when (task.isSuccessful) {
-                true -> onSuccess(task.result?.user!!)
+                true -> onResult(Result.Success(task.result?.user!!))
 
                 else -> {
                     try {
                         throw task.exception!!
                     } catch (weakPassword: FirebaseAuthWeakPasswordException){
-
+                        onResult(Result.Error("Please enter a stronger password"))
                     } catch (userExists: FirebaseAuthUserCollisionException) {
-
+                        onResult(Result.Error("Account already exists. Please log in"))
                     } catch (malformedEmail: FirebaseAuthInvalidCredentialsException) {
-
+                        onResult(Result.Error("Incorrect email format"))
                     } catch (e: Exception) {
-
+                        onResult(Result.Error("Error signing up. Please try again"))
                     }
                 }
             }
         }
     }
 
-    fun createUserAccount(avatarUri: Uri, user: User, onSuccess: (User) -> Unit) {
+    fun createUserAccount(avatarUri: Uri, user: User, onResult: (Result<User>) -> Unit) {
         val storageDb = storageReference.child(Constants.AVATARS).child(user.userId!!)
 
         val uploadTask = storageDb.putFile(avatarUri)
         uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
-                throw task.exception!!
+                onResult(Result.Error("Error signing up. Please try again"))
             }
 
             // Continue with the task to getBitmap the download URL
@@ -73,36 +74,35 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
                         .child(user.userId!!)
                         .setValue(user)
                         .addOnCompleteListener { createAccountTask ->
-                            if (createAccountTask.isSuccessful) onSuccess(user)
+                            if (createAccountTask.isSuccessful) onResult(Result.Success(user))
+                            else onResult(Result.Error("Error signing up. Please try again"))
                         }
             } else {
-
+                onResult(Result.Error("Error signing up. Please try again"))
             }
         }
     }
 
-    fun loginWithEmailAndPassword(email: String, password: String, onSuccess: (FirebaseUser) -> Unit) {
+    fun loginWithEmailAndPassword(email: String, password: String, onResult: (Result<FirebaseUser>) -> Unit) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        onSuccess(task.result?.user!!)
+                        onResult(Result.Success(task.result?.user!!))
                     } else {
                         try {
                             throw task.exception!!
                         } catch (wrongPassword: FirebaseAuthInvalidCredentialsException) {
-
-
+                            onResult(Result.Error("Email or Password incorrect"))
                         } catch (userNull: FirebaseAuthInvalidUserException) {
-
-
+                            onResult(Result.Error("Account not found. Have you signed up?"))
                         } catch (e: Exception) {
-
+                            onResult(Result.Error("Error signing in. Please try again"))
                         }
                     }
                 }
     }
 
-    fun loginWithGoogle(account: GoogleSignInAccount, onSuccess: (FirebaseUser) -> Unit) {
+    fun loginWithGoogle(account: GoogleSignInAccount, onResult: (Result<FirebaseUser>) -> Unit) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
 
         firebaseAuth.signInWithCredential(credential)
@@ -110,53 +110,55 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
                     if (task.isSuccessful) {
                         val isNew = task.result?.additionalUserInfo?.isNewUser!!
 
-                        onSuccess(task.result?.user!!)
+                        onResult(Result.Success(task.result?.user!!))
 
                     } else {
-
+                        onResult(Result.Error("Error signing in. Please try again"))
                     }
                 }
     }
 
-    fun fetchUserById(userId: String, onSuccess: (User) -> Unit) {
+    fun fetchUserById(userId: String, onResult: (Result<User>) -> Unit) {
         db.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
+                onResult(Result.Error("Error fetching user details"))
             }
 
             override fun onDataChange(p0: DataSnapshot) {
-                onSuccess(p0.getValue(User::class.java)!!)
+                if (p0.exists())
+                    onResult(Result.Success(p0.getValue(User::class.java)!!))
+                else
+                    onResult(Result.Error("Error fetching user details"))
             }
         })
     }
 
-    fun updateUserAvatar(userId: String, avatarUri: Uri, onSuccess: (String) -> Unit) {
+    fun updateUserAvatar(userId: String, avatarUri: Uri, onResult: (Result<String>) -> Unit) {
         val storageDb = storageReference.child(Constants.AVATARS).child(userId)
 
         val uploadTask = storageDb.putFile(avatarUri)
         uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
-                throw task.exception!!
+                onResult(Result.Error("Error updating profile details"))
             }
 
             // Continue with the task to get the download URL
             storageDb.downloadUrl
         }.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                onSuccess(task.result.toString())
-            } else {
-
-            }
+            if (task.isSuccessful)
+                onResult(Result.Success(task.result.toString()))
+            else
+                onResult(Result.Error("Error fetching user details"))
         }
     }
 
-    fun updateUserDetails(userId: String, username: String, bio: String, avatar: String?, updated: (Boolean) -> Unit) {
+    fun updateUserDetails(userId: String, username: String, bio: String, avatar: String?, onResult: (Result<Boolean>) -> Unit) {
         val userReference = db.child(userId)
         userReference.child(Constants.USER_NAME).setValue(username)
         userReference.child(Constants.USER_BIO).setValue(bio)
         avatar?.let { userReference.child(Constants.USER_AVATAR).setValue(it) }
 
-        updated(true)
+        onResult(Result.Success(true))
     }
 
 }

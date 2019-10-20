@@ -1,6 +1,7 @@
 package com.gelostech.dankmemes.data.repositories
 
 import android.net.Uri
+import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
@@ -20,31 +21,39 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
     private val initialQuery = db.orderBy(Constants.TIME, Query.Direction.DESCENDING).limit(Constants.MEMES_COUNT)
     private var nextQuery: Query? = null
 
-    fun fetchMemes(onSuccess: (List<Meme>) -> Unit) {
+    fun fetchMemes(onResult: (Result<List<Meme>>) -> Unit) {
         if (nextQuery != null) {
             nextQuery!!.get()
                     .addOnSuccessListener { querySnapshot ->
-                        onSuccess(handleFetchedData(querySnapshot))
+                        val memes = handleFetchedData(querySnapshot)
+                        onResult(Result.Success(memes))
                     }
+                    .addOnFailureListener { onResult(Result.Error("Error loading memes. Please try again")) }
         } else {
             initialQuery.get()
                     .addOnSuccessListener { querySnapshot ->
-                        onSuccess(handleFetchedData(querySnapshot))
+                        val memes = handleFetchedData(querySnapshot)
+                        onResult(Result.Success(memes))
                     }
+                    .addOnFailureListener { onResult(Result.Error("Error loading memes. Please try again")) }
         }
     }
 
-    fun fetchMemesByUser(userId: String, onSuccess: (List<Meme>) -> Unit) {
+    fun fetchMemesByUser(userId: String, onResult: (Result<List<Meme>>) -> Unit) {
         if (nextQuery != null) {
             nextQuery!!.whereEqualTo(Constants.POSTER_ID, userId).get()
                     .addOnSuccessListener { querySnapshot ->
-                        onSuccess(handleFetchedData(querySnapshot))
+                        val memes = handleFetchedData(querySnapshot)
+                        onResult(Result.Success(memes))
                     }
+                    .addOnFailureListener { onResult(Result.Error("Error loading memes. Please try again")) }
         } else {
             initialQuery.whereEqualTo(Constants.POSTER_ID, userId).get()
                     .addOnSuccessListener { querySnapshot ->
-                        onSuccess(handleFetchedData(querySnapshot))
+                        val memes = handleFetchedData(querySnapshot)
+                        onResult(Result.Success(memes))
                     }
+                    .addOnFailureListener { onResult(Result.Error("Error loading memes. Please try again")) }
         }
     }
 
@@ -57,14 +66,14 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
         }
     }
 
-    fun postMeme(imageUri: Uri, meme: Meme, posted: (Boolean) -> Unit) {
+    fun postMeme(imageUri: Uri, meme: Meme, onResult: (Result<Boolean>) -> Unit) {
         val id = db.document().id
         val storageDb = storageReference.child(Constants.MEMES).child(meme.memePosterID!!).child(id)
 
         val uploadTask = storageDb.putFile(imageUri)
         uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
-                posted(false)
+                onResult(Result.Error("Error posting meme. Please try again"))
             }
 
             // Continue with the task to get the download URL
@@ -79,21 +88,22 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
 
                 db.document(id).set(meme)
                         .addOnCompleteListener { postingTask ->
-                            posted(postingTask.isSuccessful)
+                            onResult(Result.Success(postingTask.isSuccessful))
                         }
 
-            } else posted (false)
+            } else onResult(Result.Error("Error posting meme. Please try again"))
         }
     }
 
-    fun deleteMeme(memeId: String, deleted: (Boolean) -> Unit) {
+    fun deleteMeme(memeId: String, onResult: (Result<Boolean>) -> Unit) {
         db.document(memeId).delete()
                 .addOnCompleteListener { task ->
-                    deleted(task.isSuccessful)
+                    if (task.isSuccessful) onResult(Result.Success(true))
+                    else onResult(Result.Error("Error deleting meme. Please try again"))
                 }
     }
 
-    fun likeMeme(memeId: String, userId: String, liked: (Boolean) -> Unit) {
+    fun likeMeme(memeId: String, userId: String, onResult: (Result<Boolean>) -> Unit) {
         val memeReference = db.document(memeId)
 
         firestoreDatabase.runTransaction {
@@ -114,12 +124,13 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
             it.update(memeReference, Constants.LIKES_COUNT, likesCount)
 
         }.addOnCompleteListener { task ->
-            liked(task.isSuccessful)
+            if (task.isSuccessful) onResult(Result.Success(true))
+            else onResult(Result.Error("Error liking meme. Please try again"))
         }
     }
 
 
-    fun faveMeme(memeId: String, userId: String, faved: (Boolean) -> Unit) {
+    fun faveMeme(memeId: String, userId: String, onResult: (Result<Boolean>) -> Unit) {
         val memeReference = db.document(memeId)
 
         firestoreDatabase.runTransaction {
@@ -153,11 +164,12 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
             it.update(memeReference, Constants.FAVES, faves)
 
         }.addOnCompleteListener { task ->
-            faved(task.isSuccessful)
+            if (task.isSuccessful) onResult(Result.Success(true))
+            else onResult(Result.Error("Error favoring meme. Please try again"))
         }
     }
 
-    fun reportMeme(report: Report, reported: (Boolean) -> Unit) {
+    fun reportMeme(report: Report, onResult: (Result<Boolean>) -> Unit) {
         val reportsDb = firebaseDatabase.child(Constants.REPORTS)
 
         val id = reportsDb.push().key
@@ -165,7 +177,8 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
 
         reportsDb.child(id!!).setValue(report)
                 .addOnCompleteListener { task ->
-                    reported(task.isSuccessful)
+                    if (task.isSuccessful) onResult(Result.Success(true))
+                    else onResult(Result.Error("Error reporting meme. Please try again"))
                 }
     }
 
