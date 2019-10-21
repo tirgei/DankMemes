@@ -27,6 +27,7 @@ import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.utils.MyBounceInterpolator
+import org.jetbrains.anko.longToast
 
 
 open class BaseFragment : Fragment() {
@@ -42,6 +43,11 @@ open class BaseFragment : Fragment() {
     // Toast a message
     fun toast(message: String) {
         activity?.toast(message)
+    }
+
+    // Toast a message
+    fun longToast(message: String) {
+        activity?.longToast(message)
     }
 
     // User hasn't requested storage permission; request them to allow
