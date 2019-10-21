@@ -39,6 +39,11 @@ open class BaseFragment : Fragment() {
 
     fun isConnected(): Boolean = Connectivity.isConnected(activity!!)
 
+    // Toast a message
+    fun toast(message: String) {
+        activity?.toast(message)
+    }
+
     // User hasn't requested storage permission; request them to allow
     fun requestStoragePermission() {
         Dexter.withActivity(activity)
