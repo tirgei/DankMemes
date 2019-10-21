@@ -5,65 +5,77 @@ import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
+import com.gelostech.dankmemes.data.wrappers.ObservableMeme
 import com.gelostech.dankmemes.utils.Constants
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.StorageReference
+import io.reactivex.Observable
+import kotlinx.coroutines.tasks.await
 
 class MemesRepository constructor(private val firestoreDatabase: FirebaseFirestore,
                                   private val firebaseDatabase: DatabaseReference,
-                                  private val storageReference: StorageReference ) {
+                                  private val storageReference: StorageReference) {
 
     private val db = firestoreDatabase.collection(Constants.MEMES)
+    private val memesQuery = db.orderBy(Constants.TIME, Query.Direction.DESCENDING).limit(Constants.MEMES_COUNT)
 
-    private val initialQuery = db.orderBy(Constants.TIME, Query.Direction.DESCENDING).limit(Constants.MEMES_COUNT)
-    private var nextQuery: Query? = null
+    /**
+     * Fetch all memes
+     */
+    suspend fun fetchMemes(loadBefore: String? = null, loadAfter: String? = null): List<ObservableMeme> {
+        var query: Query = memesQuery
 
-    fun fetchMemes(onResult: (Result<List<Meme>>) -> Unit) {
-        if (nextQuery != null) {
-            nextQuery!!.get()
-                    .addOnSuccessListener { querySnapshot ->
-                        val memes = handleFetchedData(querySnapshot)
-                        onResult(Result.Success(memes))
-                    }
-                    .addOnFailureListener { onResult(Result.Error("Error loading memes. Please try again")) }
-        } else {
-            initialQuery.get()
-                    .addOnSuccessListener { querySnapshot ->
-                        val memes = handleFetchedData(querySnapshot)
-                        onResult(Result.Success(memes))
-                    }
-                    .addOnFailureListener { onResult(Result.Error("Error loading memes. Please try again")) }
+        loadBefore?.let {
+            val meme = db.document(it).get().await()
+            query = memesQuery.endBefore(meme)
         }
+
+        loadAfter?.let {
+            val meme = db.document(it).get().await()
+            query = memesQuery.startAfter(meme)
+        }
+
+        return query.get().await().map { ObservableMeme(it.id, getObservableMeme(it.id)) }
     }
 
-    fun fetchMemesByUser(userId: String, onResult: (Result<List<Meme>>) -> Unit) {
-        if (nextQuery != null) {
-            nextQuery!!.whereEqualTo(Constants.POSTER_ID, userId).get()
-                    .addOnSuccessListener { querySnapshot ->
-                        val memes = handleFetchedData(querySnapshot)
-                        onResult(Result.Success(memes))
-                    }
-                    .addOnFailureListener { onResult(Result.Error("Error loading memes. Please try again")) }
-        } else {
-            initialQuery.whereEqualTo(Constants.POSTER_ID, userId).get()
-                    .addOnSuccessListener { querySnapshot ->
-                        val memes = handleFetchedData(querySnapshot)
-                        onResult(Result.Success(memes))
-                    }
-                    .addOnFailureListener { onResult(Result.Error("Error loading memes. Please try again")) }
+    /**
+     * Fetch all memes by user
+     * @param userId - ID of the User
+     */
+    suspend fun fetchMemesByUser(userId: String, loadBefore: String? = null, loadAfter: String? = null): List<ObservableMeme> {
+        var query: Query = memesQuery
+
+        loadBefore?.let {
+            val meme = db.document(it).get().await()
+            query = memesQuery.endBefore(meme)
         }
+
+        loadAfter?.let {
+            val meme = db.document(it).get().await()
+            query = memesQuery.startAfter(meme)
+        }
+
+        return query.whereEqualTo(Constants.POSTER_ID, userId).get().await()
+                .map { ObservableMeme(it.id, getObservableMeme(it.id)) }
     }
 
-    private fun handleFetchedData(querySnapshot: QuerySnapshot): List<Meme> {
-        val lastFetchedMeme = querySnapshot.documents[querySnapshot.size()-1]
-        nextQuery = initialQuery.startAfter(lastFetchedMeme)
 
-        return querySnapshot.map { snapshot ->
-            snapshot.toObject(Meme::class.java)
-        }
+    /**
+     * Create an observable meme object
+     * @param memeId - ID of the meme
+     */
+    private fun getObservableMeme(memeId: String): Observable<Meme> = Observable.create<Meme> { emitter ->
+        db.document(memeId)
+                .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+                    if (firebaseFirestoreException != null)
+                        emitter.onError(firebaseFirestoreException)
+                    else if (documentSnapshot != null && documentSnapshot.exists())
+                        emitter.onNext(documentSnapshot.toObject(Meme::class.java)!!)
+                    else
+                        emitter.onError(Throwable("Meme not found"))
+                }
     }
 
     fun postMeme(imageUri: Uri, meme: Meme, onResult: (Result<Boolean>) -> Unit) {
@@ -107,7 +119,7 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
         val memeReference = db.document(memeId)
 
         firestoreDatabase.runTransaction {
-            val meme =  it[memeReference].toObject(Meme::class.java)
+            val meme = it[memeReference].toObject(Meme::class.java)
             val likes = meme!!.likes
             var likesCount = meme.likesCount
 
@@ -115,7 +127,7 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
                 likesCount -= 1
                 likes.remove(userId)
 
-            } else  {
+            } else {
                 likesCount += 1
                 likes[userId] = true
             }
@@ -134,7 +146,7 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
         val memeReference = db.document(memeId)
 
         firestoreDatabase.runTransaction {
-            val meme =  it[memeReference].toObject(Meme::class.java)
+            val meme = it[memeReference].toObject(Meme::class.java)
             val faves = meme!!.faves
 
             if (faves.containsKey(userId)) {
@@ -146,7 +158,7 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
                         .document(memeId)
                         .delete()
 
-            } else  {
+            } else {
                 faves[userId] = true
 
                 val fave = Fave()
