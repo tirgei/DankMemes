@@ -3,6 +3,7 @@ package com.gelostech.dankmemes.data.repositories
 import android.net.Uri
 import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.User
+import com.gelostech.dankmemes.data.responses.GoogleLoginResponse
 import com.gelostech.dankmemes.utils.Constants
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
@@ -13,9 +14,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class UsersRepository constructor(private val firebaseDatabase: DatabaseReference,
@@ -24,21 +23,33 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
 
     private val db = firebaseDatabase.child(Constants.USERS)
 
-    suspend fun linkAnonymousUserToCredentials(email: String, password: String, onResult: (Result<FirebaseUser>) -> Unit) {
+    /**
+     * Function to register an anonymous User
+     * @param email - Email
+     * @param password - Password
+     */
+    suspend fun linkAnonymousUserToCredentials(email: String, password: String): Result<FirebaseUser> {
         val credential = EmailAuthProvider.getCredential(email, password)
         val authResult = firebaseAuth.currentUser!!.linkWithCredential(credential)
-        onResult(handleRegisterUser(authResult))
+        return handleRegisterUser(authResult)
     }
 
-    suspend fun registerUser(email: String, password: String, onResult: (Result<FirebaseUser>) -> Unit) {
+    /**
+     * Function to register a User
+     * @param email - Email
+     * @param password - Password
+     */
+    suspend fun registerUser(email: String, password: String): Result<FirebaseUser> {
         val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password)
-        onResult(handleRegisterUser(authResult))
+        return handleRegisterUser(authResult)
     }
 
+    /**
+     * Function to handle user register Task
+     */
     private suspend fun handleRegisterUser(authResult: Task<AuthResult>): Result<FirebaseUser> {
-        val result = authResult.await()
-
         return try {
+            val result = authResult.await()
             Result.Success(result.user!!)
         } catch (weakPassword: FirebaseAuthWeakPasswordException){
             Result.Error("Please enter a stronger password")
@@ -86,6 +97,11 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
         }
     }
 
+    /**
+     * Function to login User
+     * @param email - Email
+     * @param password - Password
+     */
     suspend fun loginWithEmailAndPassword(email: String, password: String): Result<FirebaseUser> {
         return try {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
@@ -99,24 +115,26 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
         }
     }
 
-    suspend fun loginWithGoogle(account: GoogleSignInAccount,
-                                onResult: (Result<FirebaseUser>) -> Unit,
-                                newUserResult: (Result<Boolean>) -> Unit?) {
+    /**
+     * Function to login with Google
+     * @param account - Device Google account
+     */
+    suspend fun loginWithGoogle(account: GoogleSignInAccount): Result<GoogleLoginResponse> {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        val result = firebaseAuth.signInWithCredential(credential).await()
 
-        firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val isNew = task.result?.additionalUserInfo?.isNewUser!!
-
-                        onResult(Result.Success(task.result?.user!!))
-                        newUserResult(Result.Success(isNew))
-                    } else {
-                        onResult(Result.Error("Error signing in. Please try again"))
-                    }
-                }
+        return try {
+            Result.Success(GoogleLoginResponse.success(result.additionalUserInfo!!.isNewUser, result.user!!))
+        } catch (e: java.lang.Exception) {
+            Timber.e("Error logging in with Google: ${e.localizedMessage}")
+            Result.Error("Error signing in. Please try again")
+        }
     }
 
+    /**
+     * Fetch user by ID
+     * @param userId - ID of the User
+     */
     suspend fun fetchUserById(userId: String): Result<User> {
         val dbSource = TaskCompletionSource<DataSnapshot>()
         val dbTask = dbSource.task

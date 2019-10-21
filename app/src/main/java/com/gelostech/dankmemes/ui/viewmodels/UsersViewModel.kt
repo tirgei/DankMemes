@@ -6,33 +6,68 @@ import androidx.lifecycle.viewModelScope
 import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.repositories.UsersRepository
 import com.gelostech.dankmemes.data.responses.FirebaseUserResponse
+import com.gelostech.dankmemes.data.responses.GoogleLoginResponse
 import com.gelostech.dankmemes.data.responses.UserResponse
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.launch
 
 class UsersViewModel constructor(private val repository: UsersRepository): ViewModel() {
-    private val _loginWithEmailAndPasswordLiveData = MutableLiveData<FirebaseUserResponse>()
-    val loginWithEmailAndPasswordLiveData: MutableLiveData<FirebaseUserResponse>
-        get() = _loginWithEmailAndPasswordLiveData
+    private val _loginLiveData = MutableLiveData<FirebaseUserResponse>()
+    val loginLiveData: MutableLiveData<FirebaseUserResponse>
+        get() = _loginLiveData
+
+    private val _loginWithGoogleLiveData = MutableLiveData<GoogleLoginResponse>()
+    val loginWithGoogleLiveData: MutableLiveData<GoogleLoginResponse>
+        get() = _loginWithGoogleLiveData
 
     private val _userLiveData = MutableLiveData<UserResponse>()
     val userLiveData: MutableLiveData<UserResponse>
         get() = _userLiveData
 
+    /**
+     * Function to login User with Email & Password
+     * @param email - Email
+     * @param password - Password
+     */
     fun loginUserWithEmailAndPassword(email: String, password: String) {
         viewModelScope.launch {
-            _loginWithEmailAndPasswordLiveData.value = FirebaseUserResponse.loading()
+            _loginLiveData.value = FirebaseUserResponse.loading()
 
             when (val loginResult = repository.loginWithEmailAndPassword(email, password)) {
                 is Result.Success -> {
-                    _loginWithEmailAndPasswordLiveData.value = FirebaseUserResponse.success(loginResult.data)
+                    _loginLiveData.value = FirebaseUserResponse.success(loginResult.data)
                 }
                 is Result.Error -> {
-                    _loginWithEmailAndPasswordLiveData.value = FirebaseUserResponse.error(loginResult.error)
+                    _loginLiveData.value = FirebaseUserResponse.error(loginResult.error)
                 }
             }
         }
     }
 
+    /**
+     * Function to login with Google
+     *@param account - Current Google account
+     */
+    fun loginWithGoogle(account: GoogleSignInAccount) {
+        viewModelScope.launch {
+            _loginWithGoogleLiveData.value = GoogleLoginResponse.loading()
+
+            when (val loginResult = repository.loginWithGoogle(account)) {
+                is Result.Success -> {
+                    _loginWithGoogleLiveData.value = loginResult.data
+                }
+                is Result.Error -> {
+                    _loginWithGoogleLiveData.value = GoogleLoginResponse.error(loginResult.error)
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Function to fetch a User's profile
+     * @param userId - ID of the User
+     */
     fun fetchUser(userId: String) {
         viewModelScope.launch {
             _userLiveData.value = UserResponse.loading()
