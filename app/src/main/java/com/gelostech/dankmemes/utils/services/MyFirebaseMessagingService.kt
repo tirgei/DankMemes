@@ -24,10 +24,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         private val TAG = MyFirebaseMessagingService::class.java.simpleName
     }
 
-    override fun onNewToken(p0: String?) {
+    override fun onNewToken(p0: String) {
         Timber.e("Token refreshed: %s", p0)
 
-        p0?.let {
+        p0.let {
             // save in prefs
             val prefs = PreferenceHelper.defaultPrefs(this)
             prefs["userToken"] = it
@@ -47,7 +47,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     }
 
-    override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.e(TAG, "From: " + remoteMessage!!.from!!)
 
         // Check if message contains a notification payload.
