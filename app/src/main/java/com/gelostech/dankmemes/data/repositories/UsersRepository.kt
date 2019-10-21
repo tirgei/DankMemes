@@ -6,13 +6,16 @@ import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.utils.Constants
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.auth.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class UsersRepository constructor(private val firebaseDatabase: DatabaseReference,
@@ -116,19 +119,29 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
                 }
     }
 
-    suspend fun fetchUserById(userId: String, onResult: (Result<User>) -> Unit) {
+    suspend fun fetchUserById(userId: String): Result<User> {
+        val dbSource = TaskCompletionSource<DataSnapshot>()
+        val dbTask = dbSource.task
+
         db.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                onResult(Result.Error("Error fetching user details"))
+                dbSource.setException(p0.toException())
             }
 
             override fun onDataChange(p0: DataSnapshot) {
                 if (p0.exists())
-                    onResult(Result.Success(p0.getValue(User::class.java)!!))
+                    dbSource.setResult(p0)
                 else
-                    onResult(Result.Error("User not found"))
+                    dbSource.setException(java.lang.Exception("User not found"))
             }
         })
+
+        val user = dbTask.await()
+        return try {
+            Result.Success(user.getValue(User::class.java)!!)
+        } catch (e: java.lang.Exception) {
+            Result.Error("User not found")
+        }
     }
 
     suspend fun updateUserAvatar(userId: String, avatarUri: Uri, onResult: (Result<String>) -> Unit) {
