@@ -11,19 +11,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.ui.activities.MainActivity
-import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.AppUtils.drawableToBitmap
 import com.gelostech.dankmemes.utils.AppUtils.setDrawable
 import com.gelostech.dankmemes.ui.base.BaseFragment
-import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.data.models.User
-import com.gelostech.dankmemes.utils.PreferenceHelper
+import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
+import com.gelostech.dankmemes.utils.*
 import com.gelostech.dankmemes.utils.PreferenceHelper.set
-import com.gelostech.dankmemes.utils.TimeFormatter
-import com.gelostech.dankmemes.utils.replaceFragment
-import com.gelostech.dankmemes.utils.setDrawable
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -42,6 +40,7 @@ import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 
@@ -49,6 +48,8 @@ class LoginFragment : BaseFragment() {
     private lateinit var signupSuccessful: Bitmap
     private var isLoggingIn = false
     private lateinit var prefs: SharedPreferences
+    private val usersViewModel: UsersViewModel by inject()
+    private val sessionManager: SessionManager by inject()
 
     companion object {
         private val TAG = LoginFragment::class.java.simpleName
@@ -80,9 +81,87 @@ class LoginFragment : BaseFragment() {
                 activity!!.toast("Please wait...")
         }
 
+        initLoginObserver()
+        initFetchUserObserver()
+
         googleLogin.setOnClickListener { googleLogin() }
-        loginButton.setOnClickListener { signIn() }
+        loginButton.setOnClickListener { login() }
         loginForgotPassword.setOnClickListener { if (!isLoggingIn) forgotPassword() else activity!!.toast("Please wait...")}
+    }
+
+    /**
+     * Login with provided email and password
+     */
+    private fun login() {
+        if (!AppUtils.validated(loginEmail, loginPassword)) return
+
+        val email = loginEmail.text.toString().trim()
+        val password = loginPassword.text.toString().trim()
+
+        usersViewModel.loginUserWithEmailAndPassword(email, password)
+    }
+
+    private fun initLoginObserver() {
+        usersViewModel.loginWithEmailAndPasswordLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> {
+                    isLoggingIn = true
+                    loginButton.startAnimation()
+                }
+
+                Status.SUCCESS -> {
+                    usersViewModel.fetchUser(it.user!!.uid)
+                }
+
+                Status.ERROR -> {
+                    errorLoggingIn(it.error!!)
+                }
+            }
+        })
+    }
+
+    private fun initFetchUserObserver() {
+        usersViewModel.userLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> {
+                    toast("Fetching your profile...")
+                }
+
+                Status.SUCCESS -> {
+                    val user = it.user!!
+                    sessionManager.saveUser(user)
+                    proceedToMainActivity(user.userName!!)
+                }
+
+                Status.ERROR -> {
+                    errorLoggingIn(it.error!!)
+                }
+            }
+        })
+    }
+
+    /**
+     * Successful login proceed to MainActivity
+     * @param username - Logged in User username
+     */
+    private fun proceedToMainActivity(username: String) {
+        FirebaseMessaging.getInstance().subscribeToTopic(Constants.TOPIC_GLOBAL)
+
+        runDelayed(400) {
+            loginButton.doneLoadingAnimation(AppUtils.getColor(activity!!, R.color.pink), signupSuccessful)
+
+            toast("Welcome back $username \uD83D\uDE03")
+
+            startActivity(Intent(activity!!, MainActivity::class.java))
+            activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+            activity!!.finish()
+        }
+    }
+
+    private fun errorLoggingIn(message: String) {
+        isLoggingIn = false
+        loginButton.revertAnimation()
+        toast(message)
     }
 
     private fun signIn() {
@@ -206,7 +285,6 @@ class LoginFragment : BaseFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
         if (requestCode == GOOGLE_SIGN_IN) {
             hideLoading()
             val  task = GoogleSignIn.getSignedInAccountFromIntent(data);
