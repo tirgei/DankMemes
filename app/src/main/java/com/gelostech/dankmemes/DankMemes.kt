@@ -3,10 +3,7 @@ package com.gelostech.dankmemes
 import androidx.multidex.MultiDexApplication
 import com.google.firebase.database.FirebaseDatabase
 import cat.ereza.customactivityoncrash.config.CaocConfig
-import com.gelostech.dankmemes.di.firebaseModule
-import com.gelostech.dankmemes.di.repositoriesModule
-import com.gelostech.dankmemes.di.sessionManagerModule
-import com.gelostech.dankmemes.di.viewModelsModule
+import com.gelostech.dankmemes.di.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import org.koin.android.ext.koin.androidContext
@@ -40,7 +37,13 @@ class DankMemes : MultiDexApplication() {
         startKoin {
             androidLogger()
             androidContext(this@DankMemes)
-            modules(listOf(firebaseModule, repositoriesModule, viewModelsModule, sessionManagerModule))
+            modules(listOf(
+                    firebaseModule,
+                    repositoriesModule,
+                    viewModelsModule,
+                    sessionManagerModule,
+                    googleSignClientModule)
+            )
         }
     }
 }
