@@ -3,6 +3,7 @@ package com.gelostech.dankmemes.utils;
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.os.Handler
 import androidx.core.content.ContextCompat
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -125,4 +126,13 @@ fun AppCompatActivity.addFragment(fragment: Fragment, frameId: Int){
  */
 fun AppCompatActivity.replaceFragment(fragment: Fragment, frameId: Int) {
     supportFragmentManager.inTransaction{ replace(frameId, fragment) }
+}
+
+/**
+ * Function to run a delayed function
+ * @param millis - Time to delay
+ * @param function - Function to execute
+ */
+fun runDelayed(millis: Long, function: () -> Unit) {
+    Handler().postDelayed(function, millis)
 }
