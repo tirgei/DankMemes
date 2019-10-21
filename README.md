@@ -9,6 +9,22 @@ server side functions.
 
 You can download the app from the Play Store here: [Dank Memes](https://play.google.com/store/apps/details?id=com.gelostech.dankmemes)
 
+### Features
+- 100% Kotlin
+- MVVM Architecture
+- Koin for DI
+- Coroutines
+- RxJava
+- Firebase
+    - Firestore
+    - Firebase Auth
+    - Firebase Database
+    - Firebase Storage
+    - Crashlytics
+    - GCM
+- Android Jetpack features
+
+
 ### Project setup
 To setup the project in your machine
 
