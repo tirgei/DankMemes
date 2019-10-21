@@ -87,11 +87,9 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
     }
 
     suspend fun loginWithEmailAndPassword(email: String, password: String): Result<FirebaseUser> {
-        val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-
         return try {
-            val user = result.user!!
-             Result.Success(user)
+            val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            Result.Success(result.user!!)
         } catch (wrongPassword: FirebaseAuthInvalidCredentialsException) {
             Result.Error("Email or Password incorrect")
         } catch (userNull: FirebaseAuthInvalidUserException) {
