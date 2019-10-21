@@ -5,8 +5,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,26 +12,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
-import com.gelostech.dankmemes.ui.activities.MainActivity
-import com.gelostech.dankmemes.utils.AppUtils.drawableToBitmap
-import com.gelostech.dankmemes.utils.AppUtils.setDrawable
-import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.data.models.User
+import com.gelostech.dankmemes.ui.activities.MainActivity
+import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.*
+import com.gelostech.dankmemes.utils.AppUtils.drawableToBitmap
+import com.gelostech.dankmemes.utils.AppUtils.setDrawable
 import com.gelostech.dankmemes.utils.PreferenceHelper.set
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import com.mikepenz.ionicons_typeface_library.Ionicons
@@ -50,9 +42,9 @@ class LoginFragment : BaseFragment() {
     private lateinit var prefs: SharedPreferences
     private val usersViewModel: UsersViewModel by inject()
     private val sessionManager: SessionManager by inject()
+    private val googleSignInOptions: GoogleSignInOptions by inject()
 
     companion object {
-        private val TAG = LoginFragment::class.java.simpleName
         private const val GOOGLE_SIGN_IN = 123
     }
 
@@ -83,8 +75,9 @@ class LoginFragment : BaseFragment() {
 
         initLoginObserver()
         initFetchUserObserver()
+        initGoogleLoginObserver()
 
-        googleLogin.setOnClickListener { googleLogin() }
+        googleLogin.setOnClickListener { loginWithGoogle() }
         loginButton.setOnClickListener { login() }
         loginForgotPassword.setOnClickListener { if (!isLoggingIn) forgotPassword() else activity!!.toast("Please wait...")}
     }
@@ -101,8 +94,11 @@ class LoginFragment : BaseFragment() {
         usersViewModel.loginUserWithEmailAndPassword(email, password)
     }
 
+    /**
+     * Initialize function to observer logging in with Email & Password LiveData
+     */
     private fun initLoginObserver() {
-        usersViewModel.loginWithEmailAndPasswordLiveData.observe(this, Observer {
+        usersViewModel.loginLiveData.observe(this, Observer {
             when (it.status) {
                 Status.LOADING -> {
                     isLoggingIn = true
@@ -120,11 +116,39 @@ class LoginFragment : BaseFragment() {
         })
     }
 
+    /**
+     * Initialize function to observer Google login LiveData
+     */
+    private fun initGoogleLoginObserver() {
+        usersViewModel.loginWithGoogleLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> {
+                    Timber.e("Logging in with Google Account...")
+                }
+
+                Status.SUCCESS -> {
+                    if (it.isNewUser!!)
+                        usersViewModel.fetchUser(it.user!!.uid)
+                    else
+                        usersViewModel.fetchUser(it.user!!.uid)
+                }
+
+                Status.ERROR -> {
+                    errorLoggingIn(it.error!!)
+                }
+            }
+
+        })
+    }
+
+    /**
+     * Initialize function to observe User LiveData
+     */
     private fun initFetchUserObserver() {
         usersViewModel.userLiveData.observe(this, Observer {
             when (it.status) {
                 Status.LOADING -> {
-                    toast("Fetching your profile...")
+                    Timber.e("Fetching User details")
                 }
 
                 Status.SUCCESS -> {
@@ -148,9 +172,11 @@ class LoginFragment : BaseFragment() {
         FirebaseMessaging.getInstance().subscribeToTopic(Constants.TOPIC_GLOBAL)
 
         runDelayed(400) {
+            isLoggingIn = false
+            hideLoading()
             loginButton.doneLoadingAnimation(AppUtils.getColor(activity!!, R.color.pink), signupSuccessful)
 
-            toast("Welcome back $username \uD83D\uDE03")
+            longToast("Welcome back $username \uD83D\uDE03")
 
             startActivity(Intent(activity!!, MainActivity::class.java))
             activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
@@ -158,61 +184,24 @@ class LoginFragment : BaseFragment() {
         }
     }
 
+    /**
+     * Handle error when login in
+     * @param message - Message to display to User
+     */
     private fun errorLoggingIn(message: String) {
         isLoggingIn = false
+        hideLoading()
         loginButton.revertAnimation()
         toast(message)
     }
 
-    private fun signIn() {
-        if (!AppUtils.validated(loginEmail, loginPassword)) return
+    /**
+     * Function to login with Google
+     */
+    private fun loginWithGoogle() {
+        val mGoogleSignInClient = GoogleSignIn.getClient(activity!!, googleSignInOptions)
 
-        val email = loginEmail.text.toString().trim()
-        val pw = loginPassword.text.toString().trim()
-
-        isLoggingIn = true
-        loginButton.startAnimation()
-        getFirebaseAuth().signInWithEmailAndPassword(email, pw)
-                .addOnCompleteListener(activity!!) { task ->
-                    if (task.isSuccessful) {
-                        Timber.e("signingIn: Success!")
-
-                        // update UI with the signed-in user's information
-                        val user = task.result?.user!!
-                        updateUI(user!!)
-                    } else {
-                        try {
-                            throw task.exception!!
-                        } catch (wrongPassword: FirebaseAuthInvalidCredentialsException) {
-                            isLoggingIn = false
-                            loginButton.revertAnimation()
-                            loginPassword.error = "Password incorrect"
-
-                        } catch (userNull: FirebaseAuthInvalidUserException) {
-                            isLoggingIn = false
-                            loginButton.revertAnimation()
-                            activity?.toast("Account not found. Have you signed up?")
-
-                        } catch (e: Exception) {
-                            isLoggingIn = false
-                            loginButton.revertAnimation()
-                            Timber.e( "signingIn: Failure - ${e.localizedMessage}" )
-                            activity?.toast("Error signing in. Please try again.")
-                        }
-                    }
-                }
-
-    }
-
-    private fun googleLogin() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.google_signin_key))
-                .requestEmail()
-                .build()
-
-        val mGoogleSignInClient = GoogleSignIn.getClient(activity!!, gso)
-
-        showLoading("Signing in...")
+        showLoading("Logging in...")
         val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, GOOGLE_SIGN_IN)
     }
@@ -253,77 +242,19 @@ class LoginFragment : BaseFragment() {
         }!!.show()
     }
 
-    private fun updateUI(user: FirebaseUser) {
-        FirebaseMessaging.getInstance().subscribeToTopic(Constants.TOPIC_GLOBAL)
-        val dbRef = getDatabaseReference().child("users").child(user.uid)
-        dbRef.addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onCancelled(p0: DatabaseError) {
-                Log.e(TAG, "Error fetching user: ${p0.message}")
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                loginButton.doneLoadingAnimation(AppUtils.getColor(activity!!, R.color.pink), signupSuccessful)
-                val userObject = p0.getValue(User::class.java)
-
-                prefs[Constants.USERNAME] = userObject!!.userName
-                prefs[Constants.EMAIL] = userObject.userEmail
-                prefs[Constants.AVATAR] = userObject.userAvatar
-                prefs[Constants.LOGGED_IN] = true
-
-                hideLoading()
-
-                Handler().postDelayed({
-                    activity!!.toast("Welcome back ${userObject.userName}")
-
-                    startActivity(Intent(activity!!, MainActivity::class.java))
-                    activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-                    activity!!.finish()
-                }, 400)
-            }
-        })
-
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == GOOGLE_SIGN_IN) {
-            hideLoading()
-            val  task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            val  task = GoogleSignIn.getSignedInAccountFromIntent(data)
 
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
-                firebaseAuthWithGoogle(account)
+                usersViewModel.loginWithGoogle(account)
             } catch (e: ApiException) {
                 Timber.e("Google sign in failed")
-
-                activity!!.toast("Error signing in. Try again")
+                errorLoggingIn("Error signing in. Try again")
             }
         }
-
-    }
-
-    private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-        showLoading("Checking account...")
-        val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
-
-        getFirebaseAuth().signInWithCredential(credential)
-                .addOnCompleteListener(activity!!) { p0 ->
-                    if (p0.isSuccessful) {
-                        val isNew = p0.result?.additionalUserInfo?.isNewUser!!
-
-                        if (isNew) {
-                            val user = getFirebaseAuth().currentUser!!
-                            createUser(user)
-
-                        } else {
-                            val user = getFirebaseAuth().currentUser!!
-                            updateUI(user)
-                        }
-
-                    } else {
-                        activity!!.toast("Error signing in. Try again")
-                    }
-                }
 
     }
 
