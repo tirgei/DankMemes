@@ -16,13 +16,14 @@ You can download the app from the Play Store here: [Dank Memes](https://play.goo
 - Coroutines
 - RxJava
 - Firebase
-    - Firestore
     - Firebase Auth
     - Firebase Database
     - Firebase Storage
+    - Firebase Firestore
     - Crashlytics
+    - Performance Monitoring
     - GCM
-- Android Jetpack features
+- Android Jetpack
 
 
 ### Project setup
