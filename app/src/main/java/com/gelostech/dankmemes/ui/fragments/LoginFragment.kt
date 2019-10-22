@@ -170,11 +170,11 @@ class LoginFragment : BaseFragment() {
      */
     private fun proceedToMainActivity(username: String) {
         FirebaseMessaging.getInstance().subscribeToTopic(Constants.TOPIC_GLOBAL)
+        loginButton.doneLoadingAnimation(AppUtils.getColor(activity!!, R.color.pink), signupSuccessful)
+        hideLoading()
 
         runDelayed(400) {
             isLoggingIn = false
-            hideLoading()
-            loginButton.doneLoadingAnimation(AppUtils.getColor(activity!!, R.color.pink), signupSuccessful)
 
             longToast("Welcome back $username \uD83D\uDE03")
 
