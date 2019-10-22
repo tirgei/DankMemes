@@ -107,10 +107,13 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             Result.Success(result.user!!)
         } catch (wrongPassword: FirebaseAuthInvalidCredentialsException) {
+            Timber.e("InvalidCredException: ${wrongPassword.localizedMessage}")
             Result.Error("Email or Password incorrect")
         } catch (userNull: FirebaseAuthInvalidUserException) {
+            Timber.e("UserException: ${userNull.localizedMessage}")
             (Result.Error("Account not found. Have you signed up?"))
         } catch (e: Exception) {
+            Timber.e("LoginException: ${e.localizedMessage}")
             Result.Error("Error signing in. Please try again")
         }
     }
