@@ -55,14 +55,14 @@ android {
         }
     }
 
-    flavorDimensions "firebase"
+    flavorDimensions "environment"
     productFlavors {
         dev {
-            dimension "firebase"
+            dimension "environment"
         }
 
         prod {
-            dimension "firebase"
+            dimension "environment"
         }
     }
 
@@ -197,6 +197,3 @@ dependencies {
 
 apply plugin: 'com.google.gms.google-services'
 
-kapt {
-    generateStubs = true
-}
