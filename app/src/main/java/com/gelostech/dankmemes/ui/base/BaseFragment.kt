@@ -101,7 +101,7 @@ open class BaseFragment : Fragment() {
     }
 
     fun hideLoading() {
-        if (progressDialog.isShowing) {
+        if (::progressDialog.isInitialized && progressDialog.isShowing) {
             progressDialog.dismiss()
         }
     }
