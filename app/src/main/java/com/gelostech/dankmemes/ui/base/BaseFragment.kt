@@ -33,11 +33,6 @@ import org.jetbrains.anko.longToast
 open class BaseFragment : Fragment() {
     lateinit var progressDialog: ProgressDialog
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
-
     fun isConnected(): Boolean = Connectivity.isConnected(activity!!)
 
     // Toast a message
