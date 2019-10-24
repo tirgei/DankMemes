@@ -1,21 +1,15 @@
 package com.gelostech.dankmemes.utils;
 
-import android.content.Context
-import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Handler
-import androidx.core.content.ContextCompat
-import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.Placeholder
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
@@ -23,11 +17,12 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.gelostech.dankmemes.R
-import com.github.chrisbanes.photoview.PhotoView
-import com.google.android.material.snackbar.Snackbar
-import com.makeramen.roundedimageview.RoundedImageView
-import de.hdodenhof.circleimageview.CircleImageView
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.TaskCompletionSource
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 
 /**
  * Bind layout using legacy inflate i.e. not using DataBinding
@@ -135,4 +130,35 @@ fun AppCompatActivity.replaceFragment(fragment: Fragment, frameId: Int) {
  */
 fun runDelayed(millis: Long, function: () -> Unit) {
     Handler().postDelayed(function, millis)
+}
+
+/**
+ * Function to wrap Firebase Database to Task
+ */
+fun DatabaseReference.get(): Task<DataSnapshot> {
+    val taskSource = TaskCompletionSource<DataSnapshot>()
+
+    this.addListenerForSingleValueEvent(object : ValueEventListener {
+        override fun onCancelled(p0: DatabaseError) {
+            taskSource.setException(p0.toException())
+        }
+
+        override fun onDataChange(p0: DataSnapshot) {
+            if (p0.exists())
+                taskSource.setResult(p0)
+            else
+                taskSource.setException(Exception("Not found"))
+        }
+    })
+
+    return taskSource.task
+}
+
+fun Task<Void>.save(): Task<Boolean> {
+    val taskSource = TaskCompletionSource<Boolean>()
+
+    this.addOnCompleteListener { taskSource.setResult(true) }
+            .addOnFailureListener { taskSource.setException(it) }
+
+    return taskSource.task
 }
