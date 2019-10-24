@@ -7,6 +7,7 @@ import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.repositories.UsersRepository
 import com.gelostech.dankmemes.data.responses.FirebaseUserResponse
+import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.responses.GoogleLoginResponse
 import com.gelostech.dankmemes.data.responses.UserResponse
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -24,6 +25,10 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
     private val _userLiveData = MutableLiveData<UserResponse>()
     val userLiveData: MutableLiveData<UserResponse>
         get() = _userLiveData
+
+    private val _resetPasswordLiveData = MutableLiveData<GenericResponse>()
+    val resetPaswordLiveData: MutableLiveData<GenericResponse>
+        get() = _resetPasswordLiveData
 
     /**
      * Function to login User with Email & Password
@@ -80,6 +85,25 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
 
                 is Result.Error -> {
                     _userLiveData.value = UserResponse.error(userResult.error)
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to send reset password email
+     */
+    fun sendResetPasswordEmail(email: String) {
+        viewModelScope.launch {
+            _resetPasswordLiveData.value = GenericResponse.loading()
+
+            when (val result = repository.sendPasswordResetEmail(email)) {
+                is Result.Success -> {
+                    _resetPasswordLiveData.value = GenericResponse.success(result.data)
+                }
+
+                is Result.Error -> {
+                    _resetPasswordLiveData.value = GenericResponse.error(result.error)
                 }
             }
         }

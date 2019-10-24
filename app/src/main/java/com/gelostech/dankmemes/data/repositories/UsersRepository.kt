@@ -6,7 +6,7 @@ import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GoogleLoginResponse
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.get
-import com.gelostech.dankmemes.utils.save
+import com.gelostech.dankmemes.utils.execute
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
@@ -49,12 +49,16 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
         return try {
             val result = authResult.await()
             Result.Success(result.user!!)
+
         } catch (weakPassword: FirebaseAuthWeakPasswordException){
             Result.Error("Please enter a stronger password")
+
         } catch (userExists: FirebaseAuthUserCollisionException) {
             Result.Error("Account already exists. Please log in")
+
         } catch (malformedEmail: FirebaseAuthInvalidCredentialsException) {
             Result.Error("Incorrect email format")
+
         } catch (e: Exception) {
             Result.Error("Error signing up. Please try again")
         }
@@ -104,12 +108,15 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
         return try {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
             Result.Success(result.user!!)
+
         } catch (wrongPassword: FirebaseAuthInvalidCredentialsException) {
             Timber.e("InvalidCredException: ${wrongPassword.localizedMessage}")
             Result.Error("Email or Password incorrect")
+
         } catch (userNull: FirebaseAuthInvalidUserException) {
             Timber.e("UserException: ${userNull.localizedMessage}")
             (Result.Error("Account not found. Have you signed up?"))
+
         } catch (e: Exception) {
             Timber.e("LoginException: ${e.localizedMessage}")
             Result.Error("Error signing in. Please try again")
@@ -126,6 +133,7 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
 
         return try {
             Result.Success(GoogleLoginResponse.success(result.additionalUserInfo!!.isNewUser, result.user!!))
+
         } catch (e: java.lang.Exception) {
             Timber.e("Error logging in with Google: ${e.localizedMessage}")
             Result.Error("Error signing in. Please try again")
@@ -137,18 +145,45 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
      * @param user - Object of the user details
      */
     suspend fun createGoogleUserAccount(user: User): Result<User> {
-        val createUser = db.child(user.userId!!).setValue(user)
-                .save()
-                .await()
+        val errorMessage = "Error signing up"
 
         return try {
+            val createUser = db.child(user.userId!!).setValue(user)
+                    .execute()
+                    .await()
+
             if (createUser)
                 Result.Success(user)
             else
-                Result.Error("Error signing up")
+                Result.Error(errorMessage)
         } catch (e: Exception) {
             Timber.e("Error creating account for Google user: ${e.localizedMessage}")
-            Result.Error("Error signing up")
+            Result.Error(errorMessage)
+        }
+    }
+
+    /**
+     * Function to send email to reset User password
+     * @param email - Email to send instructions to
+     */
+    suspend fun sendPasswordResetEmail(email: String): Result<Boolean> {
+        val errorMessage = "Error sending password reset email"
+
+        return try {
+            val result = firebaseAuth.sendPasswordResetEmail(email).execute().await()
+
+            if (result)
+                Result.Success(true)
+            else
+                Result.Error(errorMessage)
+
+        } catch (e: FirebaseAuthInvalidUserException) {
+            Timber.e("$errorMessage: ${e.localizedMessage}")
+            Result.Error("Account not found. Have you signed up?")
+
+        } catch (e: java.lang.Exception) {
+            Timber.e("$errorMessage: ${e.localizedMessage}")
+            Result.Error(errorMessage)
         }
     }
 
