@@ -74,11 +74,11 @@ class LoginFragment : BaseFragment() {
         }
 
         initLoginObserver()
-        initFetchUserObserver()
+        initUserObserver()
         initGoogleLoginObserver()
 
-        googleLogin.setOnClickListener { loginWithGoogle() }
         loginButton.setOnClickListener { login() }
+        googleLogin.setOnClickListener { loginWithGoogle() }
         loginForgotPassword.setOnClickListener { if (!isLoggingIn) forgotPassword() else activity!!.toast("Please wait...")}
     }
 
@@ -92,6 +92,17 @@ class LoginFragment : BaseFragment() {
         val password = loginPassword.text.toString().trim()
 
         usersViewModel.loginUserWithEmailAndPassword(email, password)
+    }
+
+    /**
+     * Function to login with Google
+     */
+    private fun loginWithGoogle() {
+        val mGoogleSignInClient = GoogleSignIn.getClient(activity!!, googleSignInOptions)
+
+        showLoading("Logging in...")
+        val signInIntent = mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent, GOOGLE_SIGN_IN)
     }
 
     /**
@@ -127,9 +138,21 @@ class LoginFragment : BaseFragment() {
                 }
 
                 Status.SUCCESS -> {
-                    if (it.isNewUser!!)
-                        usersViewModel.fetchUser(it.user!!.uid)
-                    else
+                    if (it.isNewUser!!) {
+                        val googleUser = it.user!!
+                        val newUser = User()
+
+                        newUser.userName = googleUser.displayName
+                        newUser.userEmail = googleUser.email
+                        newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())
+                        newUser.userToken = FirebaseInstanceId.getInstance().token
+                        newUser.userId = googleUser.uid
+                        newUser.userBio = activity?.getString(R.string.new_user_bio)
+                        newUser.userAvatar = googleUser.photoUrl?.toString()
+
+                        usersViewModel.createGoogleUserAccount(newUser)
+                        googleUser.sendEmailVerification()
+                    } else
                         usersViewModel.fetchUser(it.user!!.uid)
                 }
 
@@ -144,7 +167,7 @@ class LoginFragment : BaseFragment() {
     /**
      * Initialize function to observe User LiveData
      */
-    private fun initFetchUserObserver() {
+    private fun initUserObserver() {
         usersViewModel.userLiveData.observe(this, Observer {
             when (it.status) {
                 Status.LOADING -> {
@@ -176,7 +199,7 @@ class LoginFragment : BaseFragment() {
         runDelayed(400) {
             isLoggingIn = false
 
-            longToast("Welcome back $username \uD83D\uDE03")
+            longToast("Welcome $username \uD83D\uDE03")
 
             startActivity(Intent(activity!!, MainActivity::class.java))
             activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
@@ -193,17 +216,6 @@ class LoginFragment : BaseFragment() {
         hideLoading()
         loginButton.revertAnimation()
         toast(message)
-    }
-
-    /**
-     * Function to login with Google
-     */
-    private fun loginWithGoogle() {
-        val mGoogleSignInClient = GoogleSignIn.getClient(activity!!, googleSignInOptions)
-
-        showLoading("Logging in...")
-        val signInIntent = mGoogleSignInClient.signInIntent
-        startActivityForResult(signInIntent, GOOGLE_SIGN_IN)
     }
 
     private fun forgotPassword() {
@@ -256,34 +268,6 @@ class LoginFragment : BaseFragment() {
             }
         }
 
-    }
-
-    private fun createUser(user: FirebaseUser) {
-        val newUser = User()
-        newUser.userName = user.displayName
-        newUser.userEmail = user.email
-        newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())
-        newUser.userToken = FirebaseInstanceId.getInstance().token
-        newUser.userId = user.uid
-        newUser.userBio = activity?.getString(R.string.new_user_bio)
-        newUser.userAvatar = user.photoUrl?.toString()
-
-        user.sendEmailVerification()
-
-        FirebaseMessaging.getInstance().subscribeToTopic(Constants.TOPIC_GLOBAL)
-        getDatabaseReference().child("users").child(user.uid).setValue(newUser).addOnCompleteListener {
-
-            prefs[Constants.USERNAME] = newUser.userName
-            prefs[Constants.EMAIL] = newUser.userEmail
-            prefs[Constants.AVATAR] = newUser.userAvatar
-
-            hideLoading()
-
-            activity!!.toast("Welcome ${user.displayName}")
-            startActivity(Intent(activity!!, MainActivity::class.java))
-            activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-            activity!!.finish()
-        }
     }
 
     // Check if user has initiated logging in process. If in process, disable back button
