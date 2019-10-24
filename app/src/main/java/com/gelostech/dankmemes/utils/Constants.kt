@@ -15,6 +15,7 @@ object Constants {
 
     // Prefs constants
     const val EMAIL = "email"
+    const val USER_ID = "user_id"
     const val USERNAME = "username"
     const val AVATAR = "avatar"
     const val LOGGED_IN = "logged_in"
