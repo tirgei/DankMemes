@@ -20,8 +20,11 @@ jobs:
           name: Update keystore path
           command: sed -i 's|home/.*|$KEYSTORE_PATH|' keystore.properties
       - run:
-          name: Decode google-services json file
-          command: echo $ENCODED_GOOGLE_SERVICES | base64 --decode >> app/google-services.json
+          name: Decode dev google-services json file
+          command: echo $ENCODED_DEV_GOOGLE_SERVICES | base64 --decode >> app/src/dev/google-services.json
+      - run:
+          name: Decode prod google-services json file
+          command: echo $ENCODED_GOOGLE_SERVICES | base64 --decode >> app/src/prod/google-services.json
       - run:
           name: Decode API keys
           command: echo $ENCODED_API_KEYS | base64 --decode >> app/src/main/res/values/keys.xml
