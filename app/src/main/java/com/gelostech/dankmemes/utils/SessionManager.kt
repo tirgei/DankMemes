@@ -12,6 +12,7 @@ class SessionManager (context: Context) {
         prefs[Constants.USERNAME] = user.userName
         prefs[Constants.EMAIL] = user.userEmail
         prefs[Constants.AVATAR] = user.userAvatar
+        prefs[Constants.USER_ID] = user.userId
         prefs[Constants.LOGGED_IN] = true
     }
 
