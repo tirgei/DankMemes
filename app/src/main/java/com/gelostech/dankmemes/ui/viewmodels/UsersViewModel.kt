@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gelostech.dankmemes.data.Result
+import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.repositories.UsersRepository
 import com.gelostech.dankmemes.data.responses.FirebaseUserResponse
 import com.gelostech.dankmemes.data.responses.GoogleLoginResponse
@@ -62,6 +63,26 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
             }
         }
 
+    }
+
+    /**
+     * Function to create account for Google sign in User
+     * @param user - The user details to create account for
+     */
+    fun createGoogleUserAccount(user: User) {
+        viewModelScope.launch {
+            _userLiveData.value = UserResponse.loading()
+
+            when (val userResult = repository.createGoogleUserAccount(user)) {
+                is Result.Success -> {
+                    _userLiveData.value = UserResponse.success(userResult.data)
+                }
+
+                is Result.Error -> {
+                    _userLiveData.value = UserResponse.error(userResult.error)
+                }
+            }
+        }
     }
 
     /**

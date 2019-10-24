@@ -5,14 +5,12 @@ import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GoogleLoginResponse
 import com.gelostech.dankmemes.utils.Constants
+import com.gelostech.dankmemes.utils.get
+import com.gelostech.dankmemes.utils.save
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.firebase.auth.*
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -135,30 +133,36 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
     }
 
     /**
+     * Function to create account for User registered through Google login
+     * @param user - Object of the user details
+     */
+    suspend fun createGoogleUserAccount(user: User): Result<User> {
+        val createUser = db.child(user.userId!!).setValue(user)
+                .save()
+                .await()
+
+        return try {
+            if (createUser)
+                Result.Success(user)
+            else
+                Result.Error("Error signing up")
+        } catch (e: Exception) {
+            Timber.e("Error creating account for Google user: ${e.localizedMessage}")
+            Result.Error("Error signing up")
+        }
+    }
+
+    /**
      * Fetch user by ID
      * @param userId - ID of the User
      */
     suspend fun fetchUserById(userId: String): Result<User> {
-        val dbSource = TaskCompletionSource<DataSnapshot>()
-        val dbTask = dbSource.task
+        val user = db.child(userId).get().await()
 
-        db.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                dbSource.setException(p0.toException())
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                if (p0.exists())
-                    dbSource.setResult(p0)
-                else
-                    dbSource.setException(java.lang.Exception("User not found"))
-            }
-        })
-
-        val user = dbTask.await()
         return try {
             Result.Success(user.getValue(User::class.java)!!)
         } catch (e: java.lang.Exception) {
+            Timber.e("Error fetching User: ${e.localizedMessage}")
             Result.Error("User not found")
         }
     }
