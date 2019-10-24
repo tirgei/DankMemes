@@ -76,6 +76,7 @@ class LoginFragment : BaseFragment() {
         initLoginObserver()
         initUserObserver()
         initGoogleLoginObserver()
+        initPasswordResetObserver()
 
         loginButton.setOnClickListener { login() }
         googleLogin.setOnClickListener { loginWithGoogle() }
@@ -188,6 +189,27 @@ class LoginFragment : BaseFragment() {
     }
 
     /**
+     * Initialize function to observer Password reset LiveData
+     */
+    private fun initPasswordResetObserver() {
+        usersViewModel.resetPaswordLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> {
+                    toast("Sending password reset instructions")
+                }
+
+                Status.SUCCESS -> {
+                    longToast("Instruction to reset your password sent successfully")
+                }
+
+                Status.ERROR -> {
+                    toast("Error sending instructions to reset your password")
+                }
+            }
+        })
+    }
+
+    /**
      * Successful login proceed to MainActivity
      * @param username - Logged in User username
      */
@@ -218,36 +240,18 @@ class LoginFragment : BaseFragment() {
         toast(message)
     }
 
+    /**
+     * Function to send email with reset password instructions
+     */
     private fun forgotPassword() {
         if (!AppUtils.validated(loginEmail)) return
-
         val email = loginEmail.text.toString().trim()
 
         activity?.alert("Instructions to reset your password will be sent to $email") {
             title = "Forgot password"
 
             positiveButton("SEND EMAIL") {
-
-                getFirebaseAuth().sendPasswordResetEmail(email)
-                        .addOnCompleteListener(activity!!) { task ->
-                            if (task.isSuccessful) {
-                                Timber.e("sendResetPassword: Success!")
-                                activity?.toast("Email sent")
-
-                            } else {
-                                try {
-                                    throw task.exception!!
-                                } catch (malformedEmail: FirebaseAuthInvalidCredentialsException) {
-                                    loginEmail.error = "Incorrect email format"
-                                    activity?.toast("Email not sent. Please try again.")
-
-                                } catch (e: Exception) {
-                                    Timber.e("sendResetEmail: Failure - $e" )
-                                    activity?.toast("Email not sent. Please try again.")
-                                }
-                            }
-                        }
-
+                usersViewModel.sendResetPasswordEmail(email)
             }
 
             negativeButton("CANCEL") {}
