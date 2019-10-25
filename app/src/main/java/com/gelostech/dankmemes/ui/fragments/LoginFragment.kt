@@ -3,7 +3,6 @@ package com.gelostech.dankmemes.ui.fragments
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,21 +12,18 @@ import androidx.lifecycle.Observer
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.data.models.User
-import com.gelostech.dankmemes.ui.activities.MainActivity
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
-import com.gelostech.dankmemes.utils.*
-import com.gelostech.dankmemes.utils.AppUtils.drawableToBitmap
+import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.AppUtils.setDrawable
-import com.gelostech.dankmemes.utils.PreferenceHelper.set
+import com.gelostech.dankmemes.utils.TimeFormatter
+import com.gelostech.dankmemes.utils.replaceFragment
+import com.gelostech.dankmemes.utils.setDrawable
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.messaging.FirebaseMessaging
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.alert
@@ -37,11 +33,8 @@ import timber.log.Timber
 
 
 class LoginFragment : BaseFragment() {
-    private lateinit var signupSuccessful: Bitmap
     private var isLoggingIn = false
-    private lateinit var prefs: SharedPreferences
     private val usersViewModel: UsersViewModel by inject()
-    private val sessionManager: SessionManager by inject()
     private val googleSignInOptions: GoogleSignInOptions by inject()
 
     companion object {
@@ -51,11 +44,6 @@ class LoginFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-
-        val successfulIcon = setDrawable(activity!!, Ionicons.Icon.ion_checkmark_round, R.color.white, 25)
-        signupSuccessful = drawableToBitmap(successfulIcon)
-        prefs = PreferenceHelper.defaultPrefs(activity!!)
-
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
@@ -110,7 +98,7 @@ class LoginFragment : BaseFragment() {
      * Initialize function to observer logging in with Email & Password LiveData
      */
     private fun initLoginObserver() {
-        usersViewModel.loginLiveData.observe(this, Observer {
+        usersViewModel.authLiveData.observe(this, Observer {
             when (it.status) {
                 Status.LOADING -> {
                     isLoggingIn = true
@@ -176,9 +164,7 @@ class LoginFragment : BaseFragment() {
                 }
 
                 Status.SUCCESS -> {
-                    val user = it.user!!
-                    sessionManager.saveUser(user)
-                    proceedToMainActivity(user.userName!!)
+                    proceedToMainActivity(it.user!!, loginButton)
                 }
 
                 Status.ERROR -> {
@@ -192,7 +178,7 @@ class LoginFragment : BaseFragment() {
      * Initialize function to observer Password reset LiveData
      */
     private fun initPasswordResetObserver() {
-        usersViewModel.resetPaswordLiveData.observe(this, Observer {
+        usersViewModel.resetPasswordLiveData.observe(this, Observer {
             when (it.status) {
                 Status.LOADING -> {
                     toast("Sending password reset instructions")
@@ -207,26 +193,6 @@ class LoginFragment : BaseFragment() {
                 }
             }
         })
-    }
-
-    /**
-     * Successful login proceed to MainActivity
-     * @param username - Logged in User username
-     */
-    private fun proceedToMainActivity(username: String) {
-        FirebaseMessaging.getInstance().subscribeToTopic(Constants.TOPIC_GLOBAL)
-        loginButton.doneLoadingAnimation(AppUtils.getColor(activity!!, R.color.pink), signupSuccessful)
-        hideLoading()
-
-        runDelayed(400) {
-            isLoggingIn = false
-
-            longToast("Welcome $username \uD83D\uDE03")
-
-            startActivity(Intent(activity!!, MainActivity::class.java))
-            activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-            activity!!.finish()
-        }
     }
 
     /**

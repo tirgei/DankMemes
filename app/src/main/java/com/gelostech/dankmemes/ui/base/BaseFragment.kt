@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.gelostech.dankmemes.utils.Connectivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -23,16 +22,24 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import org.jetbrains.anko.toast
 import android.app.ProgressDialog
+import android.content.Intent
+import android.graphics.Bitmap
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
+import br.com.simplepass.loadingbutton.customViews.CircularProgressButton
 import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.utils.MyBounceInterpolator
+import com.gelostech.dankmemes.data.models.User
+import com.gelostech.dankmemes.ui.activities.MainActivity
+import com.gelostech.dankmemes.utils.*
+import com.google.firebase.messaging.FirebaseMessaging
+import com.mikepenz.ionicons_typeface_library.Ionicons
 import org.jetbrains.anko.longToast
+import org.koin.android.ext.android.inject
 
 
 open class BaseFragment : Fragment() {
     lateinit var progressDialog: ProgressDialog
-
+    private val sessionManager: SessionManager by inject()
     fun isConnected(): Boolean = Connectivity.isConnected(activity!!)
 
     // Toast a message
@@ -98,6 +105,25 @@ open class BaseFragment : Fragment() {
     fun hideLoading() {
         if (::progressDialog.isInitialized && progressDialog.isShowing) {
             progressDialog.dismiss()
+        }
+    }
+
+    fun proceedToMainActivity(user: User, button: CircularProgressButton) {
+        // Set progress icon status
+        val successIcon = AppUtils.setDrawable(activity!!, Ionicons.Icon.ion_checkmark_round, R.color.white, 25)
+        val successfulButtonIcon: Bitmap = AppUtils.drawableToBitmap(successIcon)
+        button.doneLoadingAnimation(AppUtils.getColor(activity!!, R.color.pink), successfulButtonIcon)
+
+        hideLoading()
+        sessionManager.saveUser(user)
+        FirebaseMessaging.getInstance().subscribeToTopic(Constants.TOPIC_GLOBAL)
+
+        runDelayed(400) {
+            longToast("Welcome ${user.userName} \uD83D\uDE03")
+
+            startActivity(Intent(activity!!, MainActivity::class.java))
+            activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+            activity!!.finish()
         }
     }
 
