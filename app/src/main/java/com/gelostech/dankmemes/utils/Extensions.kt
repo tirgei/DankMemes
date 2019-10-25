@@ -153,21 +153,3 @@ fun DatabaseReference.get(): Task<DataSnapshot> {
 
     return taskSource.task
 }
-
-fun Task<Void>.execute(): Task<Boolean> {
-    val taskSource = TaskCompletionSource<Boolean>()
-
-    this.addOnCompleteListener {
-        if (it.isSuccessful) {
-            taskSource.setResult(true)
-        } else {
-            try {
-                throw it.exception!!
-            } catch (e: java.lang.Exception) {
-                taskSource.setException(e)
-            }
-        }
-    }
-
-    return taskSource.task
-}
