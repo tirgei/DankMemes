@@ -1,5 +1,6 @@
 package com.gelostech.dankmemes.ui.viewmodels
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,11 +13,12 @@ import com.gelostech.dankmemes.data.responses.GoogleLoginResponse
 import com.gelostech.dankmemes.data.responses.UserResponse
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class UsersViewModel constructor(private val repository: UsersRepository): ViewModel() {
-    private val _loginLiveData = MutableLiveData<FirebaseUserResponse>()
-    val loginLiveData: MutableLiveData<FirebaseUserResponse>
-        get() = _loginLiveData
+    private val _authLiveData = MutableLiveData<FirebaseUserResponse>()
+    val authLiveData: MutableLiveData<FirebaseUserResponse>
+        get() = _authLiveData
 
     private val _loginWithGoogleLiveData = MutableLiveData<GoogleLoginResponse>()
     val loginWithGoogleLiveData: MutableLiveData<GoogleLoginResponse>
@@ -27,7 +29,7 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
         get() = _userLiveData
 
     private val _resetPasswordLiveData = MutableLiveData<GenericResponse>()
-    val resetPaswordLiveData: MutableLiveData<GenericResponse>
+    val resetPasswordLiveData: MutableLiveData<GenericResponse>
         get() = _resetPasswordLiveData
 
     /**
@@ -37,14 +39,14 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
      */
     fun loginUserWithEmailAndPassword(email: String, password: String) {
         viewModelScope.launch {
-            _loginLiveData.value = FirebaseUserResponse.loading()
+            _authLiveData.value = FirebaseUserResponse.loading()
 
             when (val loginResult = repository.loginWithEmailAndPassword(email, password)) {
                 is Result.Success -> {
-                    _loginLiveData.value = FirebaseUserResponse.success(loginResult.data)
+                    _authLiveData.value = FirebaseUserResponse.success(loginResult.data)
                 }
                 is Result.Error -> {
-                    _loginLiveData.value = FirebaseUserResponse.error(loginResult.error)
+                    _authLiveData.value = FirebaseUserResponse.error(loginResult.error)
                 }
             }
         }
@@ -68,6 +70,50 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
             }
         }
 
+    }
+
+    /**
+     * Function to register user
+     */
+    fun registerUser(email: String, password: String) {
+        viewModelScope.launch {
+            _authLiveData.value = FirebaseUserResponse.loading()
+
+            when (val authResult = repository.registerUser(email, password)) {
+                is Result.Success -> {
+                    _authLiveData.value = FirebaseUserResponse.success(authResult.data)
+                }
+
+                is Result.Error -> {
+                    _authLiveData.value = FirebaseUserResponse.error(authResult.error)
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to create account for new User
+     * @param user - The user details to create account for
+     * @param imageUri - Selected avatar file Uri
+     */
+    fun createUserAccount(user: User, imageUri: Uri) {
+        viewModelScope.launch {
+            _userLiveData.value = UserResponse.loading()
+
+            repository.createUserAccount(imageUri, user) {
+                Timber.e("Creating account..")
+
+                when (it) {
+                    is Result.Success -> {
+                        _userLiveData.postValue(UserResponse.success(it.data))
+                    }
+
+                    is Result.Error -> {
+                        _userLiveData.postValue(UserResponse.error(it.error))
+                    }
+                }
+            }
+        }
     }
 
     /**

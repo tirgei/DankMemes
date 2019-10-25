@@ -4,15 +4,20 @@ import android.net.Uri
 import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GoogleLoginResponse
+import com.gelostech.dankmemes.ui.callbacks.StorageUploadListener
+import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.get
-import com.gelostech.dankmemes.utils.execute
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class UsersRepository constructor(private val firebaseDatabase: DatabaseReference,
@@ -64,39 +69,42 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
         }
     }
 
-    suspend fun createUserAccount(avatarUri: Uri, user: User, onResult: (Result<User>) -> Unit) {
+    /**
+     * Function to create account for new User
+     * @param user - The user details to create account for
+     * @param avatarUri - Selected avatar file Uri
+     */
+    suspend fun createUserAccount(avatarUri: Uri, user: User, callback: (Result<User>) -> Unit) {
         val storageDb = storageReference.child(Constants.AVATARS).child(user.userId!!)
         val errorMessage = "Error signing up. Please try again"
 
-        val uploadTask = storageDb.putFile(avatarUri)
-        uploadTask.continueWithTask { task ->
-            if (!task.isSuccessful) {
-                throw Exception(errorMessage)
-            }
+        AppUtils.uploadFileToFirebaseStorage(storageDb, avatarUri, object : StorageUploadListener {
+            override fun onFileUploaded(downloadUrl: String?) {
+                Timber.e("Avatar uploaded \uD83D\uDD7A...")
+                GlobalScope.launch(Dispatchers.IO) {
+                    if (downloadUrl.isNullOrEmpty()) {
+                        Timber.e("URl is null")
+                        callback(Result.Error(errorMessage))
+                    } else {
+                        Timber.e("URl is aiit")
 
-            // Continue with the task to getBitmap the download URL
-            storageDb.downloadUrl
+                        try {
+                            user.apply {
+                                user.userAvatar = downloadUrl
+                            }
 
-        }
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                user.apply {
-                    this.userAvatar = task.result.toString()
+                            db.child(user.userId!!).setValue(user).await()
+                            callback(Result.Success(user))
+
+                        } catch (e: java.lang.Exception) {
+                            Timber.e("Error creating User account: ${e.localizedMessage}")
+                            callback(Result.Error(errorMessage))
+                        }
+                    }
                 }
-
-                firebaseDatabase.child(Constants.USERS)
-                        .child(user.userId!!)
-                        .setValue(user)
-                        .addOnSuccessListener {
-                            onResult(Result.Success(user))
-                        }
-                        .addOnFailureListener {
-                            onResult(Result.Error(errorMessage))
-                        }
-            } else {
-                onResult(Result.Error(errorMessage))
             }
-        }
+        })
+
     }
 
     /**
@@ -148,14 +156,9 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
         val errorMessage = "Error signing up"
 
         return try {
-            val createUser = db.child(user.userId!!).setValue(user)
-                    .execute()
-                    .await()
+            db.child(user.userId!!).setValue(user).await()
+            Result.Success(user)
 
-            if (createUser)
-                Result.Success(user)
-            else
-                Result.Error(errorMessage)
         } catch (e: Exception) {
             Timber.e("Error creating account for Google user: ${e.localizedMessage}")
             Result.Error(errorMessage)
@@ -170,12 +173,8 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
         val errorMessage = "Error sending password reset email"
 
         return try {
-            val result = firebaseAuth.sendPasswordResetEmail(email).execute().await()
-
-            if (result)
-                Result.Success(true)
-            else
-                Result.Error(errorMessage)
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            Result.Success(true)
 
         } catch (e: FirebaseAuthInvalidUserException) {
             Timber.e("$errorMessage: ${e.localizedMessage}")
@@ -192,7 +191,9 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
      * @param userId - ID of the User
      */
     suspend fun fetchUserById(userId: String): Result<User> {
-        val user = db.child(userId).get().await()
+        val user = db.child(userId)
+                .get()
+                .await()
 
         return try {
             Result.Success(user.getValue(User::class.java)!!)
