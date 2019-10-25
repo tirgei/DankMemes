@@ -29,17 +29,23 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.ui.callbacks.StorageUploadListener
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
 import com.nostra13.universalimageloader.core.ImageLoader
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.*
 
 
 object AppUtils {
@@ -318,12 +324,53 @@ object AppUtils {
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
+    /**
+     * Function to highlight username
+     */
     fun highLightName(context: Context, title: String, start: Int, length: Int): SpannableString {
         val newName = SpannableString(title)
         newName.setSpan(StyleSpan(Typeface.BOLD), start, length, 0)
         newName.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.black)), start, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         return newName
+    }
+
+    /**
+     * Function to check provided username is valid
+     */
+    fun isValidUsername(name: String): Boolean {
+        val username = name.toLowerCase(Locale.getDefault())
+
+        if (username == "dank memes"
+                || username.contains("dank")
+                || username.contains("memes")
+                || username.contains("dank_memes"))
+            return false
+
+        return true
+    }
+
+    /**
+     * FUnction to upload a file to FirebaseStorage
+     * @param db - Firebase StorageReference
+     * @param fileUri - Uri of the file
+     */
+    fun uploadFileToFirebaseStorage(db: StorageReference, fileUri: Uri, listener: StorageUploadListener) {
+        val uploadTask = db.putFile(fileUri)
+        uploadTask.continueWithTask {task ->
+            if (!task.isSuccessful) {
+                throw task.exception!!
+            }
+            db.downloadUrl
+        }.addOnCompleteListener {
+            if (it.isSuccessful) {
+                Timber.e("File uploaded...")
+                listener.onFileUploaded(it.result.toString())
+            } else {
+                Timber.e("File not uploaded...")
+                listener.onFileUploaded(null)
+            }
+        }
     }
 
 
