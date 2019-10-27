@@ -9,29 +9,31 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.lifecycle.Observer
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.ui.base.BaseActivity
-import com.gelostech.dankmemes.utils.AppUtils
-import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.data.models.Meme
-import com.gelostech.dankmemes.utils.PreferenceHelper
+import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
+import com.gelostech.dankmemes.utils.*
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_post.*
 import org.jetbrains.anko.toast
 import com.gelostech.dankmemes.utils.PreferenceHelper.get
+import org.koin.android.ext.android.inject
+import timber.log.Timber
 
-class PostActivity : BaseActivity(), View.OnClickListener {
+class PostActivity : BaseActivity() {
     private var imageUri: Uri? = null
     private var imageSelected = false
     private var uploadMeme: MenuItem? = null
-    private var loggedIn = false;
-    private lateinit var prefs: SharedPreferences
+    private val sessionManager: SessionManager by inject()
+    private val memesViewModel: MemesViewModel by inject()
 
     companion object {
-        private const val GALLERY_REQUEST = 1
-        private var TAG = PostActivity::class.java.simpleName
+        private const val GALLERY_REQUEST = 125
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,18 +43,26 @@ class PostActivity : BaseActivity(), View.OnClickListener {
         initViews()
         checkIfShareAction()
 
-        prefs = PreferenceHelper.defaultPrefs(this)
-        loggedIn = prefs[Constants.LOGGED_IN, false]
+        initMemesObserver()
     }
 
     private fun initViews() {
         setSupportActionBar(postToolbar)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Post new meme"
+        supportActionBar?.apply {
+            setDisplayShowHomeEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
+            title = "Post new meme"
+        }
 
         postAddImage.setImageDrawable(AppUtils.setDrawable(this, Ionicons.Icon.ion_image, R.color.secondaryText, 65))
-        postAddImage.setOnClickListener(this)
+        postAddImage.setOnClickListener {
+            if (storagePermissionGranted()) {
+                val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                startActivityForResult(galleryIntent, GALLERY_REQUEST)
+            } else {
+                requestStoragePermission()
+            }
+        }
     }
 
     /**
@@ -67,7 +77,57 @@ class PostActivity : BaseActivity(), View.OnClickListener {
             imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as Uri
             startCropActivity(imageUri!!)
         }
+    }
 
+    /**
+     * Initialize observer for Meme LiveData
+     */
+    private fun initMemesObserver() {
+        memesViewModel.postMemeLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> {
+                    showLoading("Posting meme...")
+                }
+
+                Status.SUCCESS -> {
+                    hideLoading()
+                    showSelectImage()
+                    toast("Meme posted \uD83E\uDD2A\uD83E\uDD2A")
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    toast(it.error!!)
+                }
+            }
+        })
+    }
+
+    /**
+     * Function to post new Meme
+     */
+    private fun postMeme() {
+        if (!sessionManager.isLoggedIn() || sessionManager.getUserId().isEmpty()) {
+            toast("Please login first")
+            return
+        }
+
+        if (imageUri == null || !imageSelected) {
+            toast("Please select a meme")
+            return
+        }
+
+        // Create new meme object
+        val meme = Meme()
+        meme.caption = postCaption.text.toString().trim()
+        meme.likesCount = 0
+        meme.commentsCount = 0
+        meme.memePoster = sessionManager.getUsername()
+        meme.memePosterAvatar = sessionManager.getUserAvatar()
+        meme.memePosterID = sessionManager.getUserId()
+        meme.time = System.currentTimeMillis()
+
+        memesViewModel.postMeme(imageUri!!, meme)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -88,35 +148,13 @@ class PostActivity : BaseActivity(), View.OnClickListener {
         return true
     }
 
-    override fun onClick(v: View?) {
-        when(v?.id) {
-            postAddImage.id -> {
-                if (storagePermissionGranted()) {
-                    val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                    startActivityForResult(galleryIntent, GALLERY_REQUEST)
-
-                } else {
-                    requestStoragePermission()
-                }
-            }
-        }
-    }
-
-    private fun startCropActivity(imageUri: Uri) {
-        CropImage.activity(imageUri)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                .start(this)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == GALLERY_REQUEST && resultCode == Activity.RESULT_OK) {
             data.let { imageUri = it!!.data }
-
             startCropActivity(imageUri!!)
         }
-
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
@@ -129,78 +167,27 @@ class PostActivity : BaseActivity(), View.OnClickListener {
                 showSelectedImage()
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Log.d(TAG, "Cropping error: ${result.error.message}")
+                Timber.e("Error cropping meme: ${result.error.localizedMessage}")
             }
         }
-
     }
 
-    private fun postMeme() {
-        if (!loggedIn) {
-            toast("Please login first")
-            return
-        }
-
-        if (imageUri == null) {
-            toast("Please select a meme...")
-            return
-        }
-
-        if (!imageSelected) return
-
-        showLoading("Posting meme...")
-        val id = getFirestore().collection(Constants.MEMES).document().id
-
-        // Create new meme object
-        val meme = Meme()
-        meme.id = id
-        meme.caption = postCaption.text.toString().trim()
-        meme.likesCount = 0
-        meme.commentsCount = 0
-        meme.memePoster = prefs[Constants.USERNAME]
-        meme.memePosterAvatar = prefs[Constants.AVATAR]
-        meme.memePosterID = getUid()
-        meme.time = System.currentTimeMillis()
-
-        val ref = getStorageReference().child("memes").child(getUid()).child(id)
-        val uploadTask = ref.putFile(imageUri!!)
-        uploadTask.continueWithTask { task ->
-            if (!task.isSuccessful) {
-                throw task.exception!!
-            }
-            Log.d(TAG, "Image uploaded")
-
-            // Continue with the task to get the download URL
-            ref.downloadUrl
-        }.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                meme.imageUrl = task.result.toString()
-
-                getFirestore().collection(Constants.MEMES).document(id).set(meme)
-                        .addOnSuccessListener {
-                            hideLoading()
-                            toast("Meme posted!")
-                            showSelectImage()
-                        }
-                        .addOnFailureListener {
-                            hideLoading()
-                            toast("Error uploading meme. Please try again")
-                        }
-            } else {
-                hideLoading()
-                toast("Error uploading meme. Please try again.")
-                Log.d(TAG, "Error uploading profile: ${task.exception}")
-            }
-        }
-
+    /**
+     * Function to launch Image crop activity
+     * @param imageUri - Selected image Uri
+     */
+    private fun startCropActivity(imageUri: Uri) {
+        CropImage.activity(imageUri)
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .start(this)
     }
 
     /**
      *  Image has been selected, show the image in ImageView and hide the select image button
      */
     private fun showSelectedImage() {
-        postAddImage.visibility = View.GONE
-        postSelectImage.visibility = View.VISIBLE
+        postAddImage.hideView()
+        postSelectImage.showView()
     }
 
     /**
@@ -210,8 +197,8 @@ class PostActivity : BaseActivity(), View.OnClickListener {
         imageSelected = false
         imageUri = null
 
-        postSelectImage.visibility = View.GONE
-        postAddImage.visibility = View.VISIBLE
+        postSelectImage.hideView()
+        postAddImage.showView()
         postCaption.setText("")
     }
 
