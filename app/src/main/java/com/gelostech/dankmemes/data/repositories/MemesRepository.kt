@@ -6,13 +6,19 @@ import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.wrappers.ObservableMeme
+import com.gelostech.dankmemes.ui.callbacks.StorageUploadListener
+import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.Constants
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.StorageReference
 import io.reactivex.Observable
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
+import java.lang.Exception
 
 class MemesRepository constructor(private val firestoreDatabase: FirebaseFirestore,
                                   private val firebaseDatabase: DatabaseReference,
@@ -78,33 +84,43 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
                 }
     }
 
-    fun postMeme(imageUri: Uri, meme: Meme, onResult: (Result<Boolean>) -> Unit) {
+    /**
+     * Function to post a new Meme
+     * @param imageUri - Selected Meme
+     * @param meme - Meme model
+     * @param callback - Callback response
+     */
+    fun postMeme(imageUri: Uri, meme: Meme, callback: (Result<Boolean>) -> Unit) {
         val id = db.document().id
         val storageDb = storageReference.child(Constants.MEMES).child(meme.memePosterID!!).child(id)
+        val errorMessage = "Error posting meme. Please try again"
 
-        val uploadTask = storageDb.putFile(imageUri)
-        uploadTask.continueWithTask { task ->
-            if (!task.isSuccessful) {
-                onResult(Result.Error("Error posting meme. Please try again"))
-            }
+        AppUtils.uploadFileToFirebaseStorage(storageDb, imageUri, object : StorageUploadListener {
+            override fun onFileUploaded(downloadUrl: String?) {
+                GlobalScope.launch {
+                    if (downloadUrl.isNullOrEmpty()) {
+                        Timber.e("Meme not uploaded...")
+                        callback(Result.Error(errorMessage))
+                    } else {
+                        Timber.e("Meme uploaded...")
 
-            // Continue with the task to get the download URL
-            storageDb.downloadUrl
+                        try {
+                            meme.apply {
+                                this.id = id
+                                this.imageUrl = downloadUrl
+                            }
 
-        }.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                meme.apply {
-                    this.id = id
-                    this.imageUrl = task.result.toString()
-                }
+                            db.document(id).set(meme).await()
+                            callback(Result.Success(true))
 
-                db.document(id).set(meme)
-                        .addOnCompleteListener { postingTask ->
-                            onResult(Result.Success(postingTask.isSuccessful))
+                        } catch (e: Exception) {
+                            Timber.e("Error posting meme: ${e.localizedMessage}")
+                            callback(Result.Error(errorMessage))
                         }
-
-            } else onResult(Result.Error("Error posting meme. Please try again"))
-        }
+                    }
+                }
+            }
+        })
     }
 
     fun deleteMeme(memeId: String, onResult: (Result<Boolean>) -> Unit) {
