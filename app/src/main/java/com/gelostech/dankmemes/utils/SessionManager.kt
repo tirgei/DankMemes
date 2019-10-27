@@ -4,16 +4,49 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.utils.PreferenceHelper.set
+import com.gelostech.dankmemes.utils.PreferenceHelper.get
 
 class SessionManager (context: Context) {
     private val prefs: SharedPreferences = PreferenceHelper.defaultPrefs(context)
 
+    /**
+     * Save User details on login
+     * @param user - User model
+     */
     fun saveUser(user: User) {
         prefs[Constants.USERNAME] = user.userName
         prefs[Constants.EMAIL] = user.userEmail
         prefs[Constants.AVATAR] = user.userAvatar
         prefs[Constants.USER_ID] = user.userId
         prefs[Constants.LOGGED_IN] = true
+    }
+
+    /**
+     * Check if user is logged in
+     */
+    fun isLoggedIn(): Boolean {
+        return prefs[Constants.LOGGED_IN, false]
+    }
+
+    /**
+     * Get the logged in User ID
+     */
+    fun getUserId(): String {
+        return prefs[Constants.USER_ID, ""]
+    }
+
+    /**
+     * Get the logged in User username
+     */
+    fun getUsername(): String {
+        return prefs[Constants.USERNAME, ""]
+    }
+
+    /**
+     * Get the logged in User avatar
+     */
+    fun getUserAvatar(): String {
+        return prefs[Constants.AVATAR, ""]
     }
 
 }
