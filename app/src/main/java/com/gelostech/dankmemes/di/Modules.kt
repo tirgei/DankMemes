@@ -4,6 +4,7 @@ import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.repositories.MemesRepository
 import com.gelostech.dankmemes.data.repositories.NotificationsRepository
 import com.gelostech.dankmemes.data.repositories.UsersRepository
+import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.SessionManager
@@ -36,6 +37,7 @@ val repositoriesModule = module {
 
 val viewModelsModule = module {
     viewModel { UsersViewModel(get()) }
+    viewModel { MemesViewModel(get()) }
 }
 
 val sessionManagerModule = module {
