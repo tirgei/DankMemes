@@ -343,7 +343,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId) {
             R.id.menu_add_meme -> {
-                startActivity(Intent(this, AdActivity::class.java))
+                startActivity(Intent(this, PostActivity::class.java))
                 overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
             }
 
