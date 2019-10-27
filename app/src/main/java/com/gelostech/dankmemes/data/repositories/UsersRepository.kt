@@ -80,13 +80,12 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
 
         AppUtils.uploadFileToFirebaseStorage(storageDb, avatarUri, object : StorageUploadListener {
             override fun onFileUploaded(downloadUrl: String?) {
-                Timber.e("Avatar uploaded \uD83D\uDD7A...")
                 GlobalScope.launch(Dispatchers.IO) {
                     if (downloadUrl.isNullOrEmpty()) {
-                        Timber.e("URl is null")
+                        Timber.e("Avatar is not uploaded...")
                         callback(Result.Error(errorMessage))
                     } else {
-                        Timber.e("URl is aiit")
+                        Timber.e("Avatar uploaded...")
 
                         try {
                             user.apply {
