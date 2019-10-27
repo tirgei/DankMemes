@@ -11,29 +11,30 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.data.models.Fave
+import com.gelostech.dankmemes.data.models.Meme
+import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.ui.activities.CommentActivity
 import com.gelostech.dankmemes.ui.activities.ProfileActivity
 import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
 import com.gelostech.dankmemes.ui.adapters.MemesAdapter
-import com.gelostech.dankmemes.utils.AppUtils
+import com.gelostech.dankmemes.ui.adapters.PagedMemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
-import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.Fave
-import com.gelostech.dankmemes.data.models.Meme
-import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
+import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
+import com.gelostech.dankmemes.utils.AppUtils
+import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.RecyclerFormatter
 import com.gelostech.dankmemes.utils.showView
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
-import com.makeramen.roundedimageview.RoundedDrawable
-import com.makeramen.roundedimageview.RoundedImageView
 import com.mopub.nativeads.MoPubNativeAdPositioning
 import com.mopub.nativeads.MoPubRecyclerAdapter
 import com.mopub.nativeads.MoPubStaticNativeAdRenderer
@@ -43,16 +44,19 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class AllFragment : BaseFragment() {
     private lateinit var memesAdapter: MemesAdapter
+    private lateinit var pagedMemesAdapter: PagedMemesAdapter
     private lateinit var mopubAdapter: MoPubRecyclerAdapter
     private lateinit var bs: BottomSheet.Builder
     private lateinit var loadMoreFooter: RelativeLayout
     private lateinit var query: Query
     private var lastDocument: DocumentSnapshot? = null
     private var loading = false
+    private val memesViewModel: MemesViewModel by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -66,11 +70,13 @@ class AllFragment : BaseFragment() {
         initMopub()
         allShimmer.startShimmerAnimation()
 
-        load()
+//        load()
+        initMemesObserver()
     }
 
     private fun initViews() {
         memesAdapter = MemesAdapter(memesCallback)
+        pagedMemesAdapter = PagedMemesAdapter(memesCallback)
 
         allRv.apply {
             setHasFixedSize(true)
@@ -79,7 +85,7 @@ class AllFragment : BaseFragment() {
             itemAnimator = DefaultItemAnimator()
             (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
             loadMoreFooterView as RelativeLayout
-            adapter = memesAdapter
+            adapter = pagedMemesAdapter
         }
 
         allRv.setOnLoadMoreListener {
@@ -94,6 +100,18 @@ class AllFragment : BaseFragment() {
             Handler().postDelayed({allRefresh?.isRefreshing = false}, 2500)
         }
 
+    }
+
+    /**
+     * Initialize observer for Memes LiveData
+     */
+    private fun initMemesObserver() {
+        memesViewModel.memesLiveData.observe(this, Observer {
+            if (it.isEmpty())
+                toast("Empty memes")
+            else
+                pagedMemesAdapter.submitList(it)
+        })
     }
 
     private fun load() {
