@@ -12,13 +12,16 @@ import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Notification
 import com.gelostech.dankmemes.ui.callbacks.CommentsCallback
 import com.gelostech.dankmemes.ui.callbacks.FavesCallback
-import com.google.firebase.auth.FirebaseAuth
 import com.makeramen.roundedimageview.RoundedImageView
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
-import de.hdodenhof.circleimageview.CircleImageView
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
-object BindingAdapter {
+object BindingAdapter : KoinComponent {
+    private val sessionManager: SessionManager by inject()
+    private val myUserId = sessionManager.getUserId()
+
     /**
      * Bind Image to layout
      */
@@ -51,7 +54,7 @@ object BindingAdapter {
     fun setLikeStatus(view: TextView, likes: MutableMap<String, Boolean>) {
         val context = view.context
 
-        when (likes.containsKey(FirebaseAuth.getInstance().currentUser!!.uid)) {
+        when (likes.containsKey(myUserId)) {
             true -> {
                 view.setDrawable(AppUtils.setDrawable(context, FontAwesome.Icon.faw_thumbs_up2, R.color.colorAccent, 20))
                 view.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
@@ -72,7 +75,7 @@ object BindingAdapter {
     fun setFaveStatus(view: ImageButton, faves: MutableMap<String, Boolean>) {
         val context = view.context
 
-        if (!faves.containsKey(FirebaseAuth.getInstance().currentUser!!.uid))
+        if (!faves.containsKey(myUserId))
             view.setImageDrawable(AppUtils.setDrawable(context, Ionicons.Icon.ion_ios_heart_outline, R.color.secondaryText, 19))
         else
             view.setImageDrawable(AppUtils.setDrawable(context, Ionicons.Icon.ion_ios_heart, R.color.pink, 19))

@@ -59,7 +59,7 @@ class ProfileFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
-        load(true)
+//        load(true)
 
         profileRef = getDatabaseReference().child("users").child(getUid())
         profileRef.addValueEventListener(profileListener)
@@ -82,7 +82,7 @@ class ProfileFragment : BaseFragment() {
         profileRv.setOnLoadMoreListener {
             if (!loading) {
                 loadMoreFooter.showView()
-                load(false)
+//                load(false)
             }
         }
     }

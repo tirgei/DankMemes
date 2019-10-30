@@ -1,6 +1,7 @@
 package com.gelostech.dankmemes.ui.adapters
 
 import android.view.ViewGroup
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ import com.mikepenz.ionicons_typeface_library.Ionicons
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 
 class PagedMemesAdapter(private val callback: MemesCallback): PagedListAdapter<ObservableMeme, PagedMemesAdapter.MemeHolder>(DIFF_CALLBACK) {
 
@@ -32,16 +34,26 @@ class PagedMemesAdapter(private val callback: MemesCallback): PagedListAdapter<O
         }
     }
 
+    override fun onCurrentListChanged(previousList: PagedList<ObservableMeme>?, currentList: PagedList<ObservableMeme>?) {
+        super.onCurrentListChanged(previousList, currentList)
+        Timber.e("Previous list: $previousList vs Current list: $currentList")
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemeHolder {
         return MemeHolder(parent.inflate(R.layout.item_meme), callback)
     }
 
     override fun onBindViewHolder(holder: MemeHolder, position: Int) {
         val currentMeme = getItem(position)
-        currentMeme.let {
-            it?.meme?.subscribeBy { meme -> holder.bind(meme) }
-                    ?.addTo(holder.disposables)
-        }
+        Timber.e("Binding view holder: ${currentMeme?.id}")
+
+        currentMeme?.meme?.subscribeBy(
+                onComplete = {
+                    Timber.e("Subscribing")
+//                    holder.bind(it)
+                },
+                onError = { Timber.e("Error observing meme: $it") }
+        )
     }
 
     override fun onViewRecycled(holder: MemeHolder) {
@@ -65,6 +77,8 @@ class PagedMemesAdapter(private val callback: MemesCallback): PagedListAdapter<O
 
         // Bind meme object to layout
         fun bind(meme: Meme) {
+            Timber.e("Binding ${meme.id}")
+
             binding.meme = meme
             binding.callback = callback
             binding.timeFormatter = TimeFormatter()

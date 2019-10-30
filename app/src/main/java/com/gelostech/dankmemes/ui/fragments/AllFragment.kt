@@ -28,10 +28,7 @@ import com.gelostech.dankmemes.ui.adapters.PagedMemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
-import com.gelostech.dankmemes.utils.AppUtils
-import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.utils.RecyclerFormatter
-import com.gelostech.dankmemes.utils.showView
+import com.gelostech.dankmemes.utils.*
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
@@ -48,14 +45,9 @@ import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class AllFragment : BaseFragment() {
-    private lateinit var memesAdapter: MemesAdapter
     private lateinit var pagedMemesAdapter: PagedMemesAdapter
     private lateinit var mopubAdapter: MoPubRecyclerAdapter
     private lateinit var bs: BottomSheet.Builder
-    private lateinit var loadMoreFooter: RelativeLayout
-    private lateinit var query: Query
-    private var lastDocument: DocumentSnapshot? = null
-    private var loading = false
     private val memesViewModel: MemesViewModel by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -67,15 +59,13 @@ class AllFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-        initMopub()
+//        initMopub()
         allShimmer.startShimmerAnimation()
 
-//        load()
-        initMemesObserver()
+//        initMemesObserver()
     }
 
     private fun initViews() {
-        memesAdapter = MemesAdapter(memesCallback)
         pagedMemesAdapter = PagedMemesAdapter(memesCallback)
 
         allRv.apply {
@@ -84,94 +74,24 @@ class AllFragment : BaseFragment() {
             addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
             itemAnimator = DefaultItemAnimator()
             (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
-            loadMoreFooterView as RelativeLayout
             adapter = pagedMemesAdapter
         }
-
-        allRv.setOnLoadMoreListener {
-            if (!loading) {
-                loadMoreFooter.showView()
-                load()
-            }
-        }
-
-        allRefresh.isEnabled = false
-        allRefresh.setOnRefreshListener {
-            Handler().postDelayed({allRefresh?.isRefreshing = false}, 2500)
-        }
-
     }
 
     /**
      * Initialize observer for Memes LiveData
      */
     private fun initMemesObserver() {
-        memesViewModel.memesLiveData.observe(this, Observer {
-            if (it.isEmpty())
-                toast("Empty memes")
-            else
-                pagedMemesAdapter.submitList(it)
+        memesViewModel.fetchMemes().observe(this, Observer {
+            allShimmer?.stopShimmerAnimation()
+            allShimmer?.visibility = View.GONE
+            pagedMemesAdapter.submitList(it)
         })
-    }
-
-    private fun load() {
-        query = if (lastDocument == null) {
-            getFirestore().collection(Constants.MEMES)
-                    .orderBy(Constants.TIME, Query.Direction.DESCENDING)
-                    .limit(31)
-        } else {
-            loading = true
-
-            getFirestore().collection(Constants.MEMES)
-                    .orderBy(Constants.TIME, Query.Direction.DESCENDING)
-                    .startAfter(lastDocument!!)
-                    .limit(21)
-        }
-
-        query.addSnapshotListener { p0, p1 ->
-            hasPosts()
-            loading = false
-
-            if (p1 != null) {
-                Timber.e("Error loading initial memes: $p1")
-
-            }
-
-            if (p0 == null || p0.isEmpty) {
-                noPosts()
-            } else {
-                lastDocument = p0.documents[p0.size()-1]
-
-                for (change: DocumentChange in p0.documentChanges) {
-
-                    when(change.type) {
-                        DocumentChange.Type.ADDED -> {
-                            val meme = change.document.toObject(Meme::class.java)
-                            memesAdapter.addMeme(meme)
-                        }
-
-                        DocumentChange.Type.MODIFIED -> {
-                            val meme = change.document.toObject(Meme::class.java)
-                            memesAdapter.updateMeme(meme)
-                        }
-
-                        DocumentChange.Type.REMOVED -> {
-                            val meme = change.document.toObject(Meme::class.java)
-                            memesAdapter.removeMeme(meme)
-                        }
-
-
-                    }
-                }
-
-            }
-
-        }
     }
 
     private fun initMopub() {
         val adPositioning = MoPubNativeAdPositioning.MoPubServerPositioning()
-        mopubAdapter = MoPubRecyclerAdapter(activity!!, memesAdapter, adPositioning)
+        mopubAdapter = MoPubRecyclerAdapter(activity!!, pagedMemesAdapter, adPositioning)
         mopubAdapter.setContentChangeStrategy(MoPubRecyclerAdapter.ContentChangeStrategy.MOVE_ALL_ADS_WITH_CONTENT)
 
         val myViewBinder = ViewBinder.Builder(R.layout.item_native)
