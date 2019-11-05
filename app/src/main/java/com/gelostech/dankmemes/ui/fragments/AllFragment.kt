@@ -62,7 +62,7 @@ class AllFragment : BaseFragment() {
 //        initMopub()
         allShimmer.startShimmerAnimation()
 
-//        initMemesObserver()
+        initMemesObserver()
     }
 
     private fun initViews() {

@@ -27,11 +27,13 @@ object BindingAdapter : KoinComponent {
      */
     @JvmStatic
     @BindingAdapter(value = ["bind:image", "bind:placeholder", "bind:thumbnail"], requireAll = false)
-    fun loadImage(view: ImageView, image: Any, placeholder: Int, thumbnail: String? = null) {
-        if (thumbnail.isNullOrEmpty())
-            view.load(image, placeholder)
-        else
-            view.load(image, placeholder, thumbnail)
+    fun loadImage(view: ImageView, image: Any?, placeholder: Int, thumbnail: String? = null) {
+        image?.let {
+            if (thumbnail.isNullOrEmpty())
+                view.load(it, placeholder)
+            else
+                view.load(it, placeholder, thumbnail)
+        }
     }
 
     /**
@@ -51,18 +53,20 @@ object BindingAdapter : KoinComponent {
      */
     @JvmStatic
     @BindingAdapter("bind:likeStatus")
-    fun setLikeStatus(view: TextView, likes: MutableMap<String, Boolean>) {
+    fun setLikeStatus(view: TextView, likes: MutableMap<String, Boolean>?) {
         val context = view.context
 
-        when (likes.containsKey(myUserId)) {
-            true -> {
-                view.setDrawable(AppUtils.setDrawable(context, FontAwesome.Icon.faw_thumbs_up2, R.color.colorAccent, 20))
-                view.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
-            }
+        likes?.let {
+            when (likes.containsKey(myUserId)) {
+                true -> {
+                    view.setDrawable(AppUtils.setDrawable(context, FontAwesome.Icon.faw_thumbs_up2, R.color.colorAccent, 20))
+                    view.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+                }
 
-            else -> {
-                view.setDrawable(AppUtils.setDrawable(context, FontAwesome.Icon.faw_thumbs_up, R.color.secondaryText, 20))
-                view.setTextColor(ContextCompat.getColor(context, R.color.textGray))
+                else -> {
+                    view.setDrawable(AppUtils.setDrawable(context, FontAwesome.Icon.faw_thumbs_up, R.color.secondaryText, 20))
+                    view.setTextColor(ContextCompat.getColor(context, R.color.textGray))
+                }
             }
         }
     }
@@ -72,13 +76,15 @@ object BindingAdapter : KoinComponent {
      */
     @JvmStatic
     @BindingAdapter("bind:faveStatus")
-    fun setFaveStatus(view: ImageButton, faves: MutableMap<String, Boolean>) {
+    fun setFaveStatus(view: ImageButton, faves: MutableMap<String, Boolean>?) {
         val context = view.context
 
-        if (!faves.containsKey(myUserId))
-            view.setImageDrawable(AppUtils.setDrawable(context, Ionicons.Icon.ion_ios_heart_outline, R.color.secondaryText, 19))
-        else
-            view.setImageDrawable(AppUtils.setDrawable(context, Ionicons.Icon.ion_ios_heart, R.color.pink, 19))
+        faves?.let {
+            if (!faves.containsKey(myUserId))
+                view.setImageDrawable(AppUtils.setDrawable(context, Ionicons.Icon.ion_ios_heart_outline, R.color.secondaryText, 19))
+            else
+                view.setImageDrawable(AppUtils.setDrawable(context, Ionicons.Icon.ion_ios_heart, R.color.pink, 19))
+        }
     }
 
     /**

@@ -47,13 +47,10 @@ class PagedMemesAdapter(private val callback: MemesCallback): PagedListAdapter<O
         val currentMeme = getItem(position)
         Timber.e("Binding view holder: ${currentMeme?.id}")
 
-        currentMeme?.meme?.subscribeBy(
-                onComplete = {
-                    Timber.e("Subscribing")
-//                    holder.bind(it)
-                },
-                onError = { Timber.e("Error observing meme: $it") }
-        )
+        currentMeme!!.meme.subscribeBy(Timber::e) {
+            holder.bind(it)
+        }.addTo(holder.disposables)
+
     }
 
     override fun onViewRecycled(holder: MemeHolder) {

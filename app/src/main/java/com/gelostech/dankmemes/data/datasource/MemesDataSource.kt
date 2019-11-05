@@ -28,16 +28,6 @@ class MemesDataSource constructor(private val repository: MemesRepository,
         scope.launch {
             val memes = repository.fetchMemes()
             Timber.e("Memes fetched: ${memes.size}")
-
-            memes.forEach {currentMeme ->
-                currentMeme.meme.subscribeBy(
-                        onComplete = {
-                            Timber.e("Subscribing")
-                        },
-                        onError = { Timber.e("Error observing meme: $it") }
-                )
-            }
-
             callback.onResult(memes)
         }
     }
