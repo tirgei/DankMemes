@@ -39,7 +39,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
             repository.postMeme(imageUri, meme) {
                 when(it) {
                     is Result.Success -> {
-                        _postMemeLiveData.postValue(GenericResponse.success(it.data))
+                        _postMemeLiveData.postValue(GenericResponse.success(it.data, GenericResponse.ITEM_RESPONSE.POST_MEME))
                     }
 
                     is Result.Error -> {
