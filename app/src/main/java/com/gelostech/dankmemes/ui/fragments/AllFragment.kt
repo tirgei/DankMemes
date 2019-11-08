@@ -46,7 +46,6 @@ import timber.log.Timber
 
 class AllFragment : BaseFragment() {
     private lateinit var pagedMemesAdapter: PagedMemesAdapter
-    private lateinit var mopubAdapter: MoPubRecyclerAdapter
     private lateinit var bs: BottomSheet.Builder
     private val memesViewModel: MemesViewModel by inject()
 
@@ -59,9 +58,8 @@ class AllFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-//        initMopub()
-        allShimmer.startShimmerAnimation()
 
+        allShimmer.startShimmerAnimation()
         initMemesObserver()
     }
 
@@ -89,27 +87,6 @@ class AllFragment : BaseFragment() {
         })
     }
 
-    private fun initMopub() {
-        val adPositioning = MoPubNativeAdPositioning.MoPubServerPositioning()
-        mopubAdapter = MoPubRecyclerAdapter(activity!!, pagedMemesAdapter, adPositioning)
-        mopubAdapter.setContentChangeStrategy(MoPubRecyclerAdapter.ContentChangeStrategy.MOVE_ALL_ADS_WITH_CONTENT)
-
-        val myViewBinder = ViewBinder.Builder(R.layout.item_native)
-                .titleId(R.id.native_title)
-                .textId(R.id.native_text)
-                .mainImageId(R.id.native_main_image)
-                .iconImageId(R.id.native_icon_image)
-                .callToActionId(R.id.native_cta)
-                .privacyInformationIconImageId(R.id.native_privacy_information_icon_image)
-                .build()
-
-        val myRenderer = MoPubStaticNativeAdRenderer(myViewBinder)
-        mopubAdapter.registerAdRenderer(myRenderer)
-        allRv.adapter = mopubAdapter
-        if (isConnected()) mopubAdapter.loadAds(activity!!.getString(R.string.mopub_native_ad))
-
-    }
-
     private val memesCallback = object : MemesCallback {
         override fun onMemeClicked(view: View, meme: Meme) {
             val memeId = meme.id!!
@@ -125,6 +102,8 @@ class AllFragment : BaseFragment() {
                 }
 
                 else -> {
+                    showLoading("Please wait...")
+
                     doAsync {
                         // Get bitmap of shown meme
                         val imageBitmap = when(view.id) {
@@ -133,6 +112,8 @@ class AllFragment : BaseFragment() {
                         }
 
                         uiThread {
+                            hideLoading()
+
                             if (view.id == R.id.memeMore) showBottomsheetAdmin(meme, imageBitmap!!)
                             else showMeme(meme, imageBitmap!!)
                         }
@@ -332,11 +313,5 @@ class AllFragment : BaseFragment() {
     private fun noPosts() {
 
     }
-
-    override fun onDestroy() {
-        mopubAdapter.destroy()
-        super.onDestroy()
-    }
-
 }
 
