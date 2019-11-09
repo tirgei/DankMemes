@@ -348,9 +348,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
             }
 
             R.id.menu_edit_profile -> {
-                val intent = Intent(this, EditProfileActivity::class.java)
-                intent.putExtra("user", profileFragment.getUser())
-                startActivity(intent)
+                startActivity(Intent(this, EditProfileActivity::class.java))
                 overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
             }
         }
