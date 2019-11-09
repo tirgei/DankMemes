@@ -145,11 +145,11 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
 
             when (val result = repository.sendPasswordResetEmail(email)) {
                 is Result.Success -> {
-                    _resetPasswordLiveData.value = GenericResponse.success(result.data, GenericResponse.ITEM_RESPONSE.RESET_PASSWORD)
+                    _resetPasswordLiveData.value = GenericResponse.success(result.data)
                 }
 
                 is Result.Error -> {
-                    _resetPasswordLiveData.value = GenericResponse.error(result.error)
+                    _resetPasswordLiveData.value = GenericResponse.error(result.error, GenericResponse.ITEM_RESPONSE.RESET_PASSWORD)
                 }
             }
         }
