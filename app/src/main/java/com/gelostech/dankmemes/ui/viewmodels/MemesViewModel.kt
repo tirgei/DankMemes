@@ -88,6 +88,26 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
     }
 
     /**
+     * Function to like meme
+     * @param memeId - ID of the meme
+     */
+    fun faveMeme(memeId: String, userId: String) {
+        viewModelScope.launch {
+            _genericResponseLiveData.value = GenericResponse.loading()
+
+            when (val result = repository.faveMeme(memeId, userId)) {
+                is Result.Success -> {
+                    _genericResponseLiveData.value = GenericResponse.success(result.data)
+                }
+
+                is Result.Error -> {
+                    _genericResponseLiveData.value = GenericResponse.error(result.error, GenericResponse.ITEM_RESPONSE.FAVE_MEME)
+                }
+            }
+        }
+    }
+
+    /**
      * Function to delete meme
      * @param memeId - ID of the meme to delete
      */

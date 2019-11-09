@@ -112,7 +112,11 @@ class AllFragment : BaseFragment() {
             when(view.id) {
                 R.id.memeComment -> showComments(memeId)
                 R.id.memeIcon, R.id.memeUser -> showProfile(memeId)
-                R.id.memeFave -> favePost(memeId)
+
+                R.id.memeFave -> {
+                    animateView(view)
+                    memesViewModel.faveMeme(memeId, getUid())
+                }
 
                 R.id.memeLike -> {
                     animateView(view)
