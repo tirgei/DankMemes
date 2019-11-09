@@ -172,11 +172,15 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
         return Result.Error("Error liking meme. Please try again")
     }
 
-
-    fun faveMeme(memeId: String, userId: String, onResult: (Result<Boolean>) -> Unit) {
+    /**
+     * Function to (un)fave meme
+     * @param memeId - ID of the meme
+     * @param userId - ID of the logged in User
+     */
+    suspend fun faveMeme(memeId: String, userId: String): Result<Boolean> {
         val memeReference = db.document(memeId)
 
-        firestoreDatabase.runTransaction {
+        val result = firestoreDatabase.runTransaction {
             val meme = it[memeReference].toObject(Meme::class.java)
             val faves = meme!!.faves
 
@@ -205,11 +209,13 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
             }
 
             it.update(memeReference, Constants.FAVES, faves)
+        }.await()
 
-        }.addOnCompleteListener { task ->
-            if (task.isSuccessful) onResult(Result.Success(true))
-            else onResult(Result.Error("Error favoring meme. Please try again"))
+        if (result != null) {
+            return Result.Success(true)
         }
+
+        return Result.Error("Error faving meme. Please try again")
     }
 
     fun reportMeme(report: Report, onResult: (Result<Boolean>) -> Unit) {
