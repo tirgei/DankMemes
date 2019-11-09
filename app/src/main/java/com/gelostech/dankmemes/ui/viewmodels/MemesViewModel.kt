@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.gelostech.dankmemes.data.Result
+import com.gelostech.dankmemes.data.datasource.FavesDataSource
 import com.gelostech.dankmemes.data.datasource.MemesDataSource
+import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.repositories.MemesRepository
@@ -22,9 +24,11 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
         get() = _genericResponseLiveData
 
     private var _memesLiveData: LiveData<PagedList<ObservableMeme>>
+    private var _favesLiveData: LiveData<PagedList<Fave>>
 
     init {
         _memesLiveData = initializePagedMemesBuilder().build()
+        _favesLiveData = initializePagedFavesBuilder().build()
     }
 
     /**
@@ -56,17 +60,9 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
     fun fetchMemes(): LiveData<PagedList<ObservableMeme>> = _memesLiveData
 
     /**
-     * Function to fetch all memes
+     * Function to fetch memes
      */
-    private fun initializePagedMemesBuilder(): LivePagedListBuilder<String, ObservableMeme> {
-        val pagingConfig = PagedList.Config.Builder()
-                .setEnablePlaceholders(false)
-                .setPrefetchDistance(5)
-                .build()
-
-        val memeFactory = MemesDataSource.Factory(repository, viewModelScope)
-        return LivePagedListBuilder<String, ObservableMeme>(memeFactory, pagingConfig)
-    }
+    fun fetchFaves(): LiveData<PagedList<Fave>> = _favesLiveData
 
     /**
      * Function to like meme
@@ -149,6 +145,32 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 }
             }
         }
+    }
+
+    /**
+     * Function to fetch all memes
+     */
+    private fun initializePagedMemesBuilder(): LivePagedListBuilder<String, ObservableMeme> {
+        val pagingConfig = PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPrefetchDistance(5)
+                .build()
+
+        val memeFactory = MemesDataSource.Factory(repository, viewModelScope)
+        return LivePagedListBuilder<String, ObservableMeme>(memeFactory, pagingConfig)
+    }
+
+    /**
+     * Function to fetch all faves
+     */
+    private fun initializePagedFavesBuilder(): LivePagedListBuilder<String, Fave> {
+        val pagingConfig = PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPrefetchDistance(5)
+                .build()
+
+        val faveFactory = FavesDataSource.Factory(repository, viewModelScope)
+        return LivePagedListBuilder<String, Fave>(faveFactory, pagingConfig)
     }
 
 }
