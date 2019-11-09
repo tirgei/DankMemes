@@ -28,6 +28,45 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
     private val memesQuery = db.orderBy(Constants.TIME, Query.Direction.DESCENDING).limit(Constants.MEMES_COUNT)
 
     /**
+     * Function to post a new Meme
+     * @param imageUri - Selected Meme
+     * @param meme - Meme model
+     * @param callback - Callback response
+     */
+    fun postMeme(imageUri: Uri, meme: Meme, callback: (Result<Boolean>) -> Unit) {
+        val id = db.document().id
+        val storageDb = storageReference.child(Constants.MEMES).child(meme.memePosterID!!).child(id)
+        val errorMessage = "Error posting meme. Please try again"
+
+        AppUtils.uploadFileToFirebaseStorage(storageDb, imageUri, object : StorageUploadListener {
+            override fun onFileUploaded(downloadUrl: String?) {
+                GlobalScope.launch {
+                    if (downloadUrl.isNullOrEmpty()) {
+                        Timber.e("Meme not uploaded...")
+                        callback(Result.Error(errorMessage))
+                    } else {
+                        Timber.e("Meme uploaded...")
+
+                        try {
+                            meme.apply {
+                                this.id = id
+                                this.imageUrl = downloadUrl
+                            }
+
+                            db.document(id).set(meme).await()
+                            callback(Result.Success(true))
+
+                        } catch (e: Exception) {
+                            Timber.e("Error posting meme: ${e.localizedMessage}")
+                            callback(Result.Error(errorMessage))
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    /**
      * Fetch all memes
      */
     suspend fun fetchMemes(loadBefore: String? = null, loadAfter: String? = null): List<ObservableMeme> {
@@ -86,42 +125,24 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
     }
 
     /**
-     * Function to post a new Meme
-     * @param imageUri - Selected Meme
-     * @param meme - Meme model
-     * @param callback - Callback response
+     * Fetch all memes
      */
-    fun postMeme(imageUri: Uri, meme: Meme, callback: (Result<Boolean>) -> Unit) {
-        val id = db.document().id
-        val storageDb = storageReference.child(Constants.MEMES).child(meme.memePosterID!!).child(id)
-        val errorMessage = "Error posting meme. Please try again"
+    suspend fun fetchFaves(userId: String, loadBefore: String? = null, loadAfter: String? = null): List<Fave> {
+        Timber.e("Fetching memes...")
+        val favesDb = firestoreDatabase.collection(Constants.FAVORITES).document(userId).collection(Constants.USER_FAVES)
+        var query = favesDb.orderBy(Constants.TIME, Query.Direction.DESCENDING).limit(Constants.MEMES_COUNT)
 
-        AppUtils.uploadFileToFirebaseStorage(storageDb, imageUri, object : StorageUploadListener {
-            override fun onFileUploaded(downloadUrl: String?) {
-                GlobalScope.launch {
-                    if (downloadUrl.isNullOrEmpty()) {
-                        Timber.e("Meme not uploaded...")
-                        callback(Result.Error(errorMessage))
-                    } else {
-                        Timber.e("Meme uploaded...")
+        loadBefore?.let {
+            val meme = favesDb.document(it).get().await()
+            query = query.endBefore(meme)
+        }
 
-                        try {
-                            meme.apply {
-                                this.id = id
-                                this.imageUrl = downloadUrl
-                            }
+        loadAfter?.let {
+            val meme = favesDb.document(it).get().await()
+            query = query.startAfter(meme)
+        }
 
-                            db.document(id).set(meme).await()
-                            callback(Result.Success(true))
-
-                        } catch (e: Exception) {
-                            Timber.e("Error posting meme: ${e.localizedMessage}")
-                            callback(Result.Error(errorMessage))
-                        }
-                    }
-                }
-            }
-        })
+        return query.get().await().map { it.toObject(Fave::class.java) }
     }
 
     /**
