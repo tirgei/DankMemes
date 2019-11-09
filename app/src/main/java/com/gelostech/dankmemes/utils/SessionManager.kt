@@ -57,7 +57,7 @@ class SessionManager (context: Context) {
         val user = User()
         user.userId = prefs[Constants.USER_ID, ""]
         user.userName = prefs[Constants.USERNAME, ""]
-        user.userAvatar = prefs[Constants.USER_AVATAR, ""]
+        user.userAvatar = prefs[Constants.AVATAR, ""]
         user.userEmail = prefs[Constants.EMAIL, ""]
         user.userBio = prefs[Constants.USER_BIO, ""]
         return user
