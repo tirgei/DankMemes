@@ -204,6 +204,10 @@ class ProfileActivity : BaseActivity() {
                 else -> showMeme(meme, imageBitmap!!)
             }
         }
+
+        override fun onProfileClicked(view: View, user: User) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
     }
 
     private fun showMeme(meme: Meme, image: Bitmap) {
