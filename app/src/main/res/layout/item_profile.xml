@@ -18,74 +18,53 @@
     </data>
 
     <RelativeLayout
+        android:id="@+id/profileTop"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:clipToPadding="false"
+        android:paddingBottom="10dp">
 
-        <RelativeLayout
-            android:id="@+id/profileTop"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImage"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            bind:image="@{user.userAvatar}"
+            bind:placeholder="@{R.drawable.person}"
+            tools:src="@drawable/person"
+            android:onClick="@{(v) -> callback.onProfileClicked(v, user)}"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp"
-            android:clipToPadding="false"
-            android:paddingBottom="10dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true">
+            android:layout_toEndOf="@id/profileImage"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profileImage"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_centerVertical="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="10dp"
-                bind:image="@{user.userAvatar}"
-                bind:placeholder="@{R.drawable.person}"
-                tools:src="@drawable/person"
-                android:onClick="@{() -> callback.onProfileClicked(user)}"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/profileName"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/profileImage"
-                android:layout_marginStart="10dp"
-                android:layout_centerVertical="true"
-                android:orientation="vertical">
+                android:textColor="@color/textGray"
+                tools:text="Vincent Tirgei"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="@{user.userName}"/>
 
-                <TextView
-                    android:id="@+id/profileName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/textGray"
-                    tools:text="Vincent Tirgei"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:text="@{user.userName}"/>
+            <TextView
+                android:id="@+id/profileBio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondaryText"
+                android:textSize="14sp"
+                android:text="@{user.userBio}"
+                tools:text="Here's some random brief summary about me :)"/>
 
-                <TextView
-                    android:id="@+id/profileBio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/secondaryText"
-                    android:textSize="14sp"
-                    android:text="@{user.userBio}"
-                    tools:text="Here's some random brief summary about me :)"/>
-
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/profilePostsTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_below="@id/profileTop"
-            android:text="@string/my_posts"
-            android:textColor="@color/textGray"
-            android:textSize="15sp"
-            android:textStyle="bold"/>
+        </LinearLayout>
 
     </RelativeLayout>
 
