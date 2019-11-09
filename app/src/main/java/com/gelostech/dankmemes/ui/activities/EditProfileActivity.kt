@@ -79,7 +79,7 @@ class EditProfileActivity : BaseActivity() {
     }
 
     private fun loadProfile() {
-        val user = intent.getSerializableExtra("user") as User
+        val user = sessionManager.getUser()
 
         editProfileImage.load(user.userAvatar!!, R.drawable.person)
         editProfileName.setText(user.userName)
