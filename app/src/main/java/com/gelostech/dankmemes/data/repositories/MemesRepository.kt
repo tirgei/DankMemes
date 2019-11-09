@@ -21,7 +21,6 @@ import timber.log.Timber
 import kotlin.Exception
 
 class MemesRepository constructor(private val firestoreDatabase: FirebaseFirestore,
-                                  private val firebaseDatabase: DatabaseReference,
                                   private val storageReference: StorageReference) {
 
     private val db = firestoreDatabase.collection(Constants.MEMES)
@@ -255,6 +254,40 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
         } catch (e: Exception) {
             Timber.e("Error reporting meme: ${e.localizedMessage}")
             Result.Error("Error reporting meme")
+        }
+    }
+
+    /**
+     * Function to remove fave
+     */
+    suspend fun deleteFave(memeId: String, userId: String): Result<Boolean> {
+        val error = "Error deleting fave"
+        Timber.e("To delete $memeId from $userId")
+
+        return try {
+            val memeRef = db.document(memeId)
+
+            firestoreDatabase.collection(Constants.FAVORITES)
+                    .document(userId)
+                    .collection(Constants.USER_FAVES)
+                    .document(memeId)
+                    .delete()
+                    .await()
+
+            val meme = memeRef.get().await().toObject(Meme::class.java)
+            Timber.e("Deleting from ${meme?.id}")
+            firestoreDatabase.runTransaction {
+                meme?.faves?.let {faves ->
+                    faves.remove(userId)
+                    it.update(memeRef, Constants.FAVES, faves)
+                }
+            }.await()
+
+            Result.Success(true)
+
+        } catch (e: Exception) {
+            Timber.e("$error: ${e.localizedMessage}")
+            Result.Error(error)
         }
     }
 
