@@ -11,10 +11,10 @@ data class GenericResponse (
     companion object {
         fun loading(): GenericResponse = GenericResponse(Status.LOADING, null, null, null)
 
-        fun success(success: Boolean, item: ITEM_RESPONSE): GenericResponse
-                = GenericResponse(Status.SUCCESS, success, null, item)
+        fun success(success: Boolean): GenericResponse
+                = GenericResponse(Status.SUCCESS, success, null, null)
 
-        fun error(error: String): GenericResponse = GenericResponse(Status.ERROR, null, error, null)
+        fun error(error: String, item: ITEM_RESPONSE): GenericResponse = GenericResponse(Status.ERROR, null, error, item)
     }
 
     enum class ITEM_RESPONSE {
