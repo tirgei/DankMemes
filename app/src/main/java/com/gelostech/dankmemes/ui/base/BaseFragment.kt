@@ -75,26 +75,10 @@ open class BaseFragment : Fragment() {
         return ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
-    // Get root database reference
-    fun getDatabaseReference(): DatabaseReference = FirebaseDatabase.getInstance().reference
-
-    // Get root firestore reference
-    fun getFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
-
-    // Get FirebaseAuth instance
-    fun getFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
-
-    // Get Firebase Storage reference
-    fun getStorageReference(): StorageReference = FirebaseStorage.getInstance().reference
-
     // Get user ID
-    fun getUid(): String {
-        val user = FirebaseAuth.getInstance().currentUser
+    fun getUid(): String = sessionManager.getUserId()
 
-        return user!!.uid
-    }
-
-
+    // Show a progress dialog
     fun showLoading(message: String) {
         progressDialog = ProgressDialog(activity)
         progressDialog.setCancelable(false)
@@ -102,12 +86,16 @@ open class BaseFragment : Fragment() {
         progressDialog.show()
     }
 
+    // Dismiss progress dialog
     fun hideLoading() {
         if (::progressDialog.isInitialized && progressDialog.isShowing) {
             progressDialog.dismiss()
         }
     }
 
+    /**
+     * Proceed to MainActivity after successful login / registration
+     */
     fun proceedToMainActivity(user: User, button: CircularProgressButton) {
         // Set progress icon status
         val successIcon = AppUtils.setDrawable(activity!!, Ionicons.Icon.ion_checkmark_round, R.color.white, 25)
@@ -127,6 +115,9 @@ open class BaseFragment : Fragment() {
         }
     }
 
+    /**
+     * Animate bounce effect
+     */
     fun animateView(view: View) {
         val anim = AnimationUtils.loadAnimation(context, R.anim.bounce)
         val bounceInterpolator = MyBounceInterpolator(0.2, 20.0)
@@ -134,5 +125,17 @@ open class BaseFragment : Fragment() {
 
         view.startAnimation(anim)
     }
+
+    // Get root database reference
+    fun getDatabaseReference(): DatabaseReference = FirebaseDatabase.getInstance().reference
+
+    // Get root firestore reference
+    fun getFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    // Get FirebaseAuth instance
+    fun getFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    // Get Firebase Storage reference
+    fun getStorageReference(): StorageReference = FirebaseStorage.getInstance().reference
 
 }
