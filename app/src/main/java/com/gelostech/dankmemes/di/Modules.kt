@@ -19,19 +19,15 @@ import org.koin.dsl.module
 
 val firebaseModule = module {
     single { FirebaseDatabase.getInstance().reference }
-
     single { FirebaseFirestore.getInstance() }
-
     single { FirebaseStorage.getInstance().reference }
-
     single { FirebaseAuth.getInstance() }
 }
 
 val repositoriesModule = module {
     single { UsersRepository(get(), get(), get()) }
-
     single { MemesRepository(get(), get()) }
-
+    single { NotificationsRepository(get()) }
     single { NotificationsRepository(get()) }
 }
 
