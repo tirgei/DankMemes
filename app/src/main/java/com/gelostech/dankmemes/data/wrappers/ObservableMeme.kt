@@ -4,7 +4,7 @@ import com.gelostech.dankmemes.data.models.Meme
 import io.reactivex.Observable
 
 data class ObservableMeme(
-        val id: String,
+        override val id: String,
         val meme: Observable<Meme>
-) {
+): ItemViewModel {
 }

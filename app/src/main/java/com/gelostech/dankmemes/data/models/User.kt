@@ -1,5 +1,6 @@
 package com.gelostech.dankmemes.data.models
 
+import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import java.io.Serializable
 
 data class User(
@@ -10,4 +11,7 @@ data class User(
         var userEmail: String? = null,
         var dateCreated: String? = null,
         var userBio: String? = null
-): Serializable
+): ItemViewModel, Serializable {
+    override val id: String
+        get() = userId!!
+}
