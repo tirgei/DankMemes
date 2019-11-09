@@ -30,7 +30,7 @@ val firebaseModule = module {
 val repositoriesModule = module {
     single { UsersRepository(get(), get(), get()) }
 
-    single { MemesRepository(get(), get(), get()) }
+    single { MemesRepository(get(), get()) }
 
     single { NotificationsRepository(get()) }
 }
