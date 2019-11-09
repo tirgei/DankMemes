@@ -18,7 +18,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
-import java.lang.Exception
+import kotlin.Exception
 
 class MemesRepository constructor(private val firestoreDatabase: FirebaseFirestore,
                                   private val firebaseDatabase: DatabaseReference,
@@ -124,14 +124,25 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
         })
     }
 
-    fun deleteMeme(memeId: String, onResult: (Result<Boolean>) -> Unit) {
-        db.document(memeId).delete()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) onResult(Result.Success(true))
-                    else onResult(Result.Error("Error deleting meme. Please try again"))
-                }
+    /**
+     * Function to delete meme
+     * @param memeId - ID of the meme to delete
+     */
+    suspend fun deleteMeme(memeId: String): Result<Boolean> {
+        return try {
+            db.document(memeId).delete().await()
+            Result.Success(true)
+        } catch (e: Exception) {
+            Timber.e("Error deleting meme: ${e.localizedMessage}")
+            Result.Error("Error deleting meme")
+        }
     }
 
+    /**
+     * Function to (un)like meme
+     * @param memeId - ID of the meme
+     * @param userId - ID of the logged in user
+     */
     suspend fun likeMeme(memeId: String, userId: String): Result<Boolean> {
         val memeReference = db.document(memeId)
 
