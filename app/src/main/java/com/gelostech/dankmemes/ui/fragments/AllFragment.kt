@@ -138,7 +138,7 @@ class AllFragment : BaseFragment() {
             }
         }
 
-        override fun onProfileClicked(user: User) {
+        override fun onProfileClicked(view: View, user: User) {
             // Not used here
         }
     }
