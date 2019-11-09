@@ -18,6 +18,7 @@ class SessionManager (context: Context) {
         prefs[Constants.EMAIL] = user.userEmail
         prefs[Constants.AVATAR] = user.userAvatar
         prefs[Constants.USER_ID] = user.userId
+        prefs[Constants.USER_BIO] = user.userBio
         prefs[Constants.LOGGED_IN] = true
     }
 
@@ -47,6 +48,19 @@ class SessionManager (context: Context) {
      */
     fun getUserAvatar(): String {
         return prefs[Constants.AVATAR, ""]
+    }
+
+    /**
+     * Get the logged in User
+     */
+    fun getUser(): User {
+        val user = User()
+        user.userId = prefs[Constants.USER_ID, ""]
+        user.userName = prefs[Constants.USERNAME, ""]
+        user.userAvatar = prefs[Constants.USER_AVATAR, ""]
+        user.userEmail = prefs[Constants.EMAIL, ""]
+        user.userBio = prefs[Constants.USER_BIO, ""]
+        return user
     }
 
 }
