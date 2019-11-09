@@ -1,75 +1,46 @@
 package com.gelostech.dankmemes.ui.adapters
 
-import android.graphics.Bitmap
-import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedList
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.databinding.ItemFaveBinding
 import com.gelostech.dankmemes.ui.callbacks.FavesCallback
-import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.inflate
-import com.gelostech.dankmemes.utils.load
-import com.makeramen.roundedimageview.RoundedDrawable
-import kotlinx.android.synthetic.main.item_fave.view.*
-import java.lang.ref.WeakReference
+import timber.log.Timber
 
-class FavesAdapter(private val callback: FavesCallback) : RecyclerView.Adapter<FavesAdapter.FaveHolder>() {
-    private val faves = mutableListOf<Fave>()
+class FavesAdapter(private val callback: FavesCallback): PagedListAdapter<Fave, FavesAdapter.FaveHolder>(DIFF_CALLBACK) {
 
-    fun addFave(fave: Fave) {
-        if (!hasBeenAdded(fave)) {
-            faves.add(fave)
-            notifyItemInserted(faves.size-1)
-        }
-    }
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Fave>() {
+            override fun areItemsTheSame(oldItem: Fave, newItem: Fave): Boolean {
+                return oldItem.id == newItem.id
+            }
 
-    fun updateFave(fave: Fave) {
-        for ((index, memeModel) in faves.withIndex()) {
-            if (memeModel.equals(fave)) {
-                faves[index] = fave
-                notifyItemChanged(index, fave)
+            override fun areContentsTheSame(oldItem: Fave, newItem: Fave): Boolean {
+                return oldItem == newItem
             }
         }
     }
 
-    fun removeFave(fave: Fave) {
-        var indexToRemove: Int = -1
-
-        for ((index, memeModel) in faves.withIndex()) {
-            if (memeModel.equals(fave)) {
-                indexToRemove = index
-            }
-        }
-
-        faves.removeAt(indexToRemove)
-        notifyItemRemoved(indexToRemove)
-    }
-
-    private fun hasBeenAdded(fave: Fave):Boolean {
-        var added = false
-
-        for (f in faves) {
-            if (f.equals(fave)) {
-                added = true
-            }
-        }
-
-        return added
+    override fun onCurrentListChanged(previousList: PagedList<Fave>?, currentList: PagedList<Fave>?) {
+        super.onCurrentListChanged(previousList, currentList)
+        Timber.e("Previous list: $previousList vs Current list: $currentList")
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FaveHolder {
         return FaveHolder(parent.inflate(R.layout.item_fave), callback)
     }
 
-    override fun getItemCount(): Int = faves.size
-
     override fun onBindViewHolder(holder: FaveHolder, position: Int) {
-        holder.bind(faves[position])
+        val fave = getItem(position)
+        holder.bind(fave!!)
     }
 
-    class FaveHolder(private val binding: ItemFaveBinding, private val callback: FavesCallback):
+    inner class FaveHolder(private val binding: ItemFaveBinding, private val callback: FavesCallback):
             RecyclerView.ViewHolder(binding.root) {
 
         fun bind(fave: Fave) {
@@ -78,5 +49,4 @@ class FavesAdapter(private val callback: FavesCallback) : RecyclerView.Adapter<F
         }
 
     }
-
 }

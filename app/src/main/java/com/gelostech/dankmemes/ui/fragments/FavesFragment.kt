@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.gelostech.dankmemes.R
@@ -18,25 +17,17 @@ import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.data.models.Fave
-import com.gelostech.dankmemes.data.models.Meme
-import com.gelostech.dankmemes.ui.adapters.PagedFavesAdapter
 import com.gelostech.dankmemes.ui.callbacks.FavesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
-import com.gelostech.dankmemes.utils.hideView
-import com.gelostech.dankmemes.utils.showView
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Query
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.fragment_faves.*
 import org.jetbrains.anko.alert
 import org.koin.android.ext.android.inject
-import timber.log.Timber
 
 class FavesFragment : BaseFragment() {
-    private lateinit var favesAdapter: PagedFavesAdapter
+    private lateinit var favesAdapter: FavesAdapter
     private val memesViewModel: MemesViewModel by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -54,7 +45,7 @@ class FavesFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        favesAdapter = PagedFavesAdapter(favesCallback)
+        favesAdapter = FavesAdapter(favesCallback)
 
         favesRv.apply {
             setHasFixedSize(true)
