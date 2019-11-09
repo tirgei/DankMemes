@@ -6,23 +6,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragments.FavesFragment">
 
-    <com.aspsine.irecyclerview.IRecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favesRv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
         android:padding="5dp"
         android:clipToPadding="false"
-        tools:listitem="@layout/item_fave"
-        app:refreshEnabled="false"
-        app:loadMoreEnabled="true"
-        app:loadMoreFooterLayout="@layout/loading"/>
+        tools:listitem="@layout/item_fave"/>
 
     <RelativeLayout
         android:id="@+id/collectionsEmptyState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/collectionsEmptyStateImage"
