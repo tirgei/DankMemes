@@ -7,7 +7,6 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gelostech.dankmemes.R
@@ -16,22 +15,17 @@ import com.gelostech.dankmemes.ui.adapters.NotificationsAdapter
 import com.gelostech.dankmemes.ui.callbacks.NotificationsCallback
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.ui.base.BaseFragment
-import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.data.models.Notification
 import com.gelostech.dankmemes.ui.viewmodels.NotificationsViewModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
 import com.gelostech.dankmemes.utils.hideView
 import com.gelostech.dankmemes.utils.showView
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_notifications.*
 import org.koin.android.ext.android.inject
-import timber.log.Timber
 
 
 class NotificationsFragment : BaseFragment() {
-    private lateinit var adapter: NotificationsAdapter
+    private lateinit var notificationsAdapter: NotificationsAdapter
     private val notificationsViewModel: NotificationsViewModel by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -48,13 +42,13 @@ class NotificationsFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        adapter = NotificationsAdapter(callback)
+        notificationsAdapter = NotificationsAdapter(callback)
 
         notifRv.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(activity)
             addItemDecoration(RecyclerFormatter.SimpleDividerItemDecoration(activity!!))
-            adapter = adapter
+            adapter = notificationsAdapter
         }
 
         notifRefresh.isEnabled = false
@@ -66,7 +60,7 @@ class NotificationsFragment : BaseFragment() {
 
     private fun initNotificationsObserver() {
         notificationsViewModel.fetchNotifications().observe(this, Observer {
-            adapter.submitList(it)
+            notificationsAdapter.submitList(it)
         })
     }
 
