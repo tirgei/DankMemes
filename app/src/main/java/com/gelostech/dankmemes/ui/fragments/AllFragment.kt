@@ -4,38 +4,30 @@ package com.gelostech.dankmemes.ui.fragments
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
+import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.ui.activities.CommentActivity
 import com.gelostech.dankmemes.ui.activities.ProfileActivity
 import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
-import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.ui.adapters.PagedMemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.utils.*
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Query
-import com.mopub.nativeads.MoPubNativeAdPositioning
-import com.mopub.nativeads.MoPubRecyclerAdapter
-import com.mopub.nativeads.MoPubStaticNativeAdRenderer
-import com.mopub.nativeads.ViewBinder
 import kotlinx.android.synthetic.main.fragment_all.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.doAsync
@@ -61,10 +53,12 @@ class AllFragment : BaseFragment() {
 
         allShimmer.startShimmerAnimation()
         initMemesObserver()
+        initResponseObserver()
     }
 
     private fun initViews() {
         pagedMemesAdapter = PagedMemesAdapter(memesCallback)
+        allRefresh.isEnabled = false
 
         allRv.apply {
             setHasFixedSize(true)
@@ -87,6 +81,30 @@ class AllFragment : BaseFragment() {
         })
     }
 
+    /**
+     * Initialize observer for Generic Response LiveData
+     */
+    private fun initResponseObserver() {
+        memesViewModel.genericResponseLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> { Timber.e("Loading...") }
+
+                Status.SUCCESS -> { Timber.e("Success \uD83D\uDE03") }
+
+                Status.ERROR -> {
+                    val message = when (it.item) {
+                        GenericResponse.ITEM_RESPONSE.LIKE_MEME -> "Error liking meme"
+                        GenericResponse.ITEM_RESPONSE.FAVE_MEME -> "Error faving meme"
+                        GenericResponse.ITEM_RESPONSE.DELETE_MEME -> "Error deleting meme"
+                        else -> "An error has occurred. "
+                    }
+
+                    toast("$message. Please try again")
+                }
+            }
+        })
+    }
+
     private val memesCallback = object : MemesCallback {
         override fun onMemeClicked(view: View, meme: Meme) {
             val memeId = meme.id!!
@@ -98,12 +116,10 @@ class AllFragment : BaseFragment() {
 
                 R.id.memeLike -> {
                     animateView(view)
-                    likePost(memeId)
+                    memesViewModel.likeMeme(memeId, getUid())
                 }
 
                 else -> {
-                    showLoading("Please wait...")
-
                     doAsync {
                         // Get bitmap of shown meme
                         val imageBitmap = when(view.id) {
@@ -112,9 +128,7 @@ class AllFragment : BaseFragment() {
                         }
 
                         uiThread {
-                            hideLoading()
-
-                            if (view.id == R.id.memeMore) showBottomsheetAdmin(meme, imageBitmap!!)
+                            if (view.id == R.id.memeMore) showBottomSheetAdmin(meme, imageBitmap!!)
                             else showMeme(meme, imageBitmap!!)
                         }
                     }
@@ -166,11 +180,10 @@ class AllFragment : BaseFragment() {
 
     }
 
-    private fun showBottomsheetAdmin(meme: Meme, image: Bitmap) {
+    private fun showBottomSheetAdmin(meme: Meme, image: Bitmap) {
         bs = BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_admin)
 
         bs.listener { _, which ->
-
             when(which) {
                 R.id.bs_share -> AppUtils.shareImage(activity!!, image)
                 R.id.bs_delete -> deletePost(meme)
@@ -181,7 +194,6 @@ class AllFragment : BaseFragment() {
                 }
                 R.id.bs_report -> showReportDialog(meme)
             }
-
         }.show()
     }
 
@@ -193,112 +205,83 @@ class AllFragment : BaseFragment() {
     }
 
     private fun deletePost(meme: Meme) {
-        activity!!.alert("Delete this meme?") {
-            positiveButton("DELETE") {
-                getFirestore().collection(Constants.MEMES).document(meme.id!!).delete()
-            }
-            negativeButton("CANCEL"){}
-        }.show()
-    }
-
-    private fun likePost(id: String) {
-        val docRef = getFirestore().collection(Constants.MEMES).document(id)
-
-        getFirestore().runTransaction {
-
-            val meme =  it[docRef].toObject(Meme::class.java)
-            val likes = meme!!.likes
-            var likesCount = meme.likesCount
-
-            if (likes.containsKey(getUid())) {
-                likesCount -= 1
-                likes.remove(getUid())
-
-            } else  {
-                likesCount += 1
-                likes[getUid()] = true
-            }
-
-            it.update(docRef, Constants.LIKES, likes)
-            it.update(docRef, Constants.LIKES_COUNT, likesCount)
-
-            return@runTransaction null
-        }.addOnSuccessListener {
-            Timber.e("Meme liked")
-        }.addOnFailureListener {
-            Timber.e("Error liking meme")
-        }
+//        activity!!.alert("Delete this meme?") {
+//            positiveButton("DELETE") {
+//                getFirestore().collection(Constants.MEMES).document(meme.id!!).delete()
+//            }
+//            negativeButton("CANCEL"){}
+//        }.show()
     }
 
     private fun favePost(id: String) {
-        val docRef = getFirestore().collection(Constants.MEMES).document(id)
-
-        getFirestore().runTransaction {
-
-            val meme =  it[docRef].toObject(Meme::class.java)
-            val faves = meme!!.faves
-
-            if (faves.containsKey(getUid())) {
-                faves.remove(getUid())
-
-                getFirestore().collection(Constants.FAVORITES).document(getUid()).collection(Constants.USER_FAVES).document(meme.id!!).delete()
-            } else  {
-                faves[getUid()] = true
-
-                val fave = Fave()
-                fave.id = meme.id!!
-                fave.imageUrl = meme.imageUrl!!
-                fave.time = meme.time!!
-
-                getFirestore().collection(Constants.FAVORITES).document(getUid()).collection(Constants.USER_FAVES).document(meme.id!!).set(fave)
-            }
-
-            it.update(docRef, Constants.FAVES, faves)
-
-            return@runTransaction null
-        }.addOnSuccessListener {
-            Timber.e("Meme faved")
-        }.addOnFailureListener {
-            Timber.e("Error faving meme")
-        }
-
+//        val docRef = getFirestore().collection(Constants.MEMES).document(id)
+//
+//        getFirestore().runTransaction {
+//
+//            val meme =  it[docRef].toObject(Meme::class.java)
+//            val faves = meme!!.faves
+//
+//            if (faves.containsKey(getUid())) {
+//                faves.remove(getUid())
+//
+//                getFirestore().collection(Constants.FAVORITES).document(getUid()).collection(Constants.USER_FAVES).document(meme.id!!).delete()
+//            } else  {
+//                faves[getUid()] = true
+//
+//                val fave = Fave()
+//                fave.id = meme.id!!
+//                fave.imageUrl = meme.imageUrl!!
+//                fave.time = meme.time!!
+//
+//                getFirestore().collection(Constants.FAVORITES).document(getUid()).collection(Constants.USER_FAVES).document(meme.id!!).set(fave)
+//            }
+//
+//            it.update(docRef, Constants.FAVES, faves)
+//
+//            return@runTransaction null
+//        }.addOnSuccessListener {
+//            Timber.e("Meme faved")
+//        }.addOnFailureListener {
+//            Timber.e("Error faving meme")
+//        }
+//
     }
 
     private fun showReportDialog(meme: Meme) {
-        val editText = EditText(activity)
-        val layout = FrameLayout(activity!!)
-        layout.setPaddingRelative(45,15,45,0)
-        layout.addView(editText)
-
-        activity!!.alert("Please provide a reason for reporting") {
-            customView = layout
-
-            positiveButton("REPORT") {
-                if (!AppUtils.validated(editText)) {
-                    activity!!.toast("Please enter a reason to report")
-                    return@positiveButton
-                }
-
-                val key = getDatabaseReference().child("reports").push().key
-                val reason = editText.text.toString().trim()
-
-                val report = Report()
-                report.id = key
-                report.memeId = meme.id
-                report.memePosterId = meme.memePosterID
-                report.reporterId = getUid()
-                report.memeUrl = meme.imageUrl
-                report.reason = reason
-                report.time = System.currentTimeMillis()
-
-                getDatabaseReference().child("reports").child(key!!).setValue(report).addOnCompleteListener {
-                    activity!!.toast("Meme reported!")
-                }
-
-            }
-
-            negativeButton("CANCEL"){}
-        }.show()
+//        val editText = EditText(activity)
+//        val layout = FrameLayout(activity!!)
+//        layout.setPaddingRelative(45,15,45,0)
+//        layout.addView(editText)
+//
+//        activity!!.alert("Please provide a reason for reporting") {
+//            customView = layout
+//
+//            positiveButton("REPORT") {
+//                if (!AppUtils.validated(editText)) {
+//                    activity!!.toast("Please enter a reason to report")
+//                    return@positiveButton
+//                }
+//
+//                val key = getDatabaseReference().child("reports").push().key
+//                val reason = editText.text.toString().trim()
+//
+//                val report = Report()
+//                report.id = key
+//                report.memeId = meme.id
+//                report.memePosterId = meme.memePosterID
+//                report.reporterId = getUid()
+//                report.memeUrl = meme.imageUrl
+//                report.reason = reason
+//                report.time = System.currentTimeMillis()
+//
+//                getDatabaseReference().child("reports").child(key!!).setValue(report).addOnCompleteListener {
+//                    activity!!.toast("Meme reported!")
+//                }
+//
+//            }
+//
+//            negativeButton("CANCEL"){}
+//        }.show()
     }
 
     fun getRecyclerView(): RecyclerView {
