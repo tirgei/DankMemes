@@ -12,10 +12,10 @@ data class GenericResponse (
     companion object {
         fun loading(): GenericResponse = GenericResponse(Status.LOADING)
 
-        fun success(success: Boolean, id: String? = null): GenericResponse
-                = GenericResponse(Status.SUCCESS, success, id =  id)
+        fun success(success: Boolean, item: ITEM_RESPONSE? = null, id: String? = null): GenericResponse
+                = GenericResponse(Status.SUCCESS, success, item = item, id =  id)
 
-        fun error(error: String, item: ITEM_RESPONSE): GenericResponse = GenericResponse(Status.ERROR, error =  error, item = item)
+        fun error(error: String): GenericResponse = GenericResponse(Status.ERROR, error =  error)
     }
 
     enum class ITEM_RESPONSE {
@@ -23,6 +23,7 @@ data class GenericResponse (
         LIKE_MEME,
         FAVE_MEME,
         DELETE_MEME,
+        REPORT_MEME,
         RESET_PASSWORD
     }
 }
