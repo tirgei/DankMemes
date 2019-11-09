@@ -19,6 +19,7 @@ import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
+import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.ui.activities.CommentActivity
 import com.gelostech.dankmemes.ui.activities.ProfileActivity
@@ -135,6 +136,10 @@ class AllFragment : BaseFragment() {
                     }
                 }
             }
+        }
+
+        override fun onProfileClicked(user: User) {
+            // Not used here
         }
     }
 
