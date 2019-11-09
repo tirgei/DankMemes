@@ -132,10 +132,10 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
                 }
     }
 
-    fun likeMeme(memeId: String, userId: String, onResult: (Result<Boolean>) -> Unit) {
+    suspend fun likeMeme(memeId: String, userId: String): Result<Boolean> {
         val memeReference = db.document(memeId)
 
-        firestoreDatabase.runTransaction {
+        val result = firestoreDatabase.runTransaction {
             val meme = it[memeReference].toObject(Meme::class.java)
             val likes = meme!!.likes
             var likesCount = meme.likesCount
@@ -152,10 +152,13 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
             it.update(memeReference, Constants.LIKES, likes)
             it.update(memeReference, Constants.LIKES_COUNT, likesCount)
 
-        }.addOnCompleteListener { task ->
-            if (task.isSuccessful) onResult(Result.Success(true))
-            else onResult(Result.Error("Error liking meme. Please try again"))
+        }.await()
+
+        if (result != null) {
+            return Result.Success(true)
         }
+
+        return Result.Error("Error liking meme. Please try again")
     }
 
 
