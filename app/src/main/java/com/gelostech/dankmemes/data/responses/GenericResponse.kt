@@ -4,17 +4,18 @@ import com.gelostech.dankmemes.data.Status
 
 data class GenericResponse (
         val status: Status,
-        val success: Boolean?,
-        val error: String?,
-        val item: ITEM_RESPONSE?
+        val success: Boolean? = null,
+        val error: String? = null,
+        val item: ITEM_RESPONSE? = null,
+        val id: String? = null
 ) {
     companion object {
-        fun loading(): GenericResponse = GenericResponse(Status.LOADING, null, null, null)
+        fun loading(): GenericResponse = GenericResponse(Status.LOADING)
 
-        fun success(success: Boolean): GenericResponse
-                = GenericResponse(Status.SUCCESS, success, null, null)
+        fun success(success: Boolean, id: String? = null): GenericResponse
+                = GenericResponse(Status.SUCCESS, success, id =  id)
 
-        fun error(error: String, item: ITEM_RESPONSE): GenericResponse = GenericResponse(Status.ERROR, null, error, item)
+        fun error(error: String, item: ITEM_RESPONSE): GenericResponse = GenericResponse(Status.ERROR, error =  error, item = item)
     }
 
     enum class ITEM_RESPONSE {
