@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragments.NotificationsFragment"
     android:background="@color/white">
 
@@ -11,7 +10,8 @@
         android:id="@+id/notifsEmptyState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/emptyImage"
@@ -38,15 +38,12 @@
         android:layout_height="match_parent"
         android:visibility="gone">
 
-        <com.aspsine.irecyclerview.IRecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/notifRv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/item_notification"
-            android:overScrollMode="never"
-            app:refreshEnabled="false"
-            app:loadMoreEnabled="true"
-            app:loadMoreFooterLayout="@layout/loading"/>
+            android:overScrollMode="never"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
