@@ -1,5 +1,6 @@
 package com.gelostech.dankmemes.ui.adapters
 
+import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
@@ -7,8 +8,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.models.Meme
+import com.gelostech.dankmemes.data.models.User
+import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableMeme
 import com.gelostech.dankmemes.databinding.ItemMemeBinding
+import com.gelostech.dankmemes.databinding.ItemProfileBinding
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.TimeFormatter
@@ -20,41 +24,79 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
 
-class PagedMemesAdapter(private val callback: MemesCallback): PagedListAdapter<ObservableMeme, PagedMemesAdapter.MemeHolder>(DIFF_CALLBACK) {
+class PagedMemesAdapter(private val callback: MemesCallback): PagedListAdapter<ItemViewModel, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+
+    enum class VIEW_TYPE {
+        PROFILE,
+        MEME
+    }
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ObservableMeme>() {
-            override fun areItemsTheSame(oldItem: ObservableMeme, newItem: ObservableMeme): Boolean {
-                return oldItem.id == newItem.id
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ItemViewModel>() {
+            override fun areItemsTheSame(oldItem: ItemViewModel, newItem: ItemViewModel): Boolean {
+                return when {
+                    oldItem is ObservableMeme && newItem is ObservableMeme -> oldItem.id == newItem.id
+                    oldItem is User && newItem is User -> oldItem.id == newItem.id
+                    else -> false
+                }
             }
 
-            override fun areContentsTheSame(oldItem: ObservableMeme, newItem: ObservableMeme): Boolean {
-                return oldItem == newItem
+            @SuppressLint("DiffUtilEquals")
+            override fun areContentsTheSame(oldItem: ItemViewModel, newItem: ItemViewModel): Boolean {
+                return when {
+                    oldItem is ObservableMeme && newItem is ObservableMeme -> oldItem == newItem
+                    oldItem is User && newItem is User -> oldItem == newItem
+                    else -> false
+                }
             }
         }
     }
 
-    override fun onCurrentListChanged(previousList: PagedList<ObservableMeme>?, currentList: PagedList<ObservableMeme>?) {
-        super.onCurrentListChanged(previousList, currentList)
-        Timber.e("Previous list: $previousList vs Current list: $currentList")
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is User -> VIEW_TYPE.PROFILE.ordinal
+            else -> VIEW_TYPE.MEME.ordinal
+        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemeHolder {
-        return MemeHolder(parent.inflate(R.layout.item_meme), callback)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE.PROFILE.ordinal -> ProfileHolder(parent.inflate(R.layout.item_profile), callback)
+            else -> MemeHolder(parent.inflate(R.layout.item_meme), callback)
+        }
     }
 
-    override fun onBindViewHolder(holder: MemeHolder, position: Int) {
-        val currentMeme = getItem(position)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is ProfileHolder -> {
+                val user = getItem(position) as User
+                holder.bind(user)
+            }
 
-        currentMeme!!.meme.subscribeBy(
-                onNext = { holder.bind(it) },
-                onError = { Timber.e("Meme deleted") }
-        ).addTo(holder.disposables)
+            is MemeHolder -> {
+                val meme = getItem(position) as ObservableMeme
+
+                meme.meme.subscribeBy(
+                        onNext = { holder.bind(it) },
+                        onError = { Timber.e("Meme deleted") }
+                ).addTo(holder.disposables)
+            }
+        }
     }
 
-    override fun onViewRecycled(holder: MemeHolder) {
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         super.onViewRecycled(holder)
-        holder.apply { disposables.clear() }
+        if (holder is MemeHolder) holder.apply { disposables.clear() }
+    }
+
+    inner class ProfileHolder(private val binding: ItemProfileBinding, private val callback: MemesCallback):
+            RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(user: User) {
+            binding.user = user
+            binding.callback = callback
+        }
+
     }
 
     inner class MemeHolder(private val binding: ItemMemeBinding, private val callback: MemesCallback):
@@ -80,4 +122,5 @@ class PagedMemesAdapter(private val callback: MemesCallback): PagedListAdapter<O
             binding.timeFormatter = TimeFormatter()
         }
     }
+
 }
