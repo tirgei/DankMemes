@@ -218,17 +218,23 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
         return Result.Error("Error faving meme. Please try again")
     }
 
-    fun reportMeme(report: Report, onResult: (Result<Boolean>) -> Unit) {
-        val reportsDb = firebaseDatabase.child(Constants.REPORTS)
+    /**
+     * Function to report meme
+     * @param report - Report model
+     */
+    suspend fun reportMeme(report: Report): Result<Boolean> {
+        val reportsDb = firestoreDatabase.collection(Constants.REPORTS)
 
-        val id = reportsDb.push().key
+        val id = reportsDb.document().id
         report.apply { this.id = id }
 
-        reportsDb.child(id!!).setValue(report)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) onResult(Result.Success(true))
-                    else onResult(Result.Error("Error reporting meme. Please try again"))
-                }
+        return try {
+            reportsDb.document(id).set(report).await()
+            Result.Success(true)
+        } catch (e: Exception) {
+            Timber.e("Error reporting meme: ${e.localizedMessage}")
+            Result.Error("Error reporting meme")
+        }
     }
 
 }
