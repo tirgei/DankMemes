@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.ui.activities.ProfileActivity
@@ -17,6 +18,7 @@ import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.data.models.Notification
+import com.gelostech.dankmemes.ui.viewmodels.NotificationsViewModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
 import com.gelostech.dankmemes.utils.hideView
 import com.gelostech.dankmemes.utils.showView
@@ -24,15 +26,13 @@ import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_notifications.*
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 
-class NotificationsFragment : BaseFragment(), NotificationsCallback {
-    private lateinit var loadMoreFooter: RelativeLayout
+class NotificationsFragment : BaseFragment() {
     private lateinit var adapter: NotificationsAdapter
-    private lateinit var query: Query
-    private var lastDocument: DocumentSnapshot? = null
-    private var loading = false
+    private val notificationsViewModel: NotificationsViewModel by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -44,22 +44,17 @@ class NotificationsFragment : BaseFragment(), NotificationsCallback {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
-        load(true)
+        initNotificationsObserver()
     }
 
     private fun initViews() {
-        notifRv.setHasFixedSize(true)
-        notifRv.layoutManager = LinearLayoutManager(activity)
-        notifRv.addItemDecoration(RecyclerFormatter.SimpleDividerItemDecoration(activity!!))
-        adapter = NotificationsAdapter(this)
-        notifRv.adapter = adapter
+        adapter = NotificationsAdapter(callback)
 
-        loadMoreFooter = notifRv.loadMoreFooterView as RelativeLayout
-        notifRv.setOnLoadMoreListener {
-            if (!loading) {
-                loadMoreFooter.showView()
-                load(false)
-            }
+        notifRv.apply {
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(activity)
+            addItemDecoration(RecyclerFormatter.SimpleDividerItemDecoration(activity!!))
+            adapter = adapter
         }
 
         notifRefresh.isEnabled = false
@@ -69,69 +64,21 @@ class NotificationsFragment : BaseFragment(), NotificationsCallback {
 
     }
 
-    private fun load(initial: Boolean) {
-        query = if (lastDocument == null) {
-            getFirestore().collection(Constants.NOTIFICATIONS).document(getUid()).collection(Constants.USER_NOTIFS)
-                    .orderBy(Constants.TIME, Query.Direction.DESCENDING)
-                    .limit(25)
-        } else {
-            loading = true
-
-            getFirestore().collection(Constants.NOTIFICATIONS).document(getUid()).collection(Constants.USER_NOTIFS)
-                    .orderBy(Constants.TIME, Query.Direction.DESCENDING)
-                    .startAfter(lastDocument!!)
-                    .limit(25)
-        }
-
-        query.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-            loading = false
-
-            if (firebaseFirestoreException != null) {
-                Timber.e("Error fetching notifications: $firebaseFirestoreException")
-            }
-
-            if (querySnapshot == null || querySnapshot.isEmpty) {
-                if (initial) noNotifs()
-
-            } else {
-                if (initial) hasNotifs()
-                lastDocument = querySnapshot.documents[querySnapshot.size()-1]
-
-                for (change in querySnapshot.documentChanges) {
-
-                    when(change.type) {
-
-                        DocumentChange.Type.ADDED -> {
-                            val notif = change.document.toObject(Notification::class.java)
-                            adapter.addNotification(notif)
-                        }
-
-                        DocumentChange.Type.MODIFIED -> {
-                            val notif = change.document.toObject(Notification::class.java)
-                            adapter.updateNotif(notif)
-                        }
-
-                        DocumentChange.Type.REMOVED -> {
-                            val notif = change.document.toObject(Notification::class.java)
-                            adapter.removeNotif(notif)
-                        }
-
-                    }
-
-                }
-
-            }
-        }
-
+    private fun initNotificationsObserver() {
+        notificationsViewModel.fetchNotifications().observe(this, Observer {
+            adapter.submitList(it)
+        })
     }
 
-    override fun onNotificationClicked(view: View, notification: Notification) {
-        when(view.id) {
-            R.id.avatar -> {
-                val i = Intent(activity, ProfileActivity::class.java)
-                i.putExtra("userId", notification.userId)
-                startActivity(i)
-                AppUtils.animateEnterRight(activity!!)
+    private val callback = object : NotificationsCallback {
+        override fun onNotificationClicked(view: View, notification: Notification) {
+            when(view.id) {
+                R.id.avatar -> {
+                    val i = Intent(activity, ProfileActivity::class.java)
+                    i.putExtra("userId", notification.userId)
+                    startActivity(i)
+                    AppUtils.animateEnterRight(activity!!)
+                }
             }
         }
     }
