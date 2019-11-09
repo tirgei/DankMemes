@@ -148,6 +148,29 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
     }
 
     /**
+     * Function to delete fave
+     * @param faveId - ID of the fave
+     * @param userId - ID of the logged in User
+     */
+    fun deleteFave(faveId: String, userId: String) {
+        viewModelScope.launch {
+            _genericResponseLiveData.value = GenericResponse.loading()
+
+            when (val result = repository.deleteFave(faveId, userId)) {
+                is Result.Success -> {
+                    _genericResponseLiveData.value = GenericResponse.success(result.data,
+                            item = GenericResponse.ITEM_RESPONSE.DELETE_FAVE,
+                            id = faveId)
+                }
+
+                is Result.Error -> {
+                    _genericResponseLiveData.value = GenericResponse.error(result.error)
+                }
+            }
+        }
+    }
+
+    /**
      * Function to fetch all memes
      */
     private fun initializePagedMemesBuilder(): LivePagedListBuilder<String, ObservableMeme> {

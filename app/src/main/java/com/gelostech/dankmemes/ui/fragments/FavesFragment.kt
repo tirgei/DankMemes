@@ -11,6 +11,7 @@ import android.widget.RelativeLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
 import com.gelostech.dankmemes.ui.adapters.FavesAdapter
 import com.gelostech.dankmemes.utils.AppUtils
@@ -49,6 +50,7 @@ class FavesFragment : BaseFragment() {
 
         initViews()
         initFavesObserver()
+        initResponseObserver()
     }
 
     private fun initViews() {
@@ -68,6 +70,21 @@ class FavesFragment : BaseFragment() {
     private fun initFavesObserver() {
         memesViewModel.fetchFaves().observe(this, Observer {
             favesAdapter.submitList(it)
+        })
+    }
+
+    /**
+     * Initialize observer for (Delete) Response LiveData
+     */
+    private fun initResponseObserver() {
+        memesViewModel.genericResponseLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> toast("Deleting fave \uD83D\uDC94...")
+
+                Status.SUCCESS -> toast("Fave deleted \uD83D\uDEAE")
+
+                Status.ERROR -> toast("${it.error}. Please try again")
+            }
         })
     }
 
@@ -94,34 +111,12 @@ class FavesFragment : BaseFragment() {
      * Function to handle long click on Fave item
      */
     private fun handleLongClick(faveId: String) {
-        activity!!.alert("Remove meme from favorites?"){
-            positiveButton("REMOVE") {
-                removeFave(faveId)
+        activity!!.alert("Delete meme from favorites?"){
+            positiveButton("Delete") {
+                memesViewModel.deleteFave(faveId, getUid())
             }
-            negativeButton("CANCEL") {}
+            negativeButton("Cancel") {}
         }.show()
-    }
-
-    private fun removeFave(id: String) {
-        val docRef = getFirestore().collection(Constants.MEMES).document(id)
-
-        getFirestore().runTransaction {
-
-            val meme =  it[docRef].toObject(Meme::class.java)
-            val faves = meme!!.faves
-
-            faves.remove(getUid())
-            getFirestore().collection(Constants.FAVORITES).document(getUid()).collection(Constants.USER_FAVES).document(meme.id!!).delete()
-
-            it.update(docRef, Constants.FAVES, faves)
-
-            return@runTransaction null
-        }.addOnSuccessListener {
-            Timber.e("Meme faved")
-        }.addOnFailureListener {
-            Timber.e("Error faving meme")
-        }
-
     }
 
 }
