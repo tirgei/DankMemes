@@ -2,13 +2,10 @@ package com.gelostech.dankmemes.ui.activities
 
 import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.lifecycle.Observer
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
@@ -21,7 +18,6 @@ import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_post.*
 import org.jetbrains.anko.toast
-import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -83,7 +79,7 @@ class PostActivity : BaseActivity() {
      * Initialize observer for Meme LiveData
      */
     private fun initMemesObserver() {
-        memesViewModel.postMemeLiveData.observe(this, Observer {
+        memesViewModel.genericResponseLiveData.observe(this, Observer {
             when (it.status) {
                 Status.LOADING -> {
                     showLoading("Posting meme...")
