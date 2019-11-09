@@ -5,6 +5,7 @@ import com.gelostech.dankmemes.data.repositories.MemesRepository
 import com.gelostech.dankmemes.data.repositories.NotificationsRepository
 import com.gelostech.dankmemes.data.repositories.UsersRepository
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
+import com.gelostech.dankmemes.ui.viewmodels.NotificationsViewModel
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.SessionManager
@@ -28,12 +29,12 @@ val repositoriesModule = module {
     single { UsersRepository(get(), get(), get()) }
     single { MemesRepository(get(), get()) }
     single { NotificationsRepository(get()) }
-    single { NotificationsRepository(get()) }
 }
 
 val viewModelsModule = module {
     viewModel { UsersViewModel(get()) }
     viewModel { MemesViewModel(get()) }
+    viewModel { NotificationsViewModel(get()) }
 }
 
 val sessionManagerModule = module {
