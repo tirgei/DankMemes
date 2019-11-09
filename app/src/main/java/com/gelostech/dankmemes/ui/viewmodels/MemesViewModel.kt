@@ -15,6 +15,7 @@ import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.repositories.MemesRepository
 import com.gelostech.dankmemes.data.responses.GenericResponse
+import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableMeme
 import kotlinx.coroutines.launch
 
@@ -23,7 +24,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
     val genericResponseLiveData: MutableLiveData<GenericResponse>
         get() = _genericResponseLiveData
 
-    private var _memesLiveData: LiveData<PagedList<ObservableMeme>>
+    private var _memesLiveData: LiveData<PagedList<ItemViewModel>>
     private var _favesLiveData: LiveData<PagedList<Fave>>
 
     init {
@@ -57,7 +58,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
     /**
      * Function to fetch memes
      */
-    fun fetchMemes(): LiveData<PagedList<ObservableMeme>> = _memesLiveData
+    fun fetchMemes(): LiveData<PagedList<ItemViewModel>> = _memesLiveData
 
     /**
      * Function to fetch memes
@@ -173,14 +174,14 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
     /**
      * Function to fetch all memes
      */
-    private fun initializePagedMemesBuilder(): LivePagedListBuilder<String, ObservableMeme> {
+    private fun initializePagedMemesBuilder(): LivePagedListBuilder<String, ItemViewModel> {
         val pagingConfig = PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPrefetchDistance(5)
                 .build()
 
         val memeFactory = MemesDataSource.Factory(repository, viewModelScope)
-        return LivePagedListBuilder<String, ObservableMeme>(memeFactory, pagingConfig)
+        return LivePagedListBuilder<String, ItemViewModel>(memeFactory, pagingConfig)
     }
 
     /**
