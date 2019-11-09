@@ -13,13 +13,12 @@ import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.repositories.MemesRepository
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.wrappers.ObservableMeme
-import com.gelostech.dankmemes.utils.Constants
 import kotlinx.coroutines.launch
 
 class MemesViewModel constructor(private val repository: MemesRepository): ViewModel() {
-    private val _postMemeLiveData = MutableLiveData<GenericResponse>()
-    val postMemeLiveData: MutableLiveData<GenericResponse>
-        get() = _postMemeLiveData
+    private val _genericResponseLiveData = MutableLiveData<GenericResponse>()
+    val genericResponseLiveData: MutableLiveData<GenericResponse>
+        get() = _genericResponseLiveData
 
     private var _memesLiveData: LiveData<PagedList<ObservableMeme>>
 
@@ -34,16 +33,16 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
      */
     fun postMeme(imageUri: Uri, meme: Meme) {
         viewModelScope.launch {
-            _postMemeLiveData.value = GenericResponse.loading()
+            _genericResponseLiveData.value = GenericResponse.loading()
 
             repository.postMeme(imageUri, meme) {
                 when(it) {
                     is Result.Success -> {
-                        _postMemeLiveData.postValue(GenericResponse.success(it.data, GenericResponse.ITEM_RESPONSE.POST_MEME))
+                        _genericResponseLiveData.postValue(GenericResponse.success(it.data))
                     }
 
                     is Result.Error -> {
-                        _postMemeLiveData.postValue(GenericResponse.error(it.error))
+                        _genericResponseLiveData.postValue(GenericResponse.error(it.error, GenericResponse.ITEM_RESPONSE.POST_MEME))
                     }
                 }
             }
@@ -66,6 +65,26 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
 
         val memeFactory = MemesDataSource.Factory(repository, viewModelScope)
         return LivePagedListBuilder<String, ObservableMeme>(memeFactory, pagingConfig)
+    }
+
+    /**
+     * Function to like meme
+     * @param memeId - ID of the meme
+     */
+    fun likeMeme(memeId: String, userId: String) {
+        viewModelScope.launch {
+            _genericResponseLiveData.value = GenericResponse.loading()
+
+            when (val result = repository.likeMeme(memeId, userId)) {
+                is Result.Success -> {
+                    _genericResponseLiveData.value = GenericResponse.success(result.data)
+                }
+
+                is Result.Error -> {
+                    _genericResponseLiveData.value = GenericResponse.error(result.error, GenericResponse.ITEM_RESPONSE.LIKE_MEME)
+                }
+            }
+        }
     }
 
 }
