@@ -5,11 +5,11 @@ import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
+import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableMeme
 import com.gelostech.dankmemes.ui.callbacks.StorageUploadListener
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.Constants
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.StorageReference
@@ -18,7 +18,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
-import kotlin.Exception
 
 class MemesRepository constructor(private val firestoreDatabase: FirebaseFirestore,
                                   private val storageReference: StorageReference) {
@@ -89,7 +88,7 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
      * Fetch all memes by user
      * @param userId - ID of the User
      */
-    suspend fun fetchMemesByUser(userId: String, loadBefore: String? = null, loadAfter: String? = null): List<ObservableMeme> {
+    suspend fun fetchMemesByUser(userId: String, loadBefore: String? = null, loadAfter: String? = null): MutableList<ItemViewModel> {
         var query: Query = memesQuery
 
         loadBefore?.let {
@@ -102,8 +101,10 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
             query = memesQuery.startAfter(meme)
         }
 
+        Timber.e("Loading memes by: $userId")
+
         return query.whereEqualTo(Constants.POSTER_ID, userId).get().await()
-                .map { ObservableMeme(it.id, getObservableMeme(it.id)) }
+                .map { ObservableMeme(it.id, getObservableMeme(it.id)) }.toMutableList()
     }
 
 
