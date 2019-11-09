@@ -19,11 +19,8 @@ data class GenericResponse (
     }
 
     enum class ITEM_RESPONSE {
-        POST_MEME,
-        LIKE_MEME,
-        FAVE_MEME,
         DELETE_MEME,
         REPORT_MEME,
-        RESET_PASSWORD
+        DELETE_FAVE
     }
 }
