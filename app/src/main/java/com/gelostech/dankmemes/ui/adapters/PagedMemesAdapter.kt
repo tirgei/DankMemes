@@ -45,7 +45,6 @@ class PagedMemesAdapter(private val callback: MemesCallback): PagedListAdapter<O
 
     override fun onBindViewHolder(holder: MemeHolder, position: Int) {
         val currentMeme = getItem(position)
-        Timber.e("Binding view holder: ${currentMeme?.id}")
 
         currentMeme!!.meme.subscribeBy(
                 onNext = { holder.bind(it) },
