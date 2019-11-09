@@ -149,7 +149,7 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
                 }
 
                 is Result.Error -> {
-                    _resetPasswordLiveData.value = GenericResponse.error(result.error, GenericResponse.ITEM_RESPONSE.RESET_PASSWORD)
+                    _resetPasswordLiveData.value = GenericResponse.error(result.error)
                 }
             }
         }

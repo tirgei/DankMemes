@@ -89,18 +89,15 @@ class AllFragment : BaseFragment() {
             when (it.status) {
                 Status.LOADING -> { Timber.e("Loading...") }
 
-                Status.SUCCESS -> { Timber.e("Success \uD83D\uDE03") }
-
-                Status.ERROR -> {
-                    val message = when (it.item) {
-                        GenericResponse.ITEM_RESPONSE.LIKE_MEME -> "Error liking meme"
-                        GenericResponse.ITEM_RESPONSE.FAVE_MEME -> "Error faving meme"
-                        GenericResponse.ITEM_RESPONSE.DELETE_MEME -> "Error deleting meme"
-                        else -> "An error has occurred. "
+                Status.SUCCESS -> {
+                    when (it.item) {
+                        GenericResponse.ITEM_RESPONSE.DELETE_MEME -> toast("Meme deleted \uD83D\uDEAE️")
+                        GenericResponse.ITEM_RESPONSE.REPORT_MEME -> toast("Meme reported \uD83D\uDC4A")
+                        else -> Timber.e("Success \uD83D\uDE03")
                     }
-
-                    toast("$message. Please try again")
                 }
+
+                Status.ERROR -> { toast("${it.error}. Please try again") }
             }
         })
     }
@@ -213,77 +210,43 @@ class AllFragment : BaseFragment() {
         activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
     }
 
-    private fun favePost(id: String) {
-//        val docRef = getFirestore().collection(Constants.MEMES).document(id)
-//
-//        getFirestore().runTransaction {
-//
-//            val meme =  it[docRef].toObject(Meme::class.java)
-//            val faves = meme!!.faves
-//
-//            if (faves.containsKey(getUid())) {
-//                faves.remove(getUid())
-//
-//                getFirestore().collection(Constants.FAVORITES).document(getUid()).collection(Constants.USER_FAVES).document(meme.id!!).delete()
-//            } else  {
-//                faves[getUid()] = true
-//
-//                val fave = Fave()
-//                fave.id = meme.id!!
-//                fave.imageUrl = meme.imageUrl!!
-//                fave.time = meme.time!!
-//
-//                getFirestore().collection(Constants.FAVORITES).document(getUid()).collection(Constants.USER_FAVES).document(meme.id!!).set(fave)
-//            }
-//
-//            it.update(docRef, Constants.FAVES, faves)
-//
-//            return@runTransaction null
-//        }.addOnSuccessListener {
-//            Timber.e("Meme faved")
-//        }.addOnFailureListener {
-//            Timber.e("Error faving meme")
-//        }
-//
-    }
-
+    /**
+     * Show dialog for reporting meme
+     * @param meme - Meme to report
+     */
     private fun showReportDialog(meme: Meme) {
-//        val editText = EditText(activity)
-//        val layout = FrameLayout(activity!!)
-//        layout.setPaddingRelative(45,15,45,0)
-//        layout.addView(editText)
-//
-//        activity!!.alert("Please provide a reason for reporting") {
-//            customView = layout
-//
-//            positiveButton("REPORT") {
-//                if (!AppUtils.validated(editText)) {
-//                    activity!!.toast("Please enter a reason to report")
-//                    return@positiveButton
-//                }
-//
-//                val key = getDatabaseReference().child("reports").push().key
-//                val reason = editText.text.toString().trim()
-//
-//                val report = Report()
-//                report.id = key
-//                report.memeId = meme.id
-//                report.memePosterId = meme.memePosterID
-//                report.reporterId = getUid()
-//                report.memeUrl = meme.imageUrl
-//                report.reason = reason
-//                report.time = System.currentTimeMillis()
-//
-//                getDatabaseReference().child("reports").child(key!!).setValue(report).addOnCompleteListener {
-//                    activity!!.toast("Meme reported!")
-//                }
-//
-//            }
-//
-//            negativeButton("CANCEL"){}
-//        }.show()
+        val editText = EditText(activity)
+        val layout = FrameLayout(activity!!)
+        layout.setPaddingRelative(45,15,45,0)
+        layout.addView(editText)
+
+        activity!!.alert("Please provide a reason for reporting") {
+            customView = layout
+
+            positiveButton("Report") {
+                if (!AppUtils.validated(editText)) {
+                    activity!!.toast("Please enter a reason to report")
+                    return@positiveButton
+                }
+
+                val report = Report()
+                report.memeId = meme.id
+                report.memePosterId = meme.memePosterID
+                report.reporterId = getUid()
+                report.memeUrl = meme.imageUrl
+                report.reason = editText.text.toString().trim()
+                report.time = System.currentTimeMillis()
+
+                memesViewModel.reportMeme(report)
+            }
+
+            negativeButton("Cancel"){}
+        }.show()
     }
 
+    /**
+     * Function to get the current fragments RecyclerView
+     */
     fun getRecyclerView(): RecyclerView {
         return allRv
     }

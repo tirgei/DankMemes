@@ -10,6 +10,7 @@ import androidx.paging.PagedList
 import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.datasource.MemesDataSource
 import com.gelostech.dankmemes.data.models.Meme
+import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.repositories.MemesRepository
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.wrappers.ObservableMeme
@@ -42,7 +43,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                     }
 
                     is Result.Error -> {
-                        _genericResponseLiveData.postValue(GenericResponse.error(it.error, GenericResponse.ITEM_RESPONSE.POST_MEME))
+                        _genericResponseLiveData.postValue(GenericResponse.error(it.error))
                     }
                 }
             }
@@ -81,7 +82,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 }
 
                 is Result.Error -> {
-                    _genericResponseLiveData.value = GenericResponse.error(result.error, GenericResponse.ITEM_RESPONSE.LIKE_MEME)
+                    _genericResponseLiveData.value = GenericResponse.error(result.error)
                 }
             }
         }
@@ -101,7 +102,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 }
 
                 is Result.Error -> {
-                    _genericResponseLiveData.value = GenericResponse.error(result.error, GenericResponse.ITEM_RESPONSE.FAVE_MEME)
+                    _genericResponseLiveData.value = GenericResponse.error(result.error)
                 }
             }
         }
@@ -117,11 +118,34 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
 
             when (val result = repository.deleteMeme(memeId)) {
                 is Result.Success -> {
-                    _genericResponseLiveData.value = GenericResponse.success(result.data, memeId)
+                    _genericResponseLiveData.value = GenericResponse.success(result.data,
+                            item = GenericResponse.ITEM_RESPONSE.DELETE_MEME,
+                            id = memeId)
                 }
 
                 is Result.Error -> {
-                    _genericResponseLiveData.value = GenericResponse.error(result.error, GenericResponse.ITEM_RESPONSE.DELETE_MEME)
+                    _genericResponseLiveData.value = GenericResponse.error(result.error)
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to delete meme
+     * @param report
+     */
+    fun reportMeme(report: Report) {
+        viewModelScope.launch {
+            _genericResponseLiveData.value = GenericResponse.loading()
+
+            when (val result = repository.reportMeme(report)) {
+                is Result.Success -> {
+                    _genericResponseLiveData.value = GenericResponse.success(result.data,
+                            item = GenericResponse.ITEM_RESPONSE.REPORT_MEME)
+                }
+
+                is Result.Error -> {
+                    _genericResponseLiveData.value = GenericResponse.error(result.error)
                 }
             }
         }
