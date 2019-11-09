@@ -128,7 +128,7 @@ class AllFragment : BaseFragment() {
                         }
 
                         uiThread {
-                            if (view.id == R.id.memeMore) showBottomSheetAdmin(meme, imageBitmap!!)
+                            if (view.id == R.id.memeMore) showBottomSheet(meme, imageBitmap!!)
                             else showMeme(meme, imageBitmap!!)
                         }
                     }
@@ -137,6 +137,10 @@ class AllFragment : BaseFragment() {
         }
     }
 
+    /**
+     * Launch the Profile of the meme poster
+     * @param userId - ID of the user
+     */
     private fun showProfile(userId: String) {
         if (userId != getUid()) {
             val i = Intent(activity, ProfileActivity::class.java)
@@ -146,6 +150,9 @@ class AllFragment : BaseFragment() {
         }
     }
 
+    /**
+     * Launch activity to view full meme photo
+     */
     private fun showMeme(meme: Meme, image: Bitmap) {
         AppUtils.saveTemporaryImage(activity!!, image)
 
@@ -156,61 +163,50 @@ class AllFragment : BaseFragment() {
         AppUtils.fadeIn(activity!!)
     }
 
+    /**
+     * Show BottomSheet with extra actions
+     */
     private fun showBottomSheet(meme: Meme, image: Bitmap) {
-        bs = if (getUid() != meme.memePosterID) {
-            BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet)
-        } else {
-            BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_me)
-        }
-
-        bs.listener { _, which ->
-
-            when(which) {
-                R.id.bs_share -> AppUtils.shareImage(activity!!, image)
-                R.id.bs_delete -> deletePost(meme)
-                R.id.bs_save -> {
-                    if (storagePermissionGranted()) {
-                        AppUtils.saveImage(activity!!, image)
-                    } else requestStoragePermission()
-                }
-                R.id.bs_report -> showReportDialog(meme)
-            }
-
-        }.show()
-
-    }
-
-    private fun showBottomSheetAdmin(meme: Meme, image: Bitmap) {
+//        bs = if (getUid() != meme.memePosterID) {
+//            BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet)
+//        } else {
+//            BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_me)
+//        }
         bs = BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_admin)
 
         bs.listener { _, which ->
             when(which) {
                 R.id.bs_share -> AppUtils.shareImage(activity!!, image)
-                R.id.bs_delete -> deletePost(meme)
+
+                R.id.bs_delete -> {
+                    activity!!.alert("Delete this meme?") {
+                        title = "Delete Meme"
+                        positiveButton("Delete") { memesViewModel.deleteMeme(meme.id!!) }
+                        negativeButton("Cancel") {}
+                    }.show()
+                }
+
                 R.id.bs_save -> {
                     if (storagePermissionGranted()) {
                         AppUtils.saveImage(activity!!, image)
                     } else requestStoragePermission()
                 }
+
                 R.id.bs_report -> showReportDialog(meme)
             }
+
         }.show()
+
     }
 
+    /**
+     * Launch the comments activity
+     */
     private fun showComments(memeId: String) {
         val i = Intent(activity, CommentActivity::class.java)
         i.putExtra("memeId", memeId)
         startActivity(i)
         activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-    }
-
-    private fun deletePost(meme: Meme) {
-//        activity!!.alert("Delete this meme?") {
-//            positiveButton("DELETE") {
-//                getFirestore().collection(Constants.MEMES).document(meme.id!!).delete()
-//            }
-//            negativeButton("CANCEL"){}
-//        }.show()
     }
 
     private fun favePost(id: String) {
@@ -286,15 +282,6 @@ class AllFragment : BaseFragment() {
 
     fun getRecyclerView(): RecyclerView {
         return allRv
-    }
-
-    private fun hasPosts() {
-        allShimmer?.stopShimmerAnimation()
-        allShimmer?.visibility = View.GONE
-    }
-
-    private fun noPosts() {
-
     }
 }
 

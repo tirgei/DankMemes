@@ -87,4 +87,24 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
         }
     }
 
+    /**
+     * Function to delete meme
+     * @param memeId - ID of the meme to delete
+     */
+    fun deleteMeme(memeId: String) {
+        viewModelScope.launch {
+            _genericResponseLiveData.value = GenericResponse.loading()
+
+            when (val result = repository.deleteMeme(memeId)) {
+                is Result.Success -> {
+                    _genericResponseLiveData.value = GenericResponse.success(result.data, memeId)
+                }
+
+                is Result.Error -> {
+                    _genericResponseLiveData.value = GenericResponse.error(result.error, GenericResponse.ITEM_RESPONSE.DELETE_MEME)
+                }
+            }
+        }
+    }
+
 }
