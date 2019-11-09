@@ -25,7 +25,6 @@ class PostActivity : BaseActivity() {
     private var imageUri: Uri? = null
     private var imageSelected = false
     private var uploadMeme: MenuItem? = null
-    private val sessionManager: SessionManager by inject()
     private val memesViewModel: MemesViewModel by inject()
 
     companion object {
