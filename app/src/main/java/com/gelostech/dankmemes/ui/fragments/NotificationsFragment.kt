@@ -13,13 +13,10 @@ import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.ui.activities.ProfileActivity
 import com.gelostech.dankmemes.ui.adapters.NotificationsAdapter
 import com.gelostech.dankmemes.ui.callbacks.NotificationsCallback
-import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.data.models.Notification
 import com.gelostech.dankmemes.ui.viewmodels.NotificationsViewModel
-import com.gelostech.dankmemes.utils.RecyclerFormatter
-import com.gelostech.dankmemes.utils.hideView
-import com.gelostech.dankmemes.utils.showView
+import com.gelostech.dankmemes.utils.*
 import kotlinx.android.synthetic.main.fragment_notifications.*
 import org.koin.android.ext.android.inject
 
@@ -69,7 +66,7 @@ class NotificationsFragment : BaseFragment() {
             when(view.id) {
                 R.id.avatar -> {
                     val i = Intent(activity, ProfileActivity::class.java)
-                    i.putExtra("userId", notification.userId)
+                    i.putExtra(Constants.USER_ID, notification.userId)
                     startActivity(i)
                     AppUtils.animateEnterRight(activity!!)
                 }
