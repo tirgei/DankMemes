@@ -109,15 +109,15 @@ class AllFragment : BaseFragment() {
 
             when(view.id) {
                 R.id.memeComment -> showComments(memeId)
-                R.id.memeIcon, R.id.memeUser -> showProfile(memeId)
+                R.id.memeIcon, R.id.memeUser -> showProfile(meme.memePosterID!!)
 
                 R.id.memeFave -> {
-                    animateView(view)
+                    AppUtils.animateView(view)
                     memesViewModel.faveMeme(memeId, getUid())
                 }
 
                 R.id.memeLike -> {
-                    animateView(view)
+                    AppUtils.animateView(view)
                     memesViewModel.likeMeme(memeId, getUid())
                 }
 
@@ -130,8 +130,10 @@ class AllFragment : BaseFragment() {
                         }
 
                         uiThread {
-                            if (view.id == R.id.memeMore) showBottomSheet(meme, imageBitmap!!)
-                            else showMeme(meme, imageBitmap!!)
+                            imageBitmap?.let {
+                                if (view.id == R.id.memeMore) showBottomSheet(meme, imageBitmap)
+                                else showMeme(meme, imageBitmap)
+                            }
                         }
                     }
                 }
@@ -150,7 +152,7 @@ class AllFragment : BaseFragment() {
     private fun showProfile(userId: String) {
         if (userId != getUid()) {
             val i = Intent(activity, ProfileActivity::class.java)
-            i.putExtra("userId", userId)
+            i.putExtra(Constants.USER_ID, userId)
             startActivity(i)
             activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
         }
