@@ -69,7 +69,6 @@ class ProfileFragment : BaseFragment() {
             (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
             adapter = memesAdapter
         }
-
     }
 
     /**
@@ -93,7 +92,6 @@ class ProfileFragment : BaseFragment() {
                 Status.SUCCESS -> {
                     when (it.item) {
                         GenericResponse.ITEM_RESPONSE.DELETE_MEME -> toast("Meme deleted \uD83D\uDEAE️")
-                        GenericResponse.ITEM_RESPONSE.REPORT_MEME -> toast("Meme reported \uD83D\uDC4A")
                         else -> Timber.e("Success \uD83D\uDE03")
                     }
                 }
@@ -112,12 +110,12 @@ class ProfileFragment : BaseFragment() {
                 R.id.memeIcon, R.id.memeUser -> { Timber.e("Clicked on my profile") }
 
                 R.id.memeFave -> {
-                    animateView(view)
+                    AppUtils.animateView(view)
                     memesViewModel.faveMeme(memeId, getUid())
                 }
 
                 R.id.memeLike -> {
-                    animateView(view)
+                    AppUtils.animateView(view)
                     memesViewModel.likeMeme(memeId, getUid())
                 }
 
@@ -130,8 +128,10 @@ class ProfileFragment : BaseFragment() {
                         }
 
                         uiThread {
-                            if (view.id == R.id.memeMore) showBottomSheet(meme, imageBitmap!!)
-                            else showMeme(meme, imageBitmap!!)
+                            imageBitmap?.let {
+                                if (view.id == R.id.memeMore) showBottomSheet(meme, imageBitmap)
+                                else showMeme(meme, imageBitmap)
+                            }
                         }
                     }
                 }
@@ -166,12 +166,7 @@ class ProfileFragment : BaseFragment() {
      * Show BottomSheet with extra actions
      */
     private fun showBottomSheet(meme: Meme, image: Bitmap) {
-//        bs = if (getUid() != meme.memePosterID) {
-//            BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet)
-//        } else {
-//            BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_me)
-//        }
-        bs = BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_admin)
+        bs = BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_me)
 
         bs.listener { _, which ->
             when(which) {
@@ -190,8 +185,6 @@ class ProfileFragment : BaseFragment() {
                         AppUtils.saveImage(activity!!, image)
                     } else requestStoragePermission()
                 }
-
-                R.id.bs_report -> showReportDialog(meme)
             }
 
         }.show()
@@ -206,40 +199,6 @@ class ProfileFragment : BaseFragment() {
         i.putExtra("memeId", memeId)
         startActivity(i)
         activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-    }
-
-    /**
-     * Show dialog for reporting meme
-     * @param meme - Meme to report
-     */
-    private fun showReportDialog(meme: Meme) {
-        val editText = EditText(activity)
-        val layout = FrameLayout(activity!!)
-        layout.setPaddingRelative(45,15,45,0)
-        layout.addView(editText)
-
-        activity!!.alert("Please provide a reason for reporting") {
-            customView = layout
-
-            positiveButton("Report") {
-                if (!AppUtils.validated(editText)) {
-                    activity!!.toast("Please enter a reason to report")
-                    return@positiveButton
-                }
-
-                val report = Report()
-                report.memeId = meme.id
-                report.memePosterId = meme.memePosterID
-                report.reporterId = getUid()
-                report.memeUrl = meme.imageUrl
-                report.reason = editText.text.toString().trim()
-                report.time = System.currentTimeMillis()
-
-                memesViewModel.reportMeme(report)
-            }
-
-            negativeButton("Cancel"){}
-        }.show()
     }
 
 }
