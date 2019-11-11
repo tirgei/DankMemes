@@ -18,7 +18,7 @@ import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
-import com.gelostech.dankmemes.ui.adapters.PagedMemesAdapter
+import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
@@ -31,7 +31,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class ProfileActivity : BaseActivity() {
-    private lateinit var memesAdapter: PagedMemesAdapter
+    private lateinit var memesAdapter: MemesAdapter
     private lateinit var bs: BottomSheet.Builder
     private val memesViewModel: MemesViewModel by viewModel()
     private val usersViewModel: UsersViewModel by viewModel()
@@ -58,7 +58,7 @@ class ProfileActivity : BaseActivity() {
             setDisplayHomeAsUpEnabled(true)
         }
 
-        memesAdapter = PagedMemesAdapter(memesCallback)
+        memesAdapter = MemesAdapter(memesCallback)
 
         viewProfileRv.apply {
             setHasFixedSize(true)

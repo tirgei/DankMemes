@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
-import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.models.User
@@ -24,7 +23,7 @@ import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.ui.activities.CommentActivity
 import com.gelostech.dankmemes.ui.activities.ProfileActivity
 import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
-import com.gelostech.dankmemes.ui.adapters.PagedMemesAdapter
+import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
@@ -38,7 +37,7 @@ import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class AllFragment : BaseFragment() {
-    private lateinit var pagedMemesAdapter: PagedMemesAdapter
+    private lateinit var memesAdapter: MemesAdapter
     private lateinit var bs: BottomSheet.Builder
     private val memesViewModel: MemesViewModel by inject()
 
@@ -58,7 +57,7 @@ class AllFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        pagedMemesAdapter = PagedMemesAdapter(memesCallback)
+        memesAdapter = MemesAdapter(memesCallback)
         allRefresh.isEnabled = false
 
         allRv.apply {
@@ -67,7 +66,7 @@ class AllFragment : BaseFragment() {
             addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
             itemAnimator = DefaultItemAnimator()
             (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
-            adapter = pagedMemesAdapter
+            adapter = memesAdapter
         }
     }
 
@@ -78,7 +77,7 @@ class AllFragment : BaseFragment() {
         memesViewModel.fetchMemes().observe(this, Observer {
             allShimmer?.stopShimmerAnimation()
             allShimmer?.visibility = View.GONE
-            pagedMemesAdapter.submitList(it)
+            memesAdapter.submitList(it)
         })
     }
 

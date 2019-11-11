@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.FrameLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,12 +15,11 @@ import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.data.models.Meme
-import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.ui.activities.CommentActivity
 import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
-import com.gelostech.dankmemes.ui.adapters.PagedMemesAdapter
+import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
@@ -33,14 +30,13 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_profile.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 
 class ProfileFragment : BaseFragment() {
-    private lateinit var memesAdapter: PagedMemesAdapter
+    private lateinit var memesAdapter: MemesAdapter
     private lateinit var bs: BottomSheet.Builder
     private val memesViewModel: MemesViewModel by inject()
 
@@ -59,7 +55,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        memesAdapter = PagedMemesAdapter(memesCallback)
+        memesAdapter = MemesAdapter(memesCallback)
 
         profileRv.apply {
             setHasFixedSize(true)
