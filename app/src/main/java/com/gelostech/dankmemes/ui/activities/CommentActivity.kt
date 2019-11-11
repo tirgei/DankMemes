@@ -161,7 +161,7 @@ class CommentActivity : BaseActivity() {
     private fun handleClick (comment: Comment) {
         if (comment.authorId != getUid()) {
             val i = Intent(this, ProfileActivity::class.java)
-            i.putExtra("userId", comment.authorId)
+            i.putExtra(Constants.USER_ID, comment.authorId)
             startActivity(i)
             overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
         }
