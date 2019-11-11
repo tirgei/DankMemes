@@ -32,6 +32,9 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
     val resetPasswordLiveData: MutableLiveData<GenericResponse>
         get() = _resetPasswordLiveData
 
+    private val _logoutLiveData = MutableLiveData<GenericResponse>()
+    val logoutLiveData = _logoutLiveData
+
     /**
      * Function to login User with Email & Password
      * @param email - Email
@@ -171,6 +174,23 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
                 is Result.Error -> {
                     _userLiveData.value = UserResponse.error(userResult.error)
                 }
+            }
+        }
+    }
+
+    /**
+     * Function to logout User
+     */
+    fun logout() {
+        _logoutLiveData.value = GenericResponse.loading()
+
+        when (val result = repository.logout()) {
+            is Result.Success -> {
+                _logoutLiveData.value = GenericResponse.success(result.data)
+            }
+
+            is Result.Error -> {
+                _logoutLiveData.value = GenericResponse.error(result.error)
             }
         }
     }

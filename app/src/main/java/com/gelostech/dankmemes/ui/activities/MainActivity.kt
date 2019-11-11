@@ -25,16 +25,21 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.net.Uri
 import android.view.View
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
+import com.gelostech.dankmemes.data.Status
 import com.google.firebase.auth.FirebaseAuth
 import org.jetbrains.anko.alert
 import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.ui.fragments.*
+import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.*
 import com.gelostech.pageradapter.PagerAdapter
 import com.google.firebase.messaging.FirebaseMessaging
 import com.wooplr.spotlight.SpotlightView
+import org.jetbrains.anko.longToast
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 
@@ -51,6 +56,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private lateinit var notifFragment: NotificationsFragment
     private lateinit var prefs: SharedPreferences
     private lateinit var noInternetDialog: NoInternetDialog
+    private val usersViewModel: UsersViewModel by viewModel()
 
     companion object {
         private const val HOME: String = "Dank Memes"
@@ -76,7 +82,9 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         setupBottomNav()
         setupViewPager()
         setupDrawer()
+
         initNoInternet()
+        initLogoutObserver()
     }
 
     //Setup the main toolbar
@@ -235,16 +243,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
             Handler().postDelayed({
                 alert("Are you sure you want to log out?") {
                     title = "Log out"
-                    positiveButton("LOG OUT") {
-                        val firebaseAuth = FirebaseAuth.getInstance()
-                        firebaseAuth.signOut()
-                        FirebaseMessaging.getInstance().unsubscribeFromTopic("memes")
-
-                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                        overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
-                        finish()
-                    }
-                    negativeButton("CANCEL") {}
+                    positiveButton("Log Out") { usersViewModel.logout() }
+                    negativeButton("Cancel") {}
                 }.show()
             }, 300)
         }
@@ -261,6 +261,30 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         noInternetDialog = NoInternetDialog.Builder(this)
                 .setCancelable(true)
                 .build()
+    }
+
+    private fun initLogoutObserver() {
+        usersViewModel.logoutLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> showLoading("Logging out...")
+
+                Status.SUCCESS -> {
+                    runDelayed(500) {
+                        hideLoading()
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic(Constants.TOPIC_GLOBAL)
+
+                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
+                        finish()
+                    }
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    longToast("${it.error}. Please try again")
+                }
+            }
+        })
     }
 
     override fun onTabSelected(position: Int, wasSelected: Boolean): Boolean {
