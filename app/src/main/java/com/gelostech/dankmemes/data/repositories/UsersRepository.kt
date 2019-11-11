@@ -190,11 +190,11 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
      * @param userId - ID of the User
      */
     suspend fun fetchUserById(userId: String): Result<User> {
-        val user = db.child(userId)
-                .get()
-                .await()
-
         return try {
+            val user = db.child(userId)
+                    .get()
+                    .await()
+
             Result.Success(user.getValue(User::class.java)!!)
         } catch (e: java.lang.Exception) {
             Timber.e("Error fetching User: ${e.localizedMessage}")
