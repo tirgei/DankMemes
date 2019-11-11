@@ -2,29 +2,13 @@ package com.gelostech.dankmemes.ui.base
 
 
 import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Bundle
-import androidx.core.content.ContextCompat
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
-import org.jetbrains.anko.toast
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.view.View
 import android.view.animation.AnimationUtils
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton
 import com.gelostech.dankmemes.R
@@ -32,8 +16,15 @@ import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.ui.activities.MainActivity
 import com.gelostech.dankmemes.utils.*
 import com.google.firebase.messaging.FirebaseMessaging
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 
 
@@ -114,28 +105,5 @@ open class BaseFragment : Fragment() {
             activity!!.finish()
         }
     }
-
-    /**
-     * Animate bounce effect
-     */
-    fun animateView(view: View) {
-        val anim = AnimationUtils.loadAnimation(context, R.anim.bounce)
-        val bounceInterpolator = MyBounceInterpolator(0.2, 20.0)
-        anim.interpolator = bounceInterpolator
-
-        view.startAnimation(anim)
-    }
-
-    // Get root database reference
-    fun getDatabaseReference(): DatabaseReference = FirebaseDatabase.getInstance().reference
-
-    // Get root firestore reference
-    fun getFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
-
-    // Get FirebaseAuth instance
-    fun getFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
-
-    // Get Firebase Storage reference
-    fun getStorageReference(): StorageReference = FirebaseStorage.getInstance().reference
 
 }
