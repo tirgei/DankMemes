@@ -4,78 +4,61 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.FrameLayout
-import android.widget.RelativeLayout
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.ui.adapters.MemesAdapter
-import com.gelostech.dankmemes.utils.AppUtils
-import com.gelostech.dankmemes.ui.base.BaseActivity
-import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.Fave
+import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.models.User
+import com.gelostech.dankmemes.data.responses.GenericResponse
+import com.gelostech.dankmemes.ui.adapters.PagedMemesAdapter
+import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
-import com.gelostech.dankmemes.utils.RecyclerFormatter
-import com.gelostech.dankmemes.utils.hideView
-import com.gelostech.dankmemes.utils.load
-import com.gelostech.dankmemes.utils.showView
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.DocumentSnapshot
-import com.makeramen.roundedimageview.RoundedDrawable
-import com.makeramen.roundedimageview.RoundedImageView
+import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
+import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
+import com.gelostech.dankmemes.utils.*
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_profile.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class ProfileActivity : BaseActivity() {
-    private lateinit var memesAdapter: MemesAdapter
-    private lateinit var image: Bitmap
-    private lateinit var profileRef: DatabaseReference
+    private lateinit var memesAdapter: PagedMemesAdapter
     private lateinit var bs: BottomSheet.Builder
-    private lateinit var name: String
+    private val memesViewModel: MemesViewModel by viewModel()
+    private val usersViewModel: UsersViewModel by viewModel()
     private lateinit var userId: String
-    private lateinit var loadMoreFooter: RelativeLayout
-    private var lastDocument: DocumentSnapshot? = null
-    private lateinit var query: com.google.firebase.firestore.Query
-    private var loading = false
-
-    companion object {
-        private var TAG = ProfileActivity::class.java.simpleName
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        userId = intent.getStringExtra("userId")
+        userId = intent.getStringExtra(Constants.USER_ID)!!
 
         initViews()
-        load(true)
+        initUserObserver()
+        initResponseObserver()
 
-        profileRef = getDatabaseReference().child("users").child(userId)
-        profileRef.addValueEventListener(profileListener)
+        usersViewModel.fetchUser(userId)
     }
 
     private fun initViews() {
         setSupportActionBar(viewProfileToolbar)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = getString(R.string.profile)
+        supportActionBar?.apply {
+            title = getString(R.string.profile)
+            setDisplayShowHomeEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
+        }
 
-        memesAdapter = MemesAdapter(memesCallback)
+        memesAdapter = PagedMemesAdapter(memesCallback)
 
         viewProfileRv.apply {
             setHasFixedSize(true)
@@ -83,133 +66,112 @@ class ProfileActivity : BaseActivity() {
             addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(this@ProfileActivity))
             itemAnimator = DefaultItemAnimator()
             (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
-            loadMoreFooterView as RelativeLayout
             adapter = memesAdapter
         }
-        viewProfileHeader.attachTo(viewProfileRv)
-
-        loadMoreFooter = viewProfileRv.loadMoreFooterView as RelativeLayout
-        viewProfileRv.setOnLoadMoreListener {
-            if (!loading) {
-                loadMoreFooter.showView()
-                load(false)
-            }
-        }
-
     }
 
-    private fun load(initial: Boolean) {
-        query = if (lastDocument == null) {
-            getFirestore().collection(Constants.MEMES)
-                    .whereEqualTo(Constants.POSTER_ID, userId)
-                    .orderBy(Constants.TIME, com.google.firebase.firestore.Query.Direction.DESCENDING)
-                    .limit(15)
-        } else {
-            loading = true
+    /**
+     * Initialize observer for User LiveData
+     */
+    private fun initUserObserver() {
+        usersViewModel.userLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> {
+                    Timber.e("Fetching $userId's profile")
+                    loading.showView()
+                }
 
-            getFirestore().collection(Constants.MEMES)
-                    .whereEqualTo(Constants.POSTER_ID, userId)
-                    .orderBy(Constants.TIME, com.google.firebase.firestore.Query.Direction.DESCENDING)
-                    .startAfter(lastDocument!!)
-                    .limit(15)
-        }
+                Status.SUCCESS -> {
+                    loading.hideView()
+                    if (it.user != null) initMemesObserver(it.user)
+                    else errorFetchingProfile()
+                }
 
-        query.addSnapshotListener { p0, p1 ->
-            hasPosts()
-            loading = false
-
-            if (p1 != null) {
-                Timber.e( "Error loading initial memes: $p1")
+                Status.ERROR -> errorFetchingProfile()
             }
+        })
+    }
 
-            if (p0 == null || p0.isEmpty) {
-                if (initial) noPosts()
-            } else {
-                lastDocument = p0.documents[p0.size()-1]
+    /**
+     * Initialize function to observer Memes LiveData
+     */
+    private fun initMemesObserver(user: User) {
+        memesViewModel.fetchMemesByUser(user).observe(this, Observer {
+            memesAdapter.submitList(it)
+        })
+    }
 
-                for (change: DocumentChange in p0.documentChanges) {
-                    Timber.e("Loading changed document")
+    /**
+     * Initialize observer for Generic Response LiveData
+     */
+    private fun initResponseObserver() {
+        memesViewModel.genericResponseLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> { Timber.e("Loading...") }
 
-                    when(change.type) {
-                        DocumentChange.Type.ADDED -> {
-                            val meme = change.document.toObject(Meme::class.java)
-                            memesAdapter.addMeme(meme)
-
-                            Timber.e("Changed document: ADDED")
-                        }
-
-                        DocumentChange.Type.MODIFIED -> {
-                            val meme = change.document.toObject(Meme::class.java)
-                            memesAdapter.updateMeme(meme)
-
-                            Timber.e("Changed document: MODIFIED")
-                        }
-
-                        DocumentChange.Type.REMOVED -> {
-                            val meme = change.document.toObject(Meme::class.java)
-                            memesAdapter.removeMeme(meme)
-                        }
-
+                Status.SUCCESS -> {
+                    when (it.item) {
+                        GenericResponse.ITEM_RESPONSE.REPORT_MEME -> toast("Meme reported \uD83D\uDC4A")
+                        else -> Timber.e("Success \uD83D\uDE03")
                     }
                 }
 
+                Status.ERROR -> { toast("${it.error}. Please try again") }
             }
-
-        }
-    }
-
-    private fun temporarilySaveImage() {
-        image = (viewProfileImage.drawable as BitmapDrawable).bitmap
-        AppUtils.saveTemporaryImage(this, image)
-    }
-
-    private val profileListener = object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-            Log.e(TAG, "Error loading profile: ${p0.message}")
-        }
-
-        override fun onDataChange(p0: DataSnapshot) {
-            val user = p0.getValue(User::class.java)!!
-            name = user.userName!!
-
-            viewProfileName.text = user.userName
-            viewProfileBio.text = user.userBio
-            viewProfileImage.load(user.userAvatar!!, R.drawable.person)
-
-            viewProfileImage.setOnClickListener {
-                temporarilySaveImage()
-                val i = Intent(this@ProfileActivity, ViewMemeActivity::class.java)
-                i.putExtra(Constants.PIC_URL, user.userAvatar!!)
-                startActivity(i)
-                AppUtils.fadeIn(this@ProfileActivity)
-            }
-        }
+        })
     }
 
     private val memesCallback = object : MemesCallback {
         override fun onMemeClicked(view: View, meme: Meme) {
             val memeId = meme.id!!
 
-            // Get bitmap of shown meme
-            val imageBitmap = when(view) {
-                is RoundedImageView -> (view.drawable as RoundedDrawable).sourceBitmap
-                else -> null
-            }
-
             when(view.id) {
-                R.id.memeMore -> showBottomSheet(meme, imageBitmap!!)
-                R.id.memeLike -> likePost(memeId)
                 R.id.memeComment -> showComments(memeId)
-                R.id.memeFave -> favePost(memeId)
-                else -> showMeme(meme, imageBitmap!!)
+                R.id.memeIcon, R.id.memeUser -> { Timber.e("Clicked on current profile") }
+
+                R.id.memeFave -> {
+                    AppUtils.animateView(view)
+                    memesViewModel.faveMeme(memeId, getUid())
+                }
+
+                R.id.memeLike -> {
+                    AppUtils.animateView(view)
+                    memesViewModel.likeMeme(memeId, getUid())
+                }
+
+                else -> {
+                    doAsync {
+                        // Get bitmap of shown meme
+                        val imageBitmap = when(view.id) {
+                            R.id.memeImage, R.id.memeMore -> AppUtils.loadBitmapFromUrl(this@ProfileActivity, meme.imageUrl!!)
+                            else -> null
+                        }
+
+                        uiThread {
+                            imageBitmap?.let {
+                                if (view.id == R.id.memeMore) showBottomSheet(meme, imageBitmap)
+                                else showMeme(meme, imageBitmap)
+                            }
+                        }
+                    }
+                }
             }
         }
 
         override fun onProfileClicked(view: View, user: User) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            val image = ((view as CircleImageView).drawable as BitmapDrawable).bitmap
+            AppUtils.saveTemporaryImage(this@ProfileActivity, image)
+
+            val i = Intent(this@ProfileActivity, ViewMemeActivity::class.java)
+            i.putExtra(Constants.PIC_URL, user.userAvatar!!)
+            startActivity(i)
+            AppUtils.fadeIn(this@ProfileActivity)
         }
     }
 
+    /**
+     * Launch activity to view full meme photo
+     */
     private fun showMeme(meme: Meme, image: Bitmap) {
         AppUtils.saveTemporaryImage(this, image)
 
@@ -220,18 +182,22 @@ class ProfileActivity : BaseActivity() {
         AppUtils.fadeIn(this)
     }
 
+    /**
+     * Show BottomSheet with extra actions
+     */
     private fun showBottomSheet(meme: Meme, image: Bitmap) {
         bs = BottomSheet.Builder(this).sheet(R.menu.main_bottomsheet)
 
         bs.listener { _, which ->
-
             when(which) {
                 R.id.bs_share -> AppUtils.shareImage(this, image)
+
                 R.id.bs_save -> {
                     if (storagePermissionGranted()) {
                         AppUtils.saveImage(this, image)
                     } else requestStoragePermission()
                 }
+
                 R.id.bs_report -> showReportDialog(meme)
             }
 
@@ -239,6 +205,9 @@ class ProfileActivity : BaseActivity() {
 
     }
 
+    /**
+     * Launch the comments activity
+     */
     private fun showComments(memeId: String) {
         val i = Intent(this, CommentActivity::class.java)
         i.putExtra("memeId", memeId)
@@ -246,68 +215,10 @@ class ProfileActivity : BaseActivity() {
         overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
     }
 
-    private fun likePost(id: String) {
-        val docRef = getFirestore().collection(Constants.MEMES).document(id)
-
-        getFirestore().runTransaction {
-
-            val meme =  it[docRef].toObject(Meme::class.java)
-            val likes = meme!!.likes
-            var likesCount = meme.likesCount
-
-            if (likes.containsKey(getUid())) {
-                likesCount -= 1
-                likes.remove(getUid())
-
-            } else  {
-                likesCount += 1
-                likes[getUid()] = true
-            }
-
-            it.update(docRef, Constants.LIKES, likes)
-            it.update(docRef, Constants.LIKES_COUNT, likesCount)
-
-            return@runTransaction null
-        }.addOnSuccessListener {
-            Timber.e("Meme liked")
-        }.addOnFailureListener {
-            Timber.e("Error liking meme")
-        }
-    }
-
-    private fun favePost(id: String) {
-        val docRef = getFirestore().collection(Constants.MEMES).document(id)
-
-        getFirestore().runTransaction {
-
-            val meme =  it[docRef].toObject(Meme::class.java)
-            val faves = meme!!.faves
-
-            if (faves.containsKey(getUid())) {
-                faves.remove(getUid())
-
-                getFirestore().collection(Constants.FAVORITES).document(getUid()).collection(Constants.USER_FAVES).document(meme.id!!).delete()
-            } else  {
-                faves[getUid()] = true
-
-                val fave = Fave()
-                fave.id = meme.id!!
-                fave.imageUrl = meme.imageUrl!!
-                fave.time = meme.time!!
-
-                getFirestore().collection(Constants.FAVORITES).document(getUid()).collection(Constants.USER_FAVES).document(meme.id!!).set(fave)
-            }
-
-            it.update(docRef, Constants.FAVES, faves)
-
-            return@runTransaction null
-        }.addOnSuccessListener {
-            Timber.e("Meme faved")
-        }.addOnFailureListener {
-            Timber.e("Error faving meme")
-        }
-    }
-
+    /**
+     * Show dialog for reporting meme
+     * @param meme - Meme to report
+     */
     private fun showReportDialog(meme: Meme) {
         val editText = EditText(this)
         val layout = FrameLayout(this)
@@ -317,32 +228,31 @@ class ProfileActivity : BaseActivity() {
         alert("Please provide a reason for reporting") {
             customView = layout
 
-            positiveButton("REPORT") {
+            positiveButton("Report") {
                 if (!AppUtils.validated(editText)) {
                     toast("Please enter a reason to report")
                     return@positiveButton
                 }
 
-                val key = getDatabaseReference().child("reports").push().key
-                val reason = editText.text.toString().trim()
-
                 val report = Report()
-                report.id = key
                 report.memeId = meme.id
                 report.memePosterId = meme.memePosterID
                 report.reporterId = getUid()
                 report.memeUrl = meme.imageUrl
-                report.reason = reason
+                report.reason = editText.text.toString().trim()
                 report.time = System.currentTimeMillis()
 
-                getDatabaseReference().child("reports").child(key!!).setValue(report).addOnCompleteListener {
-                    toast("Meme reported!")
-                }
-
+                memesViewModel.reportMeme(report)
             }
 
-            negativeButton("CANCEL"){}
+            negativeButton("Cancel"){}
         }.show()
+    }
+
+    private fun errorFetchingProfile() {
+        loading.hideView()
+        longToast("Error fetching user profile")
+        onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -353,22 +263,9 @@ class ProfileActivity : BaseActivity() {
         return true
     }
 
-    private fun hasPosts() {
-        viewProfileEmptyState?.hideView()
-    }
-
-    private fun noPosts() {
-        viewProfileEmptyState?.showView()
-        viewProfileEmptyStateText.text = "$name hasn't posted any memes yet"
-    }
-
     override fun onBackPressed() {
         super.onBackPressed()
         overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
     }
 
-    override fun onDestroy() {
-        profileRef.removeEventListener(profileListener)
-        super.onDestroy()
-    }
 }
