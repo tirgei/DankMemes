@@ -230,4 +230,16 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
         onResult(Result.Success(true))
     }
 
+    /**
+     * Function to logout User
+     */
+    fun logout(): Result<Boolean> {
+        return try {
+            firebaseAuth.signOut()
+            Result.Success(firebaseAuth.currentUser == null)
+        } catch (e: Exception) {
+            Timber.e("Error logging out: ${e.localizedMessage}")
+            Result.Error("Error logging out")
+        }
+    }
 }
