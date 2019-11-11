@@ -21,7 +21,6 @@ import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.ui.activities.CommentActivity
-import com.gelostech.dankmemes.ui.activities.ProfileActivity
 import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
 import com.gelostech.dankmemes.ui.adapters.PagedMemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
@@ -110,7 +109,7 @@ class ProfileFragment : BaseFragment() {
 
             when(view.id) {
                 R.id.memeComment -> showComments(memeId)
-                R.id.memeIcon, R.id.memeUser -> showProfile(memeId)
+                R.id.memeIcon, R.id.memeUser -> { Timber.e("Clicked on my profile") }
 
                 R.id.memeFave -> {
                     animateView(view)
@@ -147,19 +146,6 @@ class ProfileFragment : BaseFragment() {
             i.putExtra(Constants.PIC_URL, user.userAvatar!!)
             startActivity(i)
             AppUtils.fadeIn(activity!!)
-        }
-    }
-
-    /**
-     * Launch the Profile of the meme poster
-     * @param userId - ID of the user
-     */
-    private fun showProfile(userId: String) {
-        if (userId != getUid()) {
-            val i = Intent(activity, ProfileActivity::class.java)
-            i.putExtra("userId", userId)
-            startActivity(i)
-            activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
         }
     }
 
