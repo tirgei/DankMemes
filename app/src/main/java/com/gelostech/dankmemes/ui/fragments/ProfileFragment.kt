@@ -145,6 +145,7 @@ class ProfileFragment : BaseFragment() {
 
             val i = Intent(activity, ViewMemeActivity::class.java)
             i.putExtra(Constants.PIC_URL, user.userAvatar!!)
+            startActivity(i)
             AppUtils.fadeIn(activity!!)
         }
     }
