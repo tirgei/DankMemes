@@ -24,95 +24,26 @@
         android:layout_width="match_parent"
         android:layout_below="@id/viewProfileToolbar">
 
-        <com.aspsine.irecyclerview.IRecyclerView
+        <ProgressBar
+            android:id="@+id/loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/viewProfileRv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never"
-            tools:listitem="@layout/item_meme"
-            app:refreshEnabled="false"
-            app:loadMoreEnabled="true"
-            app:loadMoreFooterLayout="@layout/loading"/>
-
-        <com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader
-            android:id="@+id/viewProfileHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <RelativeLayout
-                    android:id="@+id/viewProfileTop"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="20dp"
-                    android:clipToPadding="false"
-                    android:paddingBottom="10dp"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/viewProfileImage"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="10dp"
-                        tools:src="@drawable/person"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_toEndOf="@id/viewProfileImage"
-                        android:layout_marginStart="10dp"
-                        android:layout_centerVertical="true"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/viewProfileName"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/textGray"
-                            tools:text="Vincent Tirgei"
-                            android:textSize="18sp"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:id="@+id/viewProfileBio"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/secondaryText"
-                            android:textSize="14sp"
-                            tools:text="Here's some random brief summary about me :)"/>
-
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/viewProfilePostsTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_below="@id/viewProfileTop"
-                    android:text="@string/posts"
-                    android:textColor="@color/textGray"
-                    android:textSize="15sp"
-                    android:textStyle="bold"/>
-
-            </RelativeLayout>
-
-        </com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader>
+            tools:listitem="@layout/item_meme"/>
 
         <RelativeLayout
             android:id="@+id/viewProfileEmptyState"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true">
+            android:layout_centerInParent="true"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/viewProfileEmptyStateImage"
