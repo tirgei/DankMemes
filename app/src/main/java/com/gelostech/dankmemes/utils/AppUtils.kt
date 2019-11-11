@@ -23,6 +23,7 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -74,16 +75,6 @@ object AppUtils {
         return ContextCompat.getColor(context, color)
     }
 
-    fun getBytes(bitmap: Bitmap): ByteArray {
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-        return stream.toByteArray()
-    }
-
-    fun getImage(image: ByteArray): Bitmap {
-        return BitmapFactory.decodeByteArray(image, 0, image.size)
-    }
-
     fun validated(vararg views: View): Boolean {
         var ok = true
         for (v in views) {
@@ -127,30 +118,6 @@ object AppUtils {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    fun downloadPic(context: Context, url: String) {
-        Toast.makeText(context, "Downloading...", Toast.LENGTH_SHORT).show()
-        val directory = File("${Environment.getExternalStorageDirectory()}/DankMemes")
-
-        if (!directory.exists()) {
-            directory.mkdirs()
-        }
-
-        val mgr = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        val downloadLink = Uri.parse(url)
-        val request = DownloadManager.Request(downloadLink)
-
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                .setAllowedOverRoaming(false)
-                .setDescription("Downloading meme...")
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setTitle(context.resources.getString(R.string.app_name))
-                .setDestinationInExternalFilesDir(context, Environment.DIRECTORY_PICTURES, "DankMeme-${System.currentTimeMillis()}.jpg" )
-                .allowScanningByMediaScanner()
-
-        mgr.enqueue(request)
-
     }
 
     fun saveImage(context: Context, bitmap: Bitmap) {
@@ -208,108 +175,6 @@ object AppUtils {
 
         share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"))
         context.startActivity(Intent.createChooser(share, "Share Meme via..."))
-    }
-
-    fun loadFromStorage(id: String, image: CircleImageView) {
-        image.setImageResource(R.drawable.person)
-        val bitmap = getBitmap(id)
-        if (bitmap != null) {
-            image.setImageBitmap(bitmap)
-        }
-
-        val avatarRef = FirebaseStorage.getInstance().reference.child("avatars").child(id)
-        avatarRef.downloadUrl.addOnSuccessListener {
-            ImageLoader.getInstance().loadImage(it.toString(), object : SimpleImageLoadingListener() {
-                override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
-                    super.onLoadingComplete(imageUri, view, loadedImage)
-                    if (loadedImage != null) {
-                        cacheBitmap(loadedImage, id)
-                        image.setImageBitmap(loadedImage)
-                    }
-                }
-            })
-        }
-    }
-
-    fun cacheBitmap(bitmap: Bitmap?, name: String?) {
-        val loader = ImageLoader.getInstance()
-        if (bitmap == null || name == null) return
-        try {
-            loader.diskCache.remove(name)
-        } catch (e: Exception) {
-        }
-
-        try {
-            loader.diskCache.save(name, bitmap)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-    }
-
-    fun cacheBitmap(url: String, name: String) {
-        val loader = ImageLoader.getInstance()
-        try {
-            loader.diskCache.remove(name)
-        } catch (e: Exception) {
-        }
-
-        try {
-            loader.loadImage(url, object : SimpleImageLoadingListener(){
-                override fun onLoadingComplete(imageUri: String?, view: View?, loadedImage: Bitmap?) {
-                    super.onLoadingComplete(imageUri, view, loadedImage)
-                    if (loadedImage!=null)
-                        loader.diskCache.save(name, loadedImage)
-                }
-            })
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-    }
-
-    fun getBitmap(name: String): Bitmap? {
-        val imageLoader = ImageLoader.getInstance()
-        val f = imageLoader.diskCache.get(name)
-
-        return if (f != null && f.exists()) {
-            decodedBitmap(f.absolutePath, 500, 500, 85)
-        } else {
-            null
-        }
-    }
-
-    private fun decodedBitmap(filePath: String, reqWidth: Int, reqHeight: Int, quality: Int): Bitmap? {
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true //checks the dimensions
-        try {
-            BitmapFactory.decodeFile(filePath, options) //decodes without loading in memory
-        } catch (e: Exception) {
-        }
-
-        options.inSampleSize = calculateSampleSize(options, reqWidth, reqHeight)
-        options.inJustDecodeBounds = false
-        val bitmap = BitmapFactory.decodeFile(filePath, options)
-        val bytearrayoutputstream = ByteArrayOutputStream()
-        bitmap?.compress(Bitmap.CompressFormat.JPEG, quality, bytearrayoutputstream) ?: return null
-
-        val BYTE = bytearrayoutputstream.toByteArray()
-
-        return BitmapFactory.decodeByteArray(BYTE, 0, BYTE.size)
-    }
-
-    private fun calculateSampleSize(options: BitmapFactory.Options, rw: Int, rh: Int): Int {
-        val width = options.outWidth
-        val height = options.outHeight
-        var inSampleSize = 1
-        if (width > rw || height > rh) {
-            val halfH = height / 2
-            val halfW = width / 2
-            while (halfH / inSampleSize > rh && halfW / inSampleSize > rw) {
-                inSampleSize *= 2
-            }
-        }
-        return inSampleSize
     }
 
     fun animateEnterRight(activity: Activity) {
@@ -373,5 +238,15 @@ object AppUtils {
         }
     }
 
+    /**
+     * Animate bounce effect
+     */
+    fun animateView(view: View) {
+        val anim = AnimationUtils.loadAnimation(view.context, R.anim.bounce)
+        val bounceInterpolator = MyBounceInterpolator(0.2, 20.0)
+        anim.interpolator = bounceInterpolator
+
+        view.startAnimation(anim)
+    }
 
 }
