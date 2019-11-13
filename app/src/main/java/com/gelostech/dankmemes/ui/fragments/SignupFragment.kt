@@ -24,13 +24,14 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_signup.*
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class SignupFragment : BaseFragment() {
     private var imageUri: Uri? = null
     private var imageSelected = false
     private var isSigningUp = false
-    private val usersViewModel: UsersViewModel by inject()
+    private val usersViewModel: UsersViewModel by viewModel()
 
     companion object {
         private const val AVATAR_REQUEST = 102

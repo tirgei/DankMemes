@@ -19,13 +19,14 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_post.*
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class PostActivity : BaseActivity() {
     private var imageUri: Uri? = null
     private var imageSelected = false
     private var uploadMeme: MenuItem? = null
-    private val memesViewModel: MemesViewModel by inject()
+    private val memesViewModel: MemesViewModel by viewModel()
 
     companion object {
         private const val GALLERY_REQUEST = 125

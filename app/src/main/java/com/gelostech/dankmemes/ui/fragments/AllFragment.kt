@@ -34,12 +34,13 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class AllFragment : BaseFragment() {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var bs: BottomSheet.Builder
-    private val memesViewModel: MemesViewModel by inject()
+    private val memesViewModel: MemesViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

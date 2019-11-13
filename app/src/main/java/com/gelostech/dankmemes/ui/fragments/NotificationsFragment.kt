@@ -19,11 +19,12 @@ import com.gelostech.dankmemes.ui.viewmodels.NotificationsViewModel
 import com.gelostech.dankmemes.utils.*
 import kotlinx.android.synthetic.main.fragment_notifications.*
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class NotificationsFragment : BaseFragment() {
     private lateinit var notificationsAdapter: NotificationsAdapter
-    private val notificationsViewModel: NotificationsViewModel by inject()
+    private val notificationsViewModel: NotificationsViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

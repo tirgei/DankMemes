@@ -25,10 +25,11 @@ import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.fragment_faves.*
 import org.jetbrains.anko.alert
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavesFragment : BaseFragment() {
     private lateinit var favesAdapter: FavesAdapter
-    private val memesViewModel: MemesViewModel by inject()
+    private val memesViewModel: MemesViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

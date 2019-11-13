@@ -29,12 +29,13 @@ import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 
 class LoginFragment : BaseFragment() {
     private var isLoggingIn = false
-    private val usersViewModel: UsersViewModel by inject()
+    private val usersViewModel: UsersViewModel by viewModel()
     private val googleSignInOptions: GoogleSignInOptions by inject()
 
     companion object {
