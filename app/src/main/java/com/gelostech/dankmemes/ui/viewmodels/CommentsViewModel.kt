@@ -6,12 +6,16 @@ import androidx.lifecycle.viewModelScope
 import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.Comment
 import com.gelostech.dankmemes.data.repositories.CommentsRepository
+import com.gelostech.dankmemes.data.responses.CommentsResponse
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import kotlinx.coroutines.launch
 
 class CommentsViewModel constructor(private val repository: CommentsRepository): ViewModel() {
     private val _genericResponseLiveData = MutableLiveData<GenericResponse>()
     val genericResponseLiveData = _genericResponseLiveData
+
+    private val _commentsLiveData = MutableLiveData<CommentsResponse>()
+    val commentsLiveData = _commentsLiveData
 
     /**
      * Funtion to post new comment
@@ -51,6 +55,25 @@ class CommentsViewModel constructor(private val repository: CommentsRepository):
 
                 is Result.Error -> {
                     _genericResponseLiveData.value = GenericResponse.error(result.error)
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to fetch all comments for a Meme
+     */
+    fun fetchComments(memeId: String) {
+        viewModelScope.launch {
+            _commentsLiveData.value = CommentsResponse.loading()
+
+            when (val result = repository.fetchComments(memeId)) {
+                is Result.Success -> {
+                    _commentsLiveData.value = CommentsResponse.success(result.data)
+                }
+
+                is Result.Error -> {
+                    _commentsLiveData.value = CommentsResponse.error(result.error)
                 }
             }
         }

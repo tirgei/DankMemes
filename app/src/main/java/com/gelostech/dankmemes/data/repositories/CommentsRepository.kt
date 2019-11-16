@@ -4,6 +4,7 @@ import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.Comment
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.utils.Constants
+import com.gelostech.dankmemes.utils.get
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -54,6 +55,22 @@ class CommentsRepository constructor(private val firebaseDatabase: DatabaseRefer
             Timber.e("Error deleting comment: ${e.localizedMessage}")
             Result.Error("Error deleting comment")
         }
+    }
+
+    /**
+     * Function to fetch all comments for a Meme
+     * @param memeId - ID of the meme
+     */
+    suspend fun fetchComments(memeId: String): Result<List<Comment>> {
+        val snapshot = db.child(memeId).get().await()
+
+        return if (snapshot.exists() && snapshot.hasChildren()) {
+            val comments = snapshot.children.map { it.getValue(Comment::class.java)!! }
+            Result.Success(comments)
+        } else {
+            Result.Error("No comments found")
+        }
+
     }
 
     /**
