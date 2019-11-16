@@ -44,6 +44,7 @@ object Constants {
     const val USER_NAME = "userName"
     const val USER_BIO = "userBio"
     const val USER_AVATAR = "userAvatar"
+    const val USER_TOKEN = "userToken"
     const val COMMENTS = "comments"
 
 }

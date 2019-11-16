@@ -32,6 +32,7 @@ import timber.log.Timber
 open class BaseActivity : AppCompatActivity() {
     private lateinit var progressDialog: ProgressDialog
     val sessionManager: SessionManager by inject()
+    private val firebaseDatabase: DatabaseReference by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,18 +80,6 @@ open class BaseActivity : AppCompatActivity() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
-    // Get root database reference
-    fun getDatabaseReference(): DatabaseReference = FirebaseDatabase.getInstance().reference
-
-    // Get root firestore reference
-    fun getFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
-
-    // Get Firebase Storage reference
-    fun getStorageReference(): StorageReference = FirebaseStorage.getInstance().reference
-
-    // Get FirebaseAuth instance
-    fun getFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
-
     // Get user ID
     fun getUid(): String = sessionManager.getUserId()
 
@@ -98,14 +87,13 @@ open class BaseActivity : AppCompatActivity() {
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
             if (it.isSuccessful) {
                 val token = it.result?.token
-                getDatabaseReference().child("users").child(getUid()).child("userToken").setValue(token)
+                firebaseDatabase.child(Constants.USERS).child(getUid()).child(Constants.USER_TOKEN).setValue(token)
             }
         }
     }
 
     fun updateLastActive() {
-        getDatabaseReference()
-                .child(Constants.METADATA)
+        firebaseDatabase.child(Constants.METADATA)
                 .child(Constants.LAST_ACTIVE)
                 .child(TimeFormatter().getFullYear(System.currentTimeMillis()))
                 .child(getUid())
