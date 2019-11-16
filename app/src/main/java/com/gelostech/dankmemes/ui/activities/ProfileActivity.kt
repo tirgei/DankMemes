@@ -210,7 +210,7 @@ class ProfileActivity : BaseActivity() {
      */
     private fun showComments(memeId: String) {
         val i = Intent(this, CommentActivity::class.java)
-        i.putExtra("memeId", memeId)
+        i.putExtra(Constants.MEME_ID, memeId)
         startActivity(i)
         overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
     }

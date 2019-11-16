@@ -92,10 +92,7 @@ open class BaseActivity : AppCompatActivity() {
     fun getFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
     // Get user ID
-    fun getUid(): String {
-        val user = FirebaseAuth.getInstance().currentUser
-        return user!!.uid
-    }
+    fun getUid(): String = sessionManager.getUserId()
 
     fun refreshToken() {
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
