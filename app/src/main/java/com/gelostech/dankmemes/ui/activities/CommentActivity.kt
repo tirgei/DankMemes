@@ -90,7 +90,10 @@ class CommentActivity : BaseActivity() {
                     hideLoading()
 
                     when (it.item) {
-                        GenericResponse.ITEM_RESPONSE.DELETE_COMMENT -> toast("Comment deleted \uD83D\uDEAE")
+                        GenericResponse.ITEM_RESPONSE.DELETE_COMMENT -> {
+                            toast("Comment deleted \uD83D\uDEAE")
+                            commentAdapter.removeComment(it.id!!)
+                        }
 
                         GenericResponse.ITEM_RESPONSE.POST_COMMENT -> {
                             commentET.setText("")
@@ -146,7 +149,7 @@ class CommentActivity : BaseActivity() {
 
         override fun onChildRemoved(p0: DataSnapshot) {
             val comment = p0.getValue(Comment::class.java)
-            commentAdapter.removeComment(comment!!)
+//            commentAdapter.removeComment(comment!!)
         }
     }
 
@@ -199,46 +202,15 @@ class CommentActivity : BaseActivity() {
 
     private fun handleLongClick (comment: Comment) {
         if (comment.authorId == getUid()) {
-            alert {
-                message = "Remove this comment?"
-                positiveButton("Delete") { deleteComment(comment.commentKey!!) }
+            alert ("Delete this comment?") {
+                title = "Delete Comment"
+
+                positiveButton("Delete") {
+                    showLoading("Deleting comment...")
+                    commentsViewModel.deleteComment(memeId, comment.commentKey!!)
+                }
                 negativeButton("Cancel"){}
             }.show()
-        }
-    }
-
-    /**
-     * This function deletes the comment from the database
-     * @param id ID of the comment
-     */
-    private fun deleteComment(id: String) {
-        getDatabaseReference().child("comments").child(memeId).child(id).removeValue().addOnCompleteListener {
-            toast("Comment deleted")
-            updateCommentsCount(false)
-        }
-    }
-
-    private fun updateCommentsCount(add: Boolean) {
-        val docRef = getFirestore().collection(Constants.MEMES).document(memeId)
-
-        getFirestore().runTransaction {
-
-            val meme =  it[docRef].toObject(Meme::class.java)
-            var comments = meme!!.commentsCount
-
-            if (add) {
-                comments += 1
-            } else {
-                comments -= 1
-            }
-
-            it.update(docRef, Constants.COMMENTS_COUNT, comments)
-
-            return@runTransaction null
-        }.addOnSuccessListener {
-            Timber.e("Comments count updated")
-        }.addOnFailureListener {
-            Timber.e("Error updating comments count")
         }
     }
 

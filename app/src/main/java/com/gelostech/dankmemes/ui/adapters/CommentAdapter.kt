@@ -17,11 +17,11 @@ class CommentAdapter(val callback: CommentsCallback): RecyclerView.Adapter<Comme
         notifyItemInserted(comments.size - 1)
     }
 
-    fun removeComment(comment: Comment) {
+    fun removeComment(id: String) {
         var indexToRemove: Int = -1
 
         for ((index, commentModel) in comments.withIndex()) {
-            if (commentModel.equals(comment)) {
+            if (commentModel.commentKey!! == id) {
                 indexToRemove = index
             }
         }
