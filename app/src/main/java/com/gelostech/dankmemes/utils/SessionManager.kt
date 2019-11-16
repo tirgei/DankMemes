@@ -44,6 +44,13 @@ class SessionManager (context: Context) {
     }
 
     /**
+     * Get the logged in user bio
+     */
+    fun getBio(): String {
+        return prefs[Constants.USER_BIO, ""]
+    }
+
+    /**
      * Get the logged in User avatar
      */
     fun getUserAvatar(): String {
@@ -61,6 +68,13 @@ class SessionManager (context: Context) {
         user.userEmail = prefs[Constants.EMAIL, ""]
         user.userBio = prefs[Constants.USER_BIO, ""]
         return user
+    }
+
+    /**
+     * Update User details
+     */
+    fun updateUser(key: String, value: String) {
+        prefs[key] = value
     }
 
 }

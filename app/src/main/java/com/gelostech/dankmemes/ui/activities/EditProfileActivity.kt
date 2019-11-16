@@ -2,41 +2,35 @@ package com.gelostech.dankmemes.ui.activities
 
 import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.provider.MediaStore
-import android.util.Log
 import android.view.MenuItem
+import androidx.lifecycle.Observer
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.data.Status
+import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.ui.base.BaseActivity
+import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.AppUtils
-import com.gelostech.dankmemes.utils.AppUtils.drawableToBitmap
-import com.gelostech.dankmemes.utils.AppUtils.setDrawable
 import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.data.models.User
-import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.load
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_edit_profile.*
 import org.jetbrains.anko.toast
-import com.gelostech.dankmemes.utils.PreferenceHelper.set
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class EditProfileActivity : BaseActivity() {
     private var imageUri: Uri? = null
-    private var imageSelected = false
     private var changedAvatar = false
     private var isUpdating = false
-    private lateinit var updateSuccessful: Bitmap
-    private lateinit var prefs: SharedPreferences
+    private val usersViewModel: UsersViewModel by viewModel()
 
     companion object {
         private const val AVATAR_REQUEST = 1
-        private var TAG = EditProfileActivity::class.java.simpleName
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,16 +38,19 @@ class EditProfileActivity : BaseActivity() {
         setContentView(R.layout.activity_edit_profile)
 
         initViews()
-        loadProfile()
+        initResponseObserver()
 
-        prefs = PreferenceHelper.defaultPrefs(this)
+        loadProfile()
     }
 
     private fun initViews() {
         setSupportActionBar(editProfileToolbar)
-        supportActionBar?.title = getString(R.string.edit_profile)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.apply {
+            title = getString(R.string.edit_profile)
+            setDisplayShowHomeEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
+        }
+
         editProfilePickImage.setImageDrawable(AppUtils.setDrawable(this, Ionicons.Icon.ion_camera, R.color.white, 18))
 
         editProfilePickImage.setOnClickListener {
@@ -68,14 +65,55 @@ class EditProfileActivity : BaseActivity() {
 
         editProfileButton.setOnClickListener {
             if (changedAvatar) {
-                updateAvatar()
-            } else {
+                usersViewModel.updateUserAvatar(sessionManager.getUserId(), imageUri!!)
+            } else if (hasUpdatedDetails()) {
                 updateDetails()
             }
         }
+    }
 
-        val successfullyUpdatedIcon = setDrawable(this, Ionicons.Icon.ion_checkmark_round, R.color.white, 25)
-        updateSuccessful = drawableToBitmap(successfullyUpdatedIcon)
+    /**
+     * Initialize function to observer Response LiveData
+     */
+    private fun initResponseObserver() {
+        usersViewModel.genericResponseLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> {
+                    Timber.e("Loading...")
+                    isUpdating = true
+                    editProfileButton.startAnimation()
+                }
+
+                Status.SUCCESS -> {
+                    stopUpdating()
+
+                    when (it.item) {
+                        GenericResponse.ITEM_RESPONSE.UPDATE_AVATAR -> {
+                            toast("Avatar updated")
+
+                            val avatar = it.value!!
+                            sessionManager.updateUser(Constants.AVATAR, avatar)
+
+                            if (hasUpdatedDetails()) updateDetails(avatar)
+                            else editProfileImage.load(avatar, R.drawable.person)
+                        }
+
+                        else -> {
+                            toast("Profile updated \uD83D\uDD7A \uD83D\uDC83")
+
+                            sessionManager.updateUser(Constants.USERNAME, editProfileName.text.toString())
+                            sessionManager.updateUser(Constants.USER_BIO, editProfileBio.text.toString())
+                            loadProfile()
+                        }
+                    }
+                }
+
+                Status.ERROR -> {
+                    stopUpdating()
+                    toast("${it.error}. Please try again")
+                }
+            }
+        })
     }
 
     private fun loadProfile() {
@@ -86,79 +124,20 @@ class EditProfileActivity : BaseActivity() {
         editProfileBio.setText(user.userBio)
     }
 
-    // User has changed profile picture
-    private fun updateAvatar() {
-        if (!AppUtils.validated(editProfileName, editProfileBio)) return
-
-        editProfileButton.startAnimation()
-        isUpdating = true
-
-        val ref = getStorageReference().child("avatars").child(getUid())
-        val uploadTask = ref.putFile(imageUri!!)
-        uploadTask.continueWithTask { task ->
-            if (!task.isSuccessful) {
-                throw task.exception!!
-            }
-            Log.d(TAG, "Image uploaded")
-
-            // Continue with the task to get the download URL
-            ref.downloadUrl
-        }.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val name = editProfileName.text.toString().trim()
-                val bio = editProfileBio.text.toString().trim()
-
-                val userRef = getDatabaseReference().child("users").child(getUid())
-                userRef.child("userName").setValue(name)
-                userRef.child("userBio").setValue(bio)
-                userRef.child("userAvatar").setValue(task.result.toString())
-
-                prefs[Constants.USERNAME] = name
-                prefs[Constants.AVATAR] = task.result.toString()
-
-                Handler().postDelayed({
-                    editProfileButton.revertAnimation()
-                    isUpdating = false
-
-                    toast("Profile updated!")
-                }, 500)
-
-            } else {
-                editProfileButton.revertAnimation()
-                toast("Error updating profile. Please try again.")
-                Log.d(TAG, "Error updating profile: ${task.exception}")
-            }
-        }
-    }
-
     // User has updated details only, profile picture still same
-    private fun updateDetails() {
+    private fun updateDetails(avatar: String? = null) {
         if (!AppUtils.validated(editProfileName, editProfileBio)) return
 
         val name = editProfileName.text.toString().trim()
         val bio = editProfileBio.text.toString().trim()
 
         // Check username
-        if (name.toLowerCase() == "dank memes" || name.toLowerCase().contains("dank") || name.toLowerCase().contains("memes") || name.toLowerCase().contains("dank_memes") || name.toLowerCase().contains("dank-memes")) {
+        if (!AppUtils.isValidUsername(name)) {
             editProfileName.error = "Invalid name"
             return
         }
 
-        editProfileButton.startAnimation()
-        isUpdating = true
-
-        val userRef = getDatabaseReference().child("users").child(getUid())
-        userRef.child("userName").setValue(name)
-        userRef.child("userBio").setValue(bio)
-
-        prefs[Constants.USERNAME] = name
-
-        Handler().postDelayed({
-            editProfileButton.revertAnimation()
-            isUpdating = false
-
-            toast("Profile updated!")
-        }, 500)
+        usersViewModel.updateUserDetails(sessionManager.getUserId(), name, bio, avatar)
     }
 
     private fun startCropActivity(imageUri: Uri) {
@@ -180,7 +159,6 @@ class EditProfileActivity : BaseActivity() {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == Activity.RESULT_OK) {
-                imageSelected = true
                 val resultUri = result.uri
 
                 editProfileImage.setImageURI(resultUri)
@@ -188,10 +166,29 @@ class EditProfileActivity : BaseActivity() {
                 imageUri = resultUri
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Log.d(TAG, "Cropping error: ${result.error.message}")
+                Timber.e("Cropping error: ${result.error.message}")
             }
         }
 
+    }
+
+    /**
+     * Check if User has updated their name or bio
+     */
+    private fun hasUpdatedDetails(): Boolean {
+        val name = editProfileName.text.toString().trim()
+        val bio = editProfileBio.text.toString().trim()
+
+        return name != sessionManager.getUsername() || bio != sessionManager.getBio()
+    }
+
+    /**
+     * Stop loading animations
+     */
+    private fun stopUpdating() {
+        hideLoading()
+        isUpdating = false
+        editProfileButton.revertAnimation()
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {

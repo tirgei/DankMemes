@@ -208,8 +208,8 @@ object AppUtils {
 
         if (username == "dank memes"
                 || username.contains("dank")
-                || username.contains("memes")
-                || username.contains("dank_memes"))
+                || username.contains("dank_memes")
+                || username.contains("dank-memes"))
             return false
 
         return true
