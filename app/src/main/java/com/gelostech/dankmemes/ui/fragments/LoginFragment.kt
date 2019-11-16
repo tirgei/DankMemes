@@ -2,7 +2,6 @@ package com.gelostech.dankmemes.ui.fragments
 
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -179,7 +178,7 @@ class LoginFragment : BaseFragment() {
      * Initialize function to observer Password reset LiveData
      */
     private fun initPasswordResetObserver() {
-        usersViewModel.resetPasswordLiveData.observe(this, Observer {
+        usersViewModel.genericResponseLiveData.observe(this, Observer {
             when (it.status) {
                 Status.LOADING -> {
                     toast("Sending password reset instructions")
