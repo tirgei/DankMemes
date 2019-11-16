@@ -17,7 +17,6 @@ import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.repositories.MemesRepository
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.wrappers.ItemViewModel
-import com.gelostech.dankmemes.data.wrappers.ObservableMeme
 import kotlinx.coroutines.launch
 
 class MemesViewModel constructor(private val repository: MemesRepository): ViewModel() {
@@ -139,7 +138,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 is Result.Success -> {
                     _genericResponseLiveData.value = GenericResponse.success(result.data,
                             item = GenericResponse.ITEM_RESPONSE.DELETE_MEME,
-                            id = memeId)
+                            value = memeId)
                 }
 
                 is Result.Error -> {
@@ -183,7 +182,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 is Result.Success -> {
                     _genericResponseLiveData.value = GenericResponse.success(result.data,
                             item = GenericResponse.ITEM_RESPONSE.DELETE_FAVE,
-                            id = faveId)
+                            value = faveId)
                 }
 
                 is Result.Error -> {

@@ -88,7 +88,7 @@ class CommentActivity : BaseActivity() {
                     when (it.item) {
                         GenericResponse.ITEM_RESPONSE.DELETE_COMMENT -> {
                             toast("Comment deleted \uD83D\uDEAE")
-                            commentsAdapter.removeComment(it.id!!)
+                            commentsAdapter.removeComment(it.value!!)
                         }
 
                         GenericResponse.ITEM_RESPONSE.POST_COMMENT -> {

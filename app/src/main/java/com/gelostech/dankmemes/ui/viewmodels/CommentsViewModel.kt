@@ -50,7 +50,7 @@ class CommentsViewModel constructor(private val repository: CommentsRepository):
                 is Result.Success -> {
                     _genericResponseLiveData.value = GenericResponse.success(result.data,
                             item = GenericResponse.ITEM_RESPONSE.DELETE_COMMENT,
-                            id = commentId)
+                            value = commentId)
                 }
 
                 is Result.Error -> {

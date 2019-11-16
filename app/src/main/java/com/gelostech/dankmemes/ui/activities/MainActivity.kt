@@ -264,7 +264,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     }
 
     private fun initLogoutObserver() {
-        usersViewModel.logoutLiveData.observe(this, Observer {
+        usersViewModel.genericResponseLiveData.observe(this, Observer {
             when (it.status) {
                 Status.LOADING -> showLoading("Logging out...")
 
