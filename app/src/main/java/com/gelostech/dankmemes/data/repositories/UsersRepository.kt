@@ -202,32 +202,47 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
         }
     }
 
-    suspend fun updateUserAvatar(userId: String, avatarUri: Uri, onResult: (Result<String>) -> Unit) {
+    /**
+     * Function to upload new user avatar
+     * @param userId - ID of the User
+     * @param avatarUri - URI of the new avatar
+     * @param callback - Callback with the download url
+     */
+    fun updateUserAvatar(userId: String, avatarUri: Uri, callback: (Result<String>) -> Unit) {
         val storageDb = storageReference.child(Constants.AVATARS).child(userId)
 
-        val uploadTask = storageDb.putFile(avatarUri)
-        uploadTask.continueWithTask { task ->
-            if (!task.isSuccessful) {
-                onResult(Result.Error("Error updating profile details"))
+        AppUtils.uploadFileToFirebaseStorage(storageDb, avatarUri, object : StorageUploadListener {
+            override fun onFileUploaded(downloadUrl: String?) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    if (downloadUrl.isNullOrEmpty()) {
+                        callback(Result.Error("Error uploading avatar"))
+                    } else {
+                        callback(Result.Success(downloadUrl))
+                    }
+                }
             }
-
-            // Continue with the task to get the download URL
-            storageDb.downloadUrl
-        }.addOnCompleteListener { task ->
-            if (task.isSuccessful)
-                onResult(Result.Success(task.result.toString()))
-            else
-                onResult(Result.Error("Error fetching user details"))
-        }
+        })
     }
 
-    suspend fun updateUserDetails(userId: String, username: String, bio: String, avatar: String?, onResult: (Result<Boolean>) -> Unit) {
-        val userReference = db.child(userId)
-        userReference.child(Constants.USER_NAME).setValue(username)
-        userReference.child(Constants.USER_BIO).setValue(bio)
-        avatar?.let { userReference.child(Constants.USER_AVATAR).setValue(it) }
+    /**
+     * Function to update user profile details
+     * @param userId - ID of the User
+     * @param username - Username of the User
+     * @param bio - Bio of the User
+     * @param avatar - Avatar of the User
+     */
+    suspend fun updateUserDetails(userId: String, username: String, bio: String, avatar: String?): Result<Boolean> {
+        return try {
+            val userReference = db.child(userId)
+            userReference.child(Constants.USER_NAME).setValue(username).await()
+            userReference.child(Constants.USER_BIO).setValue(bio).await()
+            avatar?.let { userReference.child(Constants.USER_AVATAR).setValue(it).await() }
+            Result.Success(true)
+        } catch (e: Exception) {
+            Timber.e("Error updating user details: ${e.localizedMessage}")
+            Result.Error("Error updating profile")
+        }
 
-        onResult(Result.Success(true))
     }
 
     /**

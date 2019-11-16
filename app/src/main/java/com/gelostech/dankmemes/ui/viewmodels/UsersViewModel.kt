@@ -28,12 +28,9 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
     val userLiveData: MutableLiveData<UserResponse>
         get() = _userLiveData
 
-    private val _resetPasswordLiveData = MutableLiveData<GenericResponse>()
-    val resetPasswordLiveData: MutableLiveData<GenericResponse>
-        get() = _resetPasswordLiveData
-
-    private val _logoutLiveData = MutableLiveData<GenericResponse>()
-    val logoutLiveData = _logoutLiveData
+    private val _genericResponseLiveData = MutableLiveData<GenericResponse>()
+    val genericResponseLiveData: MutableLiveData<GenericResponse>
+        get() = _genericResponseLiveData
 
     /**
      * Function to login User with Email & Password
@@ -144,15 +141,15 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
      */
     fun sendResetPasswordEmail(email: String) {
         viewModelScope.launch {
-            _resetPasswordLiveData.value = GenericResponse.loading()
+            _genericResponseLiveData.value = GenericResponse.loading()
 
             when (val result = repository.sendPasswordResetEmail(email)) {
                 is Result.Success -> {
-                    _resetPasswordLiveData.value = GenericResponse.success(result.data)
+                    _genericResponseLiveData.value = GenericResponse.success(result.data)
                 }
 
                 is Result.Error -> {
-                    _resetPasswordLiveData.value = GenericResponse.error(result.error)
+                    _genericResponseLiveData.value = GenericResponse.error(result.error)
                 }
             }
         }
@@ -179,18 +176,56 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
     }
 
     /**
+     * Function to update User Avatar
+     */
+    fun updateUserAvatar(userId: String, imageUri: Uri) {
+        viewModelScope.launch {
+            _genericResponseLiveData.value = GenericResponse.loading()
+
+            repository.updateUserAvatar(userId, imageUri) {
+                when (it) {
+                    is Result.Success -> {
+                        _genericResponseLiveData.postValue(GenericResponse.success(true,
+                                item = GenericResponse.ITEM_RESPONSE.UPDATE_AVATAR,
+                                value = it.data))
+                    }
+
+                    is Result.Error -> {
+                        _genericResponseLiveData.postValue(GenericResponse.error(it.error))
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to update User profile details
+     */
+    fun updateUserDetails(userId: String, username: String, bio: String, avatar: String?) {
+        viewModelScope.launch {
+            _genericResponseLiveData.value = GenericResponse.loading()
+
+            when (val result = repository.updateUserDetails(userId, username, bio, avatar)) {
+                is Result.Success -> _genericResponseLiveData.value = GenericResponse.success(result.data)
+
+                is Result.Error -> _genericResponseLiveData.value = GenericResponse.error(result.error)
+            }
+        }
+    }
+
+    /**
      * Function to logout User
      */
     fun logout() {
-        _logoutLiveData.value = GenericResponse.loading()
+        _genericResponseLiveData.value = GenericResponse.loading()
 
         when (val result = repository.logout()) {
             is Result.Success -> {
-                _logoutLiveData.value = GenericResponse.success(result.data)
+                _genericResponseLiveData.value = GenericResponse.success(result.data)
             }
 
             is Result.Error -> {
-                _logoutLiveData.value = GenericResponse.error(result.error)
+                _genericResponseLiveData.value = GenericResponse.error(result.error)
             }
         }
     }
