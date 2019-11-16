@@ -33,4 +33,26 @@ class CommentsViewModel constructor(private val repository: CommentsRepository):
         }
     }
 
+    /**
+     * Function to delete comment
+     * @param memeId - ID of the meme
+     * @param commentId - ID of the comment
+     */
+    fun deleteComment(memeId: String, commentId: String) {
+        viewModelScope.launch {
+            _genericResponseLiveData.value = GenericResponse.loading()
+
+            when (val result = repository.deleteComment(memeId, commentId)) {
+                is Result.Success -> {
+                    _genericResponseLiveData.value = GenericResponse.success(result.data,
+                            item = GenericResponse.ITEM_RESPONSE.DELETE_COMMENT,
+                            id = commentId)
+                }
+
+                is Result.Error -> {
+                    _genericResponseLiveData.value = GenericResponse.error(result.error)
+                }
+            }
+        }
+    }
 }

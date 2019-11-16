@@ -40,6 +40,23 @@ class CommentsRepository constructor(private val firebaseDatabase: DatabaseRefer
     }
 
     /**
+     * Function to delete comment
+     * @param memeId - ID of the meme
+     * @param commentId - ID of the comment
+     */
+    suspend fun deleteComment(memeId: String, commentId: String): Result<Boolean> {
+        return try {
+            db.child(memeId).child(commentId).removeValue().await()
+            updateCommentsCount(memeId, false)
+            Result.Success(true)
+
+        } catch (e: java.lang.Exception) {
+            Timber.e("Error deleting comment: ${e.localizedMessage}")
+            Result.Error("Error deleting comment")
+        }
+    }
+
+    /**
      * Function to update comments count on meme model
      * @param memeId - ID of the meme
      * @param add - Value to check whether add/minus operation
