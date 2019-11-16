@@ -12,9 +12,14 @@ import com.gelostech.dankmemes.utils.inflate
 class CommentAdapter(val callback: CommentsCallback): RecyclerView.Adapter<CommentAdapter.CommentHolder>() {
     private val comments = mutableListOf<Comment>()
 
-    fun addComment(comment: Comment) {
-        comments.add(comment)
-        notifyItemInserted(comments.size - 1)
+    fun addComments(comments: List<Comment>) {
+        this.comments.addAll(comments)
+        notifyDataSetChanged()
+    }
+
+    fun clear() {
+        this.comments.clear()
+        notifyDataSetChanged()
     }
 
     fun removeComment(id: String) {

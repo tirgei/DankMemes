@@ -62,12 +62,13 @@ class CommentsRepository constructor(private val firebaseDatabase: DatabaseRefer
      * @param memeId - ID of the meme
      */
     suspend fun fetchComments(memeId: String): Result<List<Comment>> {
-        val snapshot = db.child(memeId).get().await()
-
-        return if (snapshot.exists() && snapshot.hasChildren()) {
+        return try {
+            val snapshot = db.child(memeId).get().await()
             val comments = snapshot.children.map { it.getValue(Comment::class.java)!! }
             Result.Success(comments)
-        } else {
+
+        } catch (e: Exception) {
+            Timber.e("Error fetching comments: ${e.localizedMessage}")
             Result.Error("No comments found")
         }
 

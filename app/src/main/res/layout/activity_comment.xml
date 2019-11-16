@@ -17,6 +17,13 @@
         app:titleTextColor="@color/textGray"
         android:elevation="0.5dp"/>
 
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/commentsRv"
         android:layout_below="@id/commentToolbar"
@@ -30,7 +37,8 @@
         android:id="@+id/commentsEmptyState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/commentsEmptyStateImage"

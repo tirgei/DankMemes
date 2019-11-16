@@ -18,11 +18,11 @@ import com.gelostech.dankmemes.ui.adapters.CommentAdapter
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.data.models.Comment
-import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.ui.callbacks.CommentsCallback
 import com.gelostech.dankmemes.ui.viewmodels.CommentsViewModel
-import com.google.firebase.database.*
+import com.gelostech.dankmemes.utils.hideView
+import com.gelostech.dankmemes.utils.showView
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.iconics.IconicsDrawable
 import kotlinx.android.synthetic.main.activity_comment.*
@@ -32,9 +32,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class CommentActivity : BaseActivity() {
-    private lateinit var commentAdapter: CommentAdapter
+    private lateinit var commentsAdapter: CommentAdapter
     private lateinit var memeId: String
-    private lateinit var commentsQuery: Query
     private val commentsViewModel: CommentsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,12 +44,9 @@ class CommentActivity : BaseActivity() {
 
         initViews()
         initResponseObserver()
+        initCommentsObserver()
 
-        commentsQuery = getDatabaseReference().child("comments").child(memeId)
-
-        commentsQuery.addValueEventListener(commentsValueListener)
-        commentsQuery.addChildEventListener(commentsChildListener)
-
+        commentsViewModel.fetchComments(memeId)
     }
 
     private fun initViews() {
@@ -66,13 +62,13 @@ class CommentActivity : BaseActivity() {
                 .color(ContextCompat.getColor(this, R.color.colorAccent))
                 .sizeDp(22))
 
-        commentAdapter = CommentAdapter(commentsCallback)
+        commentsAdapter = CommentAdapter(commentsCallback)
 
         commentsRv.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(this@CommentActivity)
             itemAnimator = DefaultItemAnimator()
-            adapter = commentAdapter
+            adapter = commentsAdapter
         }
 
         sendComment.setOnClickListener { postComment() }
@@ -92,12 +88,13 @@ class CommentActivity : BaseActivity() {
                     when (it.item) {
                         GenericResponse.ITEM_RESPONSE.DELETE_COMMENT -> {
                             toast("Comment deleted \uD83D\uDEAE")
-                            commentAdapter.removeComment(it.id!!)
+                            commentsAdapter.removeComment(it.id!!)
                         }
 
                         GenericResponse.ITEM_RESPONSE.POST_COMMENT -> {
                             commentET.setText("")
                             playNotificationSound()
+                            commentsViewModel.fetchComments(memeId)
                         }
 
                         else -> Timber.e("Success")
@@ -112,45 +109,29 @@ class CommentActivity : BaseActivity() {
         })
     }
 
-    private val commentsValueListener = object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-            Timber.e("Error loading comments: ${p0.message}")
-        }
+    /**
+     * Initialize Comments LiveData observer
+     */
+    private fun initCommentsObserver() {
+        commentsViewModel.commentsLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> {
+                    commentsEmptyState.hideView()
+                    loading.showView()
+                }
 
-        override fun onDataChange(p0: DataSnapshot) {
-            if (p0.exists()) {
-                commentsEmptyState.visibility = View.GONE
-                commentsRv.visibility = View.VISIBLE
-            } else {
-                commentsRv.visibility = View.GONE
-                commentsEmptyState.visibility = View.VISIBLE
+                Status.SUCCESS -> {
+                    loading.hideView()
+                    commentsAdapter.clear()
+                    commentsAdapter.addComments(it.data!!)
+                }
+
+                Status.ERROR -> {
+                    loading.hideView()
+                    commentsEmptyState.showView()
+                }
             }
-        }
-    }
-
-    private val commentsChildListener = object : ChildEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-            Timber.e("Error loading comments: ${p0.message}")
-        }
-
-        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-            Timber.e("Comment moved: ${p0.key}")
-
-        }
-
-        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-
-        }
-
-        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-            val comment = p0.getValue(Comment::class.java)
-            commentAdapter.addComment(comment!!)
-        }
-
-        override fun onChildRemoved(p0: DataSnapshot) {
-            val comment = p0.getValue(Comment::class.java)
-//            commentAdapter.removeComment(comment!!)
-        }
+        })
     }
 
     private fun postComment() {
@@ -229,12 +210,6 @@ class CommentActivity : BaseActivity() {
             e.printStackTrace()
         }
 
-    }
-
-    override fun onDestroy() {
-        commentsQuery.removeEventListener(commentsValueListener)
-        commentsQuery.removeEventListener(commentsChildListener)
-        super.onDestroy()
     }
 
 }
