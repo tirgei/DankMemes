@@ -21,6 +21,8 @@ data class GenericResponse (
     enum class ITEM_RESPONSE {
         DELETE_MEME,
         REPORT_MEME,
-        DELETE_FAVE
+        DELETE_FAVE,
+        POST_COMMENT,
+        DELETE_COMMENT
     }
 }
