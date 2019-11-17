@@ -12,10 +12,12 @@ import kotlinx.coroutines.launch
 
 class CommentsViewModel constructor(private val repository: CommentsRepository): ViewModel() {
     private val _genericResponseLiveData = MutableLiveData<GenericResponse>()
-    val genericResponseLiveData = _genericResponseLiveData
+    val genericResponseLiveData: MutableLiveData<GenericResponse>
+        get() = _genericResponseLiveData
 
     private val _commentsLiveData = MutableLiveData<CommentsResponse>()
-    val commentsLiveData = _commentsLiveData
+    val commentsLiveData: MutableLiveData<CommentsResponse>
+        get() = _commentsLiveData
 
     /**
      * Funtion to post new comment

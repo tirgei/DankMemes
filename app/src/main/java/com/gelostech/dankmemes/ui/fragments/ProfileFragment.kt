@@ -17,17 +17,19 @@ import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
+import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import com.gelostech.dankmemes.ui.activities.CommentActivity
 import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
 import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
-import com.gelostech.dankmemes.utils.AppUtils
-import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.utils.RecyclerFormatter
+import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
+import com.gelostech.dankmemes.utils.*
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.fragment_profile.loading
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -40,6 +42,7 @@ class ProfileFragment : BaseFragment() {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var bs: BottomSheet.Builder
     private val memesViewModel: MemesViewModel by viewModel()
+    private val usersViewModel: UsersViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -51,8 +54,10 @@ class ProfileFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
-        initMemesObserver()
+        initUserObserver()
         initResponseObserver()
+
+        usersViewModel.fetchObservableUser(sessionManager.getUserId())
     }
 
     private fun initViews() {
@@ -69,10 +74,31 @@ class ProfileFragment : BaseFragment() {
     }
 
     /**
+     * Initialize observer for User LiveData
+     */
+    private fun initUserObserver() {
+        usersViewModel.observableUserLiveData.observe(this, Observer {
+            when (it.status) {
+                Status.LOADING -> {
+                    Timber.e("Fetching my profile")
+                    loading.showView()
+                }
+
+                Status.SUCCESS -> {
+                    loading.hideView()
+                    if (it.user != null) initMemesObserver(it.user)
+                    else errorFetchingProfile()
+                }
+
+                Status.ERROR -> errorFetchingProfile()
+            }
+        })
+    }
+
+    /**
      * Initialize function to observer Memes LiveData
      */
-    private fun initMemesObserver() {
-        val user = sessionManager.getUser()
+    private fun initMemesObserver(user: ObservableUser) {
         memesViewModel.fetchMemesByUser(user).observe(this, Observer {
             memesAdapter.submitList(it)
         })
@@ -196,6 +222,11 @@ class ProfileFragment : BaseFragment() {
         i.putExtra(Constants.MEME_ID, memeId)
         startActivity(i)
         activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+    }
+
+    private fun errorFetchingProfile() {
+        loading.hideView()
+        viewProfileEmptyState.showView()
     }
 
 }

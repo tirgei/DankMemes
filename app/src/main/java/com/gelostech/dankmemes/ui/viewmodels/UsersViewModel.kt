@@ -7,10 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.repositories.UsersRepository
-import com.gelostech.dankmemes.data.responses.FirebaseUserResponse
-import com.gelostech.dankmemes.data.responses.GenericResponse
-import com.gelostech.dankmemes.data.responses.GoogleLoginResponse
-import com.gelostech.dankmemes.data.responses.UserResponse
+import com.gelostech.dankmemes.data.responses.*
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -27,6 +24,10 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
     private val _userLiveData = MutableLiveData<UserResponse>()
     val userLiveData: MutableLiveData<UserResponse>
         get() = _userLiveData
+
+    private val _observableUserLiveData = MutableLiveData<ObservableUserResponse>()
+    val observableUserLiveData: MutableLiveData<ObservableUserResponse>
+        get() = _observableUserLiveData
 
     private val _genericResponseLiveData = MutableLiveData<GenericResponse>()
     val genericResponseLiveData: MutableLiveData<GenericResponse>
@@ -170,6 +171,26 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
 
                 is Result.Error -> {
                     _userLiveData.value = UserResponse.error(userResult.error)
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to fetch a User's profile
+     * @param userId - ID of the User
+     */
+    fun fetchObservableUser(userId: String) {
+        viewModelScope.launch {
+            _observableUserLiveData.value = ObservableUserResponse.loading()
+
+            when (val userResult = repository.fetchObservableUserById(userId)) {
+                is Result.Success -> {
+                    _observableUserLiveData.value = ObservableUserResponse.success(userResult.data)
+                }
+
+                is Result.Error -> {
+                    _observableUserLiveData.value = ObservableUserResponse.error(userResult.error)
                 }
             }
         }

@@ -18,6 +18,7 @@ import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
+import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
@@ -47,7 +48,7 @@ class ProfileActivity : BaseActivity() {
         initUserObserver()
         initResponseObserver()
 
-        usersViewModel.fetchUser(userId)
+        usersViewModel.fetchObservableUser(userId)
     }
 
     private fun initViews() {
@@ -74,7 +75,7 @@ class ProfileActivity : BaseActivity() {
      * Initialize observer for User LiveData
      */
     private fun initUserObserver() {
-        usersViewModel.userLiveData.observe(this, Observer {
+        usersViewModel.observableUserLiveData.observe(this, Observer {
             when (it.status) {
                 Status.LOADING -> {
                     Timber.e("Fetching $userId's profile")
@@ -95,7 +96,7 @@ class ProfileActivity : BaseActivity() {
     /**
      * Initialize function to observer Memes LiveData
      */
-    private fun initMemesObserver(user: User) {
+    private fun initMemesObserver(user: ObservableUser) {
         memesViewModel.fetchMemesByUser(user).observe(this, Observer {
             memesAdapter.submitList(it)
         })

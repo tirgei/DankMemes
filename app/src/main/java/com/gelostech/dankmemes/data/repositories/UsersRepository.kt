@@ -4,6 +4,7 @@ import android.net.Uri
 import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GoogleLoginResponse
+import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import com.gelostech.dankmemes.ui.callbacks.StorageUploadListener
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.Constants
@@ -11,8 +12,12 @@ import com.gelostech.dankmemes.utils.get
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
+import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -201,6 +206,22 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
             Result.Error("User not found")
         }
     }
+     
+    /** Fetch user by ID
+     * @param userId - ID of the User
+     */
+    suspend fun fetchObservableUserById(userId: String): Result<ObservableUser> {
+        return try {
+            val user = db.child(userId)
+                    .get()
+                    .await()
+
+            Result.Success(ObservableUser(user.key!!, getObservableUser(user.key!!)))
+        } catch (e: java.lang.Exception) {
+            Timber.e("Error fetching User: ${e.localizedMessage}")
+            Result.Error("User not found")
+        }
+    }
 
     /**
      * Function to upload new user avatar
@@ -256,5 +277,20 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
             Timber.e("Error logging out: ${e.localizedMessage}")
             Result.Error("Error logging out")
         }
+    }
+
+    /**
+     * Wrap User object in Observable
+     */
+    private fun getObservableUser(userId: String): Observable<User> = Observable.create<User> { emitter ->
+        db.child(userId).addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                emitter.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                emitter.onNext(p0.getValue(User::class.java)!!)
+            }
+        })
     }
 }

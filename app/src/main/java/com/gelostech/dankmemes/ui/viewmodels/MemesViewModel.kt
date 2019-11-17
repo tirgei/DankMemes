@@ -17,6 +17,7 @@ import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.repositories.MemesRepository
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.wrappers.ItemViewModel
+import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import kotlinx.coroutines.launch
 
 class MemesViewModel constructor(private val repository: MemesRepository): ViewModel() {
@@ -76,7 +77,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
     /**
      * Function to fetch memes
      */
-    fun fetchMemesByUser(user: User): LiveData<PagedList<ItemViewModel>> {
+    fun fetchMemesByUser(user: ObservableUser): LiveData<PagedList<ItemViewModel>> {
         val pagingConfig = PagedList.Config.Builder()
                 .setEnablePlaceholders(false)
                 .setPrefetchDistance(5)

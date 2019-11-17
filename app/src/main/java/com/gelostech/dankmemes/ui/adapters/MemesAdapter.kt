@@ -11,6 +11,7 @@ import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableMeme
+import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import com.gelostech.dankmemes.databinding.ItemMemeBinding
 import com.gelostech.dankmemes.databinding.ItemProfileBinding
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
@@ -36,7 +37,7 @@ class MemesAdapter(private val callback: MemesCallback): PagedListAdapter<ItemVi
             override fun areItemsTheSame(oldItem: ItemViewModel, newItem: ItemViewModel): Boolean {
                 return when {
                     oldItem is ObservableMeme && newItem is ObservableMeme -> oldItem.id == newItem.id
-                    oldItem is User && newItem is User -> oldItem.id == newItem.id
+                    oldItem is ObservableUser && newItem is ObservableUser -> oldItem.id == newItem.id
                     else -> false
                 }
             }
@@ -45,7 +46,7 @@ class MemesAdapter(private val callback: MemesCallback): PagedListAdapter<ItemVi
             override fun areContentsTheSame(oldItem: ItemViewModel, newItem: ItemViewModel): Boolean {
                 return when {
                     oldItem is ObservableMeme && newItem is ObservableMeme -> oldItem == newItem
-                    oldItem is User && newItem is User -> oldItem == newItem
+                    oldItem is ObservableUser && newItem is ObservableUser -> oldItem == newItem
                     else -> false
                 }
             }
@@ -54,7 +55,7 @@ class MemesAdapter(private val callback: MemesCallback): PagedListAdapter<ItemVi
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is User -> VIEW_TYPE.PROFILE.ordinal
+            is ObservableUser -> VIEW_TYPE.PROFILE.ordinal
             else -> VIEW_TYPE.MEME.ordinal
         }
     }
@@ -69,8 +70,12 @@ class MemesAdapter(private val callback: MemesCallback): PagedListAdapter<ItemVi
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ProfileHolder -> {
-                val user = getItem(position) as User
-                holder.bind(user)
+                val user = getItem(position) as ObservableUser
+
+                user.user.subscribeBy(
+                        onNext = { holder.bind(it) },
+                        onError = { Timber.e("Error fetching User") }
+                )
             }
 
             is MemeHolder -> {
@@ -87,10 +92,12 @@ class MemesAdapter(private val callback: MemesCallback): PagedListAdapter<ItemVi
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         super.onViewRecycled(holder)
         if (holder is MemeHolder) holder.apply { disposables.clear() }
+        if (holder is ProfileHolder) holder.apply { disposables.clear() }
     }
 
     inner class ProfileHolder(private val binding: ItemProfileBinding, private val callback: MemesCallback):
             RecyclerView.ViewHolder(binding.root) {
+        val disposables = CompositeDisposable()
 
         fun bind(user: User) {
             binding.user = user

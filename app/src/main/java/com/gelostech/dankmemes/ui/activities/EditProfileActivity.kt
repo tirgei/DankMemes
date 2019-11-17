@@ -81,24 +81,21 @@ class EditProfileActivity : BaseActivity() {
                 Status.LOADING -> {
                     Timber.e("Loading...")
                     isUpdating = true
-                    editProfileButton.startAnimation()
+                    if (!editProfileButton.isActivated) editProfileButton.startAnimation()
                 }
 
                 Status.SUCCESS -> {
-                    stopUpdating()
-
                     when (it.item) {
                         GenericResponse.ITEM_RESPONSE.UPDATE_AVATAR -> {
                             toast("Avatar updated")
 
                             val avatar = it.value!!
                             sessionManager.updateUser(Constants.AVATAR, avatar)
-
-                            if (hasUpdatedDetails()) updateDetails(avatar)
-                            else editProfileImage.load(avatar, R.drawable.person)
+                            updateDetails(avatar)
                         }
 
                         else -> {
+                            stopUpdating()
                             toast("Profile updated \uD83D\uDD7A \uD83D\uDC83")
 
                             sessionManager.updateUser(Constants.USERNAME, editProfileName.text.toString())
