@@ -17,11 +17,11 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_centerHorizontal="true"
-           android:layout_below="@id/loginIcon"
            android:layout_marginTop="10dp"
            android:textSize="20sp"
-           android:text="@string/sign_up"
+           android:text="@string/label_sign_up"
            android:textColor="@color/textGray"
+           android:textAllCaps="true"
            android:textStyle="bold"/>
 
        <LinearLayout
@@ -54,7 +54,7 @@
                android:layout_marginTop="20dp"
                android:background="@drawable/wire_drawable"
                android:drawablePadding="10dp"
-               android:hint="@string/username"
+               android:hint="@string/hint_username"
                android:textSize="13sp"
                android:inputType="textEmailAddress"/>
 
@@ -66,7 +66,7 @@
                android:layout_marginTop="10dp"
                android:background="@drawable/wire_drawable"
                android:drawablePadding="10dp"
-               android:hint="@string/email_address"
+               android:hint="@string/hint_email"
                android:textSize="13sp"
                android:inputType="textEmailAddress"/>
 
@@ -78,7 +78,7 @@
                android:layout_marginTop="10dp"
                android:background="@drawable/wire_drawable"
                android:drawablePadding="10dp"
-               android:hint="@string/password"
+               android:hint="@string/hint_password"
                android:textSize="13sp"
                android:inputType="textPassword"/>
 
@@ -91,7 +91,7 @@
                android:layout_marginBottom="20dp"
                android:background="@drawable/wire_drawable"
                android:drawablePadding="10dp"
-               android:hint="@string/confirm_password"
+               android:hint="@string/hint_confirm_password"
                android:textSize="13sp"
                android:inputType="textPassword"/>
 
@@ -100,7 +100,7 @@
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
                android:background="@drawable/button_solid"
-               android:text="@string/sign_up"
+               android:text="@string/label_sign_up"
                android:textColor="@color/white"
                app:spinning_bar_color="@color/white"
                app:spinning_bar_width="4dp"
@@ -134,9 +134,9 @@
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:text="@string/terms"
-                   android:textStyle="bold"
+                   android:textColor="@color/colorAccent"
                    android:textSize="13sp"
-                   android:textColor="@color/colorAccent"/>
+                   android:textStyle="bold" />
 
            </LinearLayout>
 
@@ -156,7 +156,7 @@
                android:id="@+id/signupRegisterTitle"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:text="@string/already_have_an_account"
+               android:text="@string/label_member"
                android:textColor="@color/secondaryText"
                android:textSize="13sp"
                android:layout_marginEnd="5dp"
@@ -166,7 +166,7 @@
                android:id="@+id/signupLogin"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:text="@string/login"
+               android:text="@string/button_login"
                android:textStyle="bold"
                android:textSize="15sp"
                android:textColor="@color/colorAccent"/>

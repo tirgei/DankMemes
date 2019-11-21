@@ -55,7 +55,7 @@
             android:layout_centerHorizontal="true"
             android:textColor="@color/secondaryText"
             android:layout_below="@id/commentsEmptyStateImage"
-            android:text="No comments added yet"/>
+            android:text="@string/empty_comments"/>
 
     </RelativeLayout>
 
@@ -80,23 +80,22 @@
             android:maxLines="5"
             android:gravity="center_vertical"
             android:background="@color/white"
-            android:hint="@string/add_new_comment"
+            android:hint="@string/hint_new_comment"
             android:textSize="14sp"
             android:layout_toStartOf="@id/sendCommentLayout"
-            android:layout_toLeftOf="@id/sendCommentLayout"
             android:inputType="text|textAutoComplete|textNoSuggestions|textAutoCorrect|textLongMessage|textMultiLine|textShortMessage"/>
 
         <com.gelostech.dankmemes.utils.SquareLayout
             android:id="@+id/sendCommentLayout"
             android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true">
+            android:layout_height="match_parent">
 
             <ImageButton
                 android:id="@+id/sendComment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"/>
+                android:background="@color/white"
+                android:contentDescription="@string/image"/>
 
         </com.gelostech.dankmemes.utils.SquareLayout>
 

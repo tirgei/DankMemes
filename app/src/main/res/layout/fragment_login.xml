@@ -51,7 +51,7 @@
                 android:padding="15dp"
                 android:background="@drawable/wire_drawable"
                 android:drawablePadding="10dp"
-                android:hint="@string/email_address"
+                android:hint="@string/hint_email"
                 android:textSize="13sp"
                 android:inputType="textEmailAddress"/>
 
@@ -64,7 +64,7 @@
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/wire_drawable"
                 android:drawablePadding="10dp"
-                android:hint="@string/password"
+                android:hint="@string/hint_password"
                 android:textSize="13sp"
                 android:inputType="textPassword"/>
 
@@ -73,7 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button_solid"
-                android:text="@string/login"
+                android:text="@string/button_login"
                 android:textColor="@color/white"
                 app:spinning_bar_color="@color/white"
                 app:spinning_bar_width="4dp"
@@ -84,7 +84,7 @@
                 android:id="@+id/loginForgotPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/forgot_password"
+                android:text="@string/label_forgot_password"
                 android:textSize="13sp"
                 android:textColor="@color/secondaryText"
                 android:layout_marginTop="10dp"
@@ -112,17 +112,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/not_a_member_yet"
+                android:text="@string/label_not_member"
                 android:textColor="@color/secondaryText"
                 android:textSize="13sp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginRight="5dp"/>
+                android:layout_marginEnd="5dp"/>
 
             <TextView
                 android:id="@+id/loginRegister"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/register"
+                android:text="@string/label_register"
                 android:textStyle="bold"
                 android:textSize="15sp"
                 android:textColor="@color/colorAccent"/>

@@ -1,5 +1,40 @@
 <resources>
     <string name="app_name">Dank Memes</string>
+
+    // Fragment titles
+    <string name="fragment_home">Home</string>
+    <string name="fragment_faves">Faves</string>
+    <string name="fragment_notifications">Notifs</string>
+    <string name="fragment_profile">Profile</string>
+
+    // Menu labels
+    <string name="menu_save">Save</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_report">Report</string>
+
+    // TextView labels
+    <string name="label_member">Already have an account?</string>
+    <string name="label_not_member">Not a member yet?</string>
+    <string name="label_forgot_password">Forgot password?</string>
+    <string name="label_register">Register</string>
+    <string name="label_sign_up">Sign Up</string>
+    <string name="label_agree_to_terms">I accept the</string>
+    <string name="label_terms">Terms and Conditions</string>
+
+    // Buttons labels
+    <string name="button_login">Login</string>
+
+    // EditText hints
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_confirm_password">Confirm Password</string>
+    <string name="hint_new_comment">Add new comment…</string>
+
+    // Empty State labels
+    <string name="empty_comments">No Comments</string>
+
     <string name="profile">Profile</string>
     <string name="collections">Collections</string>
     <string name="faves">Favorites</string>
