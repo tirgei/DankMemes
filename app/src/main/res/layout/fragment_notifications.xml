@@ -20,7 +20,7 @@
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
             android:src="@drawable/feed"
-            android:contentDescription="@string/image"/>
+            android:contentDescription="@string/content_image"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,7 +28,7 @@
             android:layout_centerHorizontal="true"
             android:textColor="@color/secondaryText"
             android:layout_below="@id/emptyImage"
-            android:text="No notifications received yet"/>
+            android:text="@string/label_no_notifications"/>
 
     </RelativeLayout>
 

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragments.FavesFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -29,7 +28,7 @@
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
             android:src="@drawable/feed"
-            android:contentDescription="@string/image"/>
+            android:contentDescription="@string/content_image"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -37,7 +36,7 @@
             android:layout_centerHorizontal="true"
             android:textColor="@color/secondaryText"
             android:layout_below="@id/collectionsEmptyStateImage"
-            android:text="You haven't favorited any memes yet"/>
+            android:text="@string/label_no_faves"/>
 
     </RelativeLayout>
 

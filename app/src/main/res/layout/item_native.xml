@@ -14,7 +14,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
-        />
+        android:contentDescription="@string/content_image" />
 
     <TextView android:id="@+id/native_title"
         android:layout_width="match_parent"

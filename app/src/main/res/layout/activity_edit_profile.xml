@@ -57,7 +57,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/username"
+                android:text="@string/label_username"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="@dimen/album_desc"
@@ -71,12 +71,12 @@
                 android:background="@color/white"
                 android:textSize="@dimen/album_title"
                 android:inputType="text"
-                android:hint="@string/username"/>
+                android:hint="@string/hint_username"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/bio"
+                android:text="@string/label_bio"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="@dimen/album_desc"
@@ -91,7 +91,7 @@
                 android:background="@color/white"
                 android:textSize="@dimen/album_title"
                 android:inputType="textMultiLine"
-                android:hint="@string/bio"/>
+                android:hint="@string/label_bio"/>
 
             <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
                 android:id="@+id/editProfileButton"
@@ -99,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/button_solid"
-                android:text="@string/update_profile"
+                android:text="@string/button_update_profile"
                 android:textColor="@color/white"
                 app:spinning_bar_color="@color/white"
                 app:spinning_bar_width="4dp"

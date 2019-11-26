@@ -66,7 +66,8 @@
             android:layout_centerVertical="true"
             bind:image="@{notification.imageUrl}"
             bind:placeholder="@{R.drawable.loading}"
-            android:onClick="@{(v) -> callback.onNotificationClicked(v, notification)}"/>
+            android:onClick="@{(v) -> callback.onNotificationClicked(v, notification)}"
+            android:contentDescription="@string/content_image"/>
 
     </RelativeLayout>
 </layout>

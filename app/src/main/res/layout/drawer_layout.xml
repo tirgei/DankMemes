@@ -11,7 +11,7 @@
         android:layout_height="40dp"
         android:layout_margin="20dp"
         android:src="@mipmap/ic_launcher"
-        android:contentDescription="@string/image"/>
+        android:contentDescription="@string/content_image"/>
 
     <TextView
         android:id="@+id/drawerName"
@@ -19,7 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
         android:layout_below="@id/drawerIcon"
         tools:text="Vincent Tirgei"
         android:textColor="@color/white"
@@ -30,12 +29,11 @@
         android:id="@+id/drawerEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
         android:layout_below="@id/drawerName"
         android:textColor="@color/white"
         android:textSize="@dimen/album_desc"
-        tools:text="tirgeic@gmail.com"/>
+        tools:text="devtirgei@gmail.com"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -52,7 +50,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
-            android:text="Rate app"/>
+            android:text="@string/label_rate_app"/>
 
         <TextView
             android:id="@+id/drawerShare"
@@ -62,7 +60,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
-            android:text="Share app"/>
+            android:text="@string/label_share_app"/>
 
         <TextView
             android:id="@+id/drawerFeedback"
@@ -72,7 +70,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
-            android:text="Send feedback"/>
+            android:text="@string/label_feedback"/>
 
         <TextView
             android:id="@+id/drawerTerms"
@@ -82,7 +80,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
-            android:text="Terms of Use"/>
+            android:text="@string/label_terms"/>
 
         <TextView
             android:id="@+id/drawerPolicy"
@@ -92,7 +90,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
-            android:text="Privacy policy"/>
+            android:text="@string/label_privacy_policy"/>
 
         <TextView
             android:id="@+id/drawerMoreApps"
@@ -102,7 +100,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
-            android:text="More apps"/>
+            android:text="@string/label_more_apps"/>
 
     </LinearLayout>
 
@@ -115,6 +113,6 @@
         android:textColor="@color/white"
         android:textSize="@dimen/notif_summary"
         android:drawablePadding="7dp"
-        android:text="Log out"/>
+        android:text="@string/label_logout"/>
 
 </RelativeLayout>

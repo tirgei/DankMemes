@@ -28,7 +28,7 @@
         android:layout_below="@id/postToolbar"
         android:textSize="15sp"
         android:inputType="textMultiLine"
-        android:hint="Write something..."/>
+        android:hint="@string/hint_caption"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:contentDescription="@string/select_meme"
+            android:contentDescription="@string/content_select_meme"
             android:background="@android:color/transparent"/>
 
         <ImageView
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"
-            android:contentDescription="@string/image"
+            android:contentDescription="@string/content_image"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"/>
 

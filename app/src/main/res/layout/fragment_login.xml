@@ -18,7 +18,7 @@
             android:layout_height="80dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="50dp"
-            android:contentDescription="@string/image"
+            android:contentDescription="@string/content_image"
             android:src="@mipmap/ic_launcher"/>
 
         <TextView

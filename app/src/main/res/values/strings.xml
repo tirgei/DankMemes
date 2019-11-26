@@ -12,6 +12,8 @@
     <string name="menu_share">Share</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_report">Report</string>
+    <string name="menu_post_meme">Post Meme</string>
+    <string name="menu_edit_profile">Edit Profile</string>
 
     // TextView labels
     <string name="label_member">Already have an account?</string>
@@ -21,9 +23,21 @@
     <string name="label_sign_up">Sign Up</string>
     <string name="label_agree_to_terms">I accept the</string>
     <string name="label_terms">Terms and Conditions</string>
+    <string name="label_username">Username</string>
+    <string name="label_bio">About Me</string>
+    <string name="label_rate_app">Rate App</string>
+    <string name="label_share_app">Share App</string>
+    <string name="label_feedback">Send Feedback</string>
+    <string name="label_privacy_policy">Privacy Policy</string>
+    <string name="label_more_apps">More Apps</string>
+    <string name="label_logout">Log Out</string>
+    <string name="label_no_faves">No faves found</string>
+    <string name="label_no_notifications">No notifications found</string>
+    <string name="label_no_memes">No memes found</string>
 
     // Buttons labels
     <string name="button_login">Login</string>
+    <string name="button_update_profile">Update Profile</string>
 
     // EditText hints
     <string name="hint_email">Email</string>
@@ -31,9 +45,14 @@
     <string name="hint_username">Username</string>
     <string name="hint_confirm_password">Confirm Password</string>
     <string name="hint_new_comment">Add new comment…</string>
+    <string name="hint_caption">Write something…</string>
 
     // Empty State labels
     <string name="empty_comments">No Comments</string>
+
+    // Content Description
+    <string name="content_image">image</string>
+    <string name="content_select_meme">Select meme</string>
 
     <string name="profile">Profile</string>
     <string name="collections">Collections</string>

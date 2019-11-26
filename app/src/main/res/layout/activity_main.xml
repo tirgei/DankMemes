@@ -20,18 +20,6 @@
         app:titleTextColor="@color/textGray"
         android:elevation="0.5dp">
 
-        <!--<TextView-->
-            <!--android:id="@+id/mainToolbarTitle"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:textColor="@color/textGray"-->
-            <!--android:textSize="19sp"-->
-            <!--style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:gravity="center"-->
-            <!--android:paddingTop="5dp"-->
-            <!--tools:text="Dank Memes"/>-->
-
     </androidx.appcompat.widget.Toolbar>
 
     <com.gelostech.nonswipableviewpager.NonSwipeableViewPager

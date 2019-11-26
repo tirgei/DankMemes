@@ -32,14 +32,14 @@
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
             android:src="@drawable/feed"
-            android:contentDescription="@string/image"/>
+            android:contentDescription="@string/content_image"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/profileEmptyStateImage"
             android:layout_centerHorizontal="true"
-            android:text="You haven't posted any memes yet"/>
+            android:text="@string/label_no_memes"/>
 
     </RelativeLayout>
 

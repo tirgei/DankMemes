@@ -52,7 +52,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerInside"
                 android:src="@drawable/feed"
-                android:contentDescription="@string/image"/>
+                android:contentDescription="@string/content_image"/>
 
             <TextView
                 android:id="@+id/viewProfileEmptyStateText"
