@@ -50,7 +50,7 @@
                     android:layout_alignBottom="@id/editProfileImage"
                     android:layout_alignEnd="@id/editProfileImage"
                     android:background="@drawable/circle_button"
-                    android:contentDescription="@string/button"/>
+                    android:contentDescription="@string/content_image_button"/>
 
             </RelativeLayout>
 

@@ -1,44 +1,44 @@
 package com.gelostech.dankmemes.ui.activities
 
 import am.appwise.components.ni.NoInternetDialog
-import android.content.Intent
-import android.os.Bundle
-import android.os.Handler
-import androidx.core.content.ContextCompat
-import android.view.Menu
-import android.view.MenuItem
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
-
-import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.ui.base.BaseActivity
-import com.gelostech.dankmemes.utils.AppUtils.setDrawable
-import com.mikepenz.fontawesome_typeface_library.FontAwesome
-import com.mikepenz.ionicons_typeface_library.Ionicons
-import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.toast
-import com.yarolegovich.slidingrootnav.SlidingRootNav
-import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
-import kotlinx.android.synthetic.main.drawer_layout.*
 import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.net.Uri
+import android.os.Bundle
+import android.os.Handler
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
+import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
-import com.google.firebase.auth.FirebaseAuth
-import org.jetbrains.anko.alert
-import com.gelostech.dankmemes.utils.PreferenceHelper.get
-import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.ui.fragments.*
+import com.gelostech.dankmemes.ui.base.BaseActivity
+import com.gelostech.dankmemes.ui.fragments.AllFragment
+import com.gelostech.dankmemes.ui.fragments.FavesFragment
+import com.gelostech.dankmemes.ui.fragments.NotificationsFragment
+import com.gelostech.dankmemes.ui.fragments.ProfileFragment
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.*
+import com.gelostech.dankmemes.utils.AppUtils.setDrawable
+import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import com.gelostech.pageradapter.PagerAdapter
 import com.google.firebase.messaging.FirebaseMessaging
+import com.mikepenz.fontawesome_typeface_library.FontAwesome
+import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.wooplr.spotlight.SpotlightView
+import com.yarolegovich.slidingrootnav.SlidingRootNav
+import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.drawer_layout.*
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -58,17 +58,16 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private lateinit var noInternetDialog: NoInternetDialog
     private val usersViewModel: UsersViewModel by viewModel()
 
-    companion object {
-        private const val HOME: String = "Dank Memes"
-        private const val FAVES: String = "Faves"
-        private const val PROFILE: String = "Profile"
-        private const val NOTIFICATIONS = "Notifications"
-    }
+    private lateinit var APP_NAME: String
+    private lateinit var HOME: String
+    private lateinit var FAVES: String
+    private lateinit var PROFILE: String
+    private lateinit var NOTIFICATIONS: String
+    private lateinit var PLAY_STORE_LINK: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        updateLastActive()
 
         NotificationUtils(this).clearNotifications()
         prefs = PreferenceHelper.defaultPrefs(this)
@@ -77,6 +76,13 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         favesFragment = FavesFragment()
         allFragment = AllFragment()
         notifFragment = NotificationsFragment()
+
+        APP_NAME = getString(R.string.app_name)
+        HOME = getString(R.string.fragment_home)
+        FAVES = getString(R.string.fragment_faves)
+        PROFILE = getString(R.string.fragment_profile)
+        NOTIFICATIONS = getString(R.string.fragment_notifications)
+        PLAY_STORE_LINK = getString(R.string.label_play_store_link) + this.packageName
 
         setupToolbar()
         setupBottomNav()
@@ -144,9 +150,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         setupDrawerIcons()
         drawerClickListeners()
 
-        drawerName.text = prefs[Constants.USERNAME]
-        drawerEmail.text = prefs[Constants.EMAIL]
-
+        drawerName.text = sessionManager.getUsername()
+        drawerEmail.text = sessionManager.getEmail()
     }
 
     private fun setupDrawerIcons() {
@@ -164,15 +169,14 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
             slidingDrawer.closeMenu(true)
 
             Handler().postDelayed({
-                val uri = Uri.parse(resources.getString(R.string.play_store_link) + this.packageName)
+                val uri = Uri.parse(PLAY_STORE_LINK)
                 val goToMarket = Intent(Intent.ACTION_VIEW, uri)
 
                 goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
                 try {
                     startActivity(goToMarket)
                 } catch (e: ActivityNotFoundException) {
-                    startActivity(Intent(Intent.ACTION_VIEW,
-                            Uri.parse(resources.getString(R.string.play_store_link) + this.packageName)))
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_LINK)))
                 }
             }, 300)
         }
@@ -183,10 +187,10 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
             Handler().postDelayed({
                 val intent = Intent(Intent.ACTION_SEND)
                 intent.type = "text/plain"
-                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
-                val message = resources.getString(R.string.invite_body) + "\n\n" + resources.getString(R.string.play_store_link) + this.packageName
+                intent.putExtra(Intent.EXTRA_SUBJECT, APP_NAME)
+                val message = getString(R.string.label_invite_body) + "\n\n" + PLAY_STORE_LINK
                 intent.putExtra(Intent.EXTRA_TEXT, message)
-                startActivity(Intent.createChooser(intent, "Invite pals..."))
+                startActivity(Intent.createChooser(intent, getString(R.string.intent_invite_pals)))
             }, 300)
         }
 
@@ -195,9 +199,9 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
             Handler().postDelayed({
                 val emailIntent = Intent(Intent.ACTION_SENDTO)
-                emailIntent.data = Uri.parse("mailto: devtirgei@gmail.com")
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Dank Memes")
-                startActivity(Intent.createChooser(emailIntent, "Send feedback"))
+                emailIntent.data = Uri.parse(getString(R.string.intent_dev_email))
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, APP_NAME)
+                startActivity(Intent.createChooser(emailIntent, getString(R.string.intent_send_feedback)))
             }, 300)
         }
 
@@ -205,36 +209,32 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
             slidingDrawer.closeMenu(true)
 
             Handler().postDelayed({
-                openLink("https://sites.google.com/view/dankmemesapp/terms-and-conditions")
+                openLink(getString(R.string.link_terms))
             }, 300)
-
         }
 
         drawerPolicy.setOnClickListener {
             slidingDrawer.closeMenu(true)
 
             Handler().postDelayed({
-                openLink("https://sites.google.com/view/dankmemesapp/privacy-policy")
+                openLink(getString(R.string.link_privacy))
             }, 300)
-
         }
 
         drawerMoreApps.setOnClickListener {
             slidingDrawer.closeMenu(true)
 
             Handler().postDelayed({
-                val uri = Uri.parse(resources.getString(R.string.developer_id))
+                val uri = Uri.parse(getString(R.string.label_dev_id))
                 val devAccount = Intent(Intent.ACTION_VIEW, uri)
 
                 devAccount.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
                 try {
                     startActivity(devAccount)
                 } catch (e: ActivityNotFoundException) {
-                    startActivity(Intent(Intent.ACTION_VIEW,
-                            Uri.parse(resources.getString(R.string.developer_id))))
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.label_dev_id))))
                 }
             }, 300)
-
         }
 
         drawerLogout.setOnClickListener {
@@ -248,7 +248,6 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
                 }.show()
             }, 300)
         }
-
     }
 
     private fun openLink(url: String) {
@@ -293,7 +292,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         editProfile?.isVisible = position == 3
 
         when(position) {
-            0 -> supportActionBar?.title = getString(R.string.app_name)
+            0 -> supportActionBar?.title = APP_NAME
             1 -> supportActionBar?.title = FAVES
             2 -> supportActionBar?.title = NOTIFICATIONS
             3 -> supportActionBar?.title = PROFILE

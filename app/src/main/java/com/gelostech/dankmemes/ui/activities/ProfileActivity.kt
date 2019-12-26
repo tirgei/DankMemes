@@ -54,7 +54,7 @@ class ProfileActivity : BaseActivity() {
     private fun initViews() {
         setSupportActionBar(viewProfileToolbar)
         supportActionBar?.apply {
-            title = getString(R.string.profile)
+            title = getString(R.string.fragment_profile)
             setDisplayShowHomeEnabled(true)
             setDisplayHomeAsUpEnabled(true)
         }

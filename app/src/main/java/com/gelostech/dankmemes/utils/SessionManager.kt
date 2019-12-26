@@ -44,6 +44,13 @@ class SessionManager (context: Context) {
     }
 
     /**
+     * Get the logged in User email
+     */
+    fun getEmail(): String {
+        return prefs[Constants.EMAIL, ""]
+    }
+
+    /**
      * Get the logged in user bio
      */
     fun getBio(): String {

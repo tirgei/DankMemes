@@ -44,7 +44,7 @@
                android:layout_height="80dp"
                android:layout_gravity="center_horizontal"
                android:src="@drawable/person"
-               android:contentDescription="@string/image"/>
+               android:contentDescription="@string/content_image"/>
 
            <EditText
                android:id="@+id/signupUsername"
@@ -123,17 +123,16 @@
                <TextView
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:text="@string/agree_to_terms"
+                   android:text="@string/label_agree_to_terms"
                    android:textColor="@color/secondaryText"
                    android:textSize="13sp"
-                   android:layout_marginEnd="5dp"
-                   android:layout_marginRight="5dp"/>
+                   android:layout_marginEnd="5dp"/>
 
                <TextView
                    android:id="@+id/signupTerms"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:text="@string/terms"
+                   android:text="@string/label_terms"
                    android:textColor="@color/colorAccent"
                    android:textSize="13sp"
                    android:textStyle="bold" />

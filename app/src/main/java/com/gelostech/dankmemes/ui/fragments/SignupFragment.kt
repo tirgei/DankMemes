@@ -146,7 +146,7 @@ class SignupFragment : BaseFragment() {
                     newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())
                     newUser.userToken = FirebaseInstanceId.getInstance().token
                     newUser.userId = user.uid
-                    newUser.userBio = activity?.getString(R.string.new_user_bio)
+                    newUser.userBio = activity?.getString(R.string.label_new_user)
 
                     usersViewModel.createUserAccount(newUser, imageUri!!)
                     user.sendEmailVerification()

@@ -20,7 +20,7 @@ class CommentsViewModel constructor(private val repository: CommentsRepository):
         get() = _commentsLiveData
 
     /**
-     * Funtion to post new comment
+     * Function to post new comment
      * @param comment - The comment model
      */
     fun postComment(comment: Comment) {

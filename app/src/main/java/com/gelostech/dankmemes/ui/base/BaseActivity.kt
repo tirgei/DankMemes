@@ -40,6 +40,11 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateLastActive()
+    }
+
     // User hasn't requested storage permission; request them to allow
     fun requestStoragePermission() {
         Dexter.withActivity(this)
@@ -87,7 +92,7 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun updateLastActive() {
+    private fun updateLastActive() {
         firebaseDatabase.child(Constants.METADATA)
                 .child(Constants.LAST_ACTIVE)
                 .child(TimeFormatter().getFullYear(System.currentTimeMillis()))
