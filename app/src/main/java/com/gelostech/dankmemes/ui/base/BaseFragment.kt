@@ -20,7 +20,6 @@ import org.koin.android.ext.android.inject
 open class BaseFragment : Fragment() {
     lateinit var progressDialog: ProgressDialog
     val sessionManager: SessionManager by inject()
-    fun isConnected(): Boolean = Connectivity.isConnected(activity!!)
 
     // Toast a message
     fun toast(message: String) {

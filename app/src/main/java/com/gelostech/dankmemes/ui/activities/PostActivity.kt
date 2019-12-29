@@ -104,6 +104,11 @@ class PostActivity : BaseActivity() {
      * Function to post new Meme
      */
     private fun postMeme() {
+        if (!Connectivity.isConnected(this)) {
+            toast("Please turn on your internet connection")
+            return
+        }
+
         if (!sessionManager.isLoggedIn() || sessionManager.getUserId().isEmpty()) {
             toast("Please login first")
             return
