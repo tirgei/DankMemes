@@ -23,7 +23,8 @@ class DankMemes : MultiDexApplication() {
             FirebaseApp.initializeApp(this)
 
         // Set Timber
-        Timber.plant(Timber.DebugTree())
+        if (BuildConfig.DEBUG)
+            Timber.plant(Timber.DebugTree())
 
         // Initialize crash activity
         CaocConfig.Builder.create()

@@ -3,11 +3,9 @@ package com.gelostech.dankmemes.utils.services
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.NotificationUtils
-import com.gelostech.dankmemes.utils.PreferenceHelper
-import com.gelostech.dankmemes.utils.PreferenceHelper.set
+import com.gelostech.dankmemes.utils.SessionManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -29,20 +27,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         p0.let {
             // save in prefs
-            val prefs = PreferenceHelper.defaultPrefs(this)
-            prefs["userToken"] = it
+            val sessionManager = SessionManager(this)
+            sessionManager.updateUser(Constants.USER_TOKEN, it)
 
             // sending reg id to your server
             val userID = FirebaseAuth.getInstance().currentUser?.uid
             if (userID != null) {
                 val dbRef = FirebaseDatabase.getInstance().reference
-                dbRef.child("users").child(userID).child("userToken").setValue(it)
+                dbRef.child(Constants.USERS).child(userID).child(Constants.USER_TOKEN).setValue(it)
             }
-
-            // Notify UI that registration has completed, so the progress indicator can be hidden.
-            val registrationComplete = Intent(Constants.REGISTRATION_COMPLETE)
-            registrationComplete.putExtra("token", it)
-            LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete)
         }
 
     }
@@ -76,7 +69,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val pushNotification = Intent(Constants.PUSH_NOTIFICATION)
             pushNotification.putExtra("title", notification!!.title)
             pushNotification.putExtra("message", notification.body)
-            LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification)
 
             // play notification sound
             val notificationUtils = NotificationUtils(applicationContext)
@@ -94,7 +86,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             if (json.getString("type") == "topup"){
                 val pushNotification = Intent(Constants.PUSH_NOTIFICATION)
                 pushNotification.putExtra("type", "topup")
-                LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification)
 
                 return
 

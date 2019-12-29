@@ -26,7 +26,6 @@ import com.gelostech.dankmemes.ui.fragments.ProfileFragment
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.*
 import com.gelostech.dankmemes.utils.AppUtils.setDrawable
-import com.gelostech.dankmemes.utils.PreferenceHelper.get
 import com.gelostech.pageradapter.PagerAdapter
 import com.google.firebase.messaging.FirebaseMessaging
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
@@ -54,7 +53,6 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
     private lateinit var profileFragment: ProfileFragment
     private lateinit var allFragment: AllFragment
     private lateinit var notifFragment: NotificationsFragment
-    private lateinit var prefs: SharedPreferences
     private lateinit var noInternetDialog: NoInternetDialog
     private val usersViewModel: UsersViewModel by viewModel()
 
@@ -70,7 +68,6 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         setContentView(R.layout.activity_main)
 
         NotificationUtils(this).clearNotifications()
-        prefs = PreferenceHelper.defaultPrefs(this)
 
         profileFragment = ProfileFragment()
         favesFragment = FavesFragment()
@@ -381,8 +378,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
     override fun onResume() {
         super.onResume()
-        drawerName.text = prefs[Constants.USERNAME]
-        refreshToken()
+        drawerName.text = sessionManager.getUsername()
+        //refreshToken()
     }
 
     override fun onBackPressed() {

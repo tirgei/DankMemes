@@ -2,7 +2,7 @@ package com.gelostech.dankmemes.utils;
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 
 object PreferenceHelper {
 

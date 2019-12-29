@@ -9,7 +9,6 @@ import com.gelostech.dankmemes.ui.viewmodels.CommentsViewModel
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.ui.viewmodels.NotificationsViewModel
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
-import com.gelostech.dankmemes.utils.PreferenceHelper
 import com.gelostech.dankmemes.utils.SessionManager
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
