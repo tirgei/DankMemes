@@ -26,8 +26,6 @@ class LoginActivity : BaseActivity() {
         loginFragment = LoginFragment()
 
         addFragment(loginFragment, loginHolder.id)
-
-        requestStoragePermission()
     }
 
     private fun checkIfLoggedIn() {

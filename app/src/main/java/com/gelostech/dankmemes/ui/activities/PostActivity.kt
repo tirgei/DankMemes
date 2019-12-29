@@ -17,6 +17,7 @@ import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_post.*
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -52,11 +53,11 @@ class PostActivity : BaseActivity() {
 
         postAddImage.setImageDrawable(AppUtils.setDrawable(this, Ionicons.Icon.ion_image, R.color.secondaryText, 65))
         postAddImage.setOnClickListener {
-            if (storagePermissionGranted()) {
-                val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(galleryIntent, GALLERY_REQUEST)
-            } else {
-                requestStoragePermission()
+            AppUtils.requestStoragePermission(this) { granted ->
+                if (granted) {
+                    val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    startActivityForResult(galleryIntent, GALLERY_REQUEST)
+                } else longToast("Storage permission is required to select Avatar")
             }
         }
     }

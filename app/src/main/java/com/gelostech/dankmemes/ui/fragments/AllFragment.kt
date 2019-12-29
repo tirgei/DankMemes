@@ -29,10 +29,7 @@ import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.utils.*
 import kotlinx.android.synthetic.main.fragment_all.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import org.jetbrains.anko.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -195,9 +192,10 @@ class AllFragment : BaseFragment() {
                 }
 
                 R.id.bs_save -> {
-                    if (storagePermissionGranted()) {
-                        AppUtils.saveImage(activity!!, image)
-                    } else requestStoragePermission()
+                    AppUtils.requestStoragePermission(activity!!) { granted ->
+                        if (granted) AppUtils.saveImage(activity!!, image)
+                        else longToast("Storage permission is required to save memes")
+                    }
                 }
 
                 R.id.bs_report -> showReportDialog(meme)

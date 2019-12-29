@@ -1,5 +1,6 @@
 package com.gelostech.dankmemes.utils
 
+import android.Manifest
 import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
@@ -34,6 +35,12 @@ import com.gelostech.dankmemes.ui.callbacks.StorageUploadListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -61,6 +68,27 @@ object AppUtils {
      */
     fun setDrawable(context: Context, icon: IIcon, color: Int, size: Int): Drawable {
         return IconicsDrawable(context).icon(icon).color(ContextCompat.getColor(context, color)).sizeDp(size)
+    }
+
+    /**k
+     * Function to check storage permission is granted
+     */
+    fun requestStoragePermission(context: Context, granted: (Boolean) -> Unit) {
+        Dexter.withActivity(context as Activity)
+                .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withListener(object : PermissionListener {
+                    override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                        granted(true)
+                    }
+
+                    override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                        granted(false)
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest, token: PermissionToken) {
+                        token.continuePermissionRequest()
+                    }
+                }).check()
     }
 
     fun loadBitmapFromUrl(context: Context, url: String): Bitmap {

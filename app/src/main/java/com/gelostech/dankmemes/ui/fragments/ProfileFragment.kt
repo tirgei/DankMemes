@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.loading
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -204,9 +205,10 @@ class ProfileFragment : BaseFragment() {
                 }
 
                 R.id.bs_save -> {
-                    if (storagePermissionGranted()) {
-                        AppUtils.saveImage(activity!!, image)
-                    } else requestStoragePermission()
+                    AppUtils.requestStoragePermission(activity!!) { granted ->
+                        if (granted) AppUtils.saveImage(activity!!, image)
+                        else longToast("Storage permission is required to save memes")
+                    }
                 }
             }
 

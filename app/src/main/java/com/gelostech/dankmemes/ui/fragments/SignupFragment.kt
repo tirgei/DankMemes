@@ -22,6 +22,7 @@ import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_signup.*
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -56,11 +57,11 @@ class SignupFragment : BaseFragment() {
 
         signupAvatar.setOnClickListener {
             if (!isSigningUp) {
-                if (storagePermissionGranted()) {
-                    val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                    startActivityForResult(galleryIntent, AVATAR_REQUEST)
-                } else {
-                    requestStoragePermission()
+                AppUtils.requestStoragePermission(activity!!) { granted ->
+                    if (granted) {
+                        val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        startActivityForResult(galleryIntent, AVATAR_REQUEST)
+                    } else longToast("Storage permission is required to select Avatar")
                 }
             }
         }

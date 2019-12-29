@@ -194,9 +194,10 @@ class ProfileActivity : BaseActivity() {
                 R.id.bs_share -> AppUtils.shareImage(this, image)
 
                 R.id.bs_save -> {
-                    if (storagePermissionGranted()) {
-                        AppUtils.saveImage(this, image)
-                    } else requestStoragePermission()
+                    AppUtils.requestStoragePermission(this) { granted ->
+                        if (granted) AppUtils.saveImage(this, image)
+                        else longToast("Storage permission is required to save memes")
+                    }
                 }
 
                 R.id.bs_report -> showReportDialog(meme)
