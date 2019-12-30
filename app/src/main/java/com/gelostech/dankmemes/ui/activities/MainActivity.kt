@@ -268,6 +268,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
                     runDelayed(500) {
                         hideLoading()
                         FirebaseMessaging.getInstance().unsubscribeFromTopic(Constants.TOPIC_GLOBAL)
+                        sessionManager.clearSession()
 
                         startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                         overridePendingTransition(R.anim.enter_a, R.anim.exit_b)

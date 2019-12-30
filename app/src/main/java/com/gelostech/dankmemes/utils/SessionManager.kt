@@ -20,6 +20,7 @@ class SessionManager (context: Context) {
         prefs[Constants.USER_ID] = user.userId
         prefs[Constants.USER_BIO] = user.userBio
         prefs[Constants.LOGGED_IN] = true
+        prefs[Constants.ADMIN_STATUS] = user.admin
     }
 
     /**
@@ -65,6 +66,13 @@ class SessionManager (context: Context) {
     }
 
     /**
+     * Get the logged in User admin status
+     */
+    fun getAdminStatus(): Int {
+        return prefs[Constants.ADMIN_STATUS, 0]
+    }
+
+    /**
      * Get the logged in User
      */
     fun getUser(): User {
@@ -84,4 +92,10 @@ class SessionManager (context: Context) {
         prefs[key] = value
     }
 
+    /**
+     * Function to clear prefs
+     */
+    fun clearSession() {
+        prefs.edit().clear().apply()
+    }
 }
