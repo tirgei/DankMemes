@@ -101,8 +101,6 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
             query = memesQuery.startAfter(meme)
         }
 
-        Timber.e("Loading memes by: $userId")
-
         return query.whereEqualTo(Constants.POSTER_ID, userId).get().await()
                 .map { ObservableMeme(it.id, getObservableMeme(it.id)) }.toMutableList()
     }

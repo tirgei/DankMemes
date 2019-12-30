@@ -38,14 +38,16 @@ class MemesDataSource constructor(private val repository: MemesRepository,
     }
 
     override fun loadAfter(params: LoadParams<String>, callback: LoadCallback<ItemViewModel>) {
-        scope.launch {
-            val memes = if (user == null) {
-                repository.fetchMemes(loadAfter = params.key)
-            } else {
-                repository.fetchMemesByUser(userId = user.id, loadAfter = params.key)
-            }
+        if (params.key != user?.id) {
+            scope.launch {
+                val memes = if (user == null) {
+                    repository.fetchMemes(loadAfter = params.key)
+                } else {
+                    repository.fetchMemesByUser(userId = user.id, loadAfter = params.key)
+                }
 
-            callback.onResult(memes)
+                callback.onResult(memes)
+            }
         }
     }
 
