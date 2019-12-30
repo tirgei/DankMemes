@@ -164,6 +164,7 @@ class LoginFragment : BaseFragment() {
                 }
 
                 Status.SUCCESS -> {
+                    Timber.e("Logged in: ${it.user?.admin}")
                     proceedToMainActivity(it.user!!, loginButton)
                 }
 

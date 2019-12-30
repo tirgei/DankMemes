@@ -187,7 +187,10 @@ class ProfileActivity : BaseActivity() {
      * Show BottomSheet with extra actions
      */
     private fun showBottomSheet(meme: Meme, image: Bitmap) {
-        bs = BottomSheet.Builder(this).sheet(R.menu.main_bottomsheet)
+        bs = when (sessionManager.getAdminStatus()) {
+            Constants.ADMIN, Constants.SUPER_ADMIN -> BottomSheet.Builder(this).sheet(R.menu.main_bottomsheet_admin)
+            else -> BottomSheet.Builder(this).sheet(R.menu.main_bottomsheet)
+        }
 
         bs.listener { _, which ->
             when(which) {

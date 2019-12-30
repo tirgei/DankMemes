@@ -22,9 +22,7 @@ import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.fragment_signup.*
-import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -148,6 +146,7 @@ class SignupFragment : BaseFragment() {
                     newUser.userToken = FirebaseInstanceId.getInstance().token
                     newUser.userId = user.uid
                     newUser.userBio = activity?.getString(R.string.label_new_user)
+                    newUser.admin = 0
 
                     usersViewModel.createUserAccount(newUser, imageUri!!)
                     user.sendEmailVerification()

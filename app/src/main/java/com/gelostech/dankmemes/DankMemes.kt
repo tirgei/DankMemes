@@ -7,6 +7,7 @@ import com.gelostech.dankmemes.di.*
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import io.reactivex.plugins.RxJavaPlugins
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -50,6 +51,11 @@ class DankMemes : MultiDexApplication() {
                     sessionManagerModule,
                     googleSignClientModule)
             )
+        }
+
+        // Set RxJava handler
+        RxJavaPlugins.setErrorHandler {
+            Timber.e("RxJava error: ${it.localizedMessage}")
         }
     }
 }

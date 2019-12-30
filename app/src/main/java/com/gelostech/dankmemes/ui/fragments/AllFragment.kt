@@ -172,12 +172,16 @@ class AllFragment : BaseFragment() {
      * Show BottomSheet with extra actions
      */
     private fun showBottomSheet(meme: Meme, image: Bitmap) {
-//        bs = if (getUid() != meme.memePosterID) {
-//            BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet)
-//        } else {
-//            BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_me)
-//        }
-        bs = BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_admin)
+        bs = when (sessionManager.getAdminStatus()) {
+            Constants.ADMIN, Constants.SUPER_ADMIN -> BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_admin)
+            else -> {
+                if (getUid() != meme.memePosterID) {
+                    BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet)
+                } else {
+                    BottomSheet.Builder(activity!!).sheet(R.menu.main_bottomsheet_me)
+                }
+            }
+        }
 
         bs.listener { _, which ->
             when(which) {
@@ -202,7 +206,6 @@ class AllFragment : BaseFragment() {
             }
 
         }.show()
-
     }
 
     /**

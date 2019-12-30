@@ -19,6 +19,7 @@ object Constants {
     const val USERNAME = "username"
     const val AVATAR = "avatar"
     const val LOGGED_IN = "logged_in"
+    const val ADMIN_STATUS = "admin_status"
 
     const val PIC_URL = "pic_url"
     const val MEME_ID = "meme_id"
@@ -47,4 +48,7 @@ object Constants {
     const val USER_TOKEN = "userToken"
     const val COMMENTS = "comments"
 
+    // Admin type
+    const val ADMIN = 1
+    const val SUPER_ADMIN = 2
 }

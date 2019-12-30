@@ -9,5 +9,6 @@ data class User(
         var userAvatar: String? = null,
         var userEmail: String? = null,
         var dateCreated: String? = null,
-        var userBio: String? = null
+        var userBio: String? = null,
+        var admin: Int? = null
 ): Serializable {}
