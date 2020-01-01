@@ -4,11 +4,11 @@
     xmlns:shimmer="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.AllFragment"
+    tools:context=".ui.fragments.HomeFragment"
     android:background="@color/white">
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/allShimmer"
+        android:id="@+id/homeShimmer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -30,12 +30,12 @@
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/allRefresh"
+        android:id="@+id/homeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/allRv"
+            android:id="@+id/homeRv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/item_meme"

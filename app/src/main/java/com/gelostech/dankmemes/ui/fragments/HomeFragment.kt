@@ -26,17 +26,18 @@ import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
 import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
+import com.gelostech.dankmemes.ui.callbacks.ScrollingMemesListener
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.utils.*
 import kotlinx.android.synthetic.main.fragment_all.*
 import org.jetbrains.anko.*
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
-class AllFragment : BaseFragment() {
+class HomeFragment : BaseFragment() {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var bs: BottomSheet.Builder
+    private var scrollingListener: ScrollingMemesListener? = null
     private val memesViewModel: MemesViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -49,16 +50,16 @@ class AllFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
 
-        allShimmer.startShimmerAnimation()
+        homeShimmer.startShimmerAnimation()
         initMemesObserver()
         initResponseObserver()
     }
 
     private fun initViews() {
         memesAdapter = MemesAdapter(memesCallback)
-        allRefresh.isEnabled = false
+        homeRefresh.isEnabled = false
 
-        allRv.apply {
+        homeRv.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(activity)
             addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
@@ -66,6 +67,15 @@ class AllFragment : BaseFragment() {
             (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
             adapter = memesAdapter
         }
+
+        homeRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (dy > 0) scrollingListener?.hideFab()
+                else if (dy < 0) scrollingListener?.showFab()
+            }
+        })
     }
 
     /**
@@ -73,8 +83,8 @@ class AllFragment : BaseFragment() {
      */
     private fun initMemesObserver() {
         memesViewModel.fetchMemes().observe(this, Observer {
-            allShimmer?.stopShimmerAnimation()
-            allShimmer?.visibility = View.GONE
+            homeShimmer?.stopShimmerAnimation()
+            homeShimmer?.visibility = View.GONE
             memesAdapter.submitList(it)
         })
     }
@@ -256,7 +266,21 @@ class AllFragment : BaseFragment() {
      * Function to get the current fragments RecyclerView
      */
     fun getRecyclerView(): RecyclerView {
-        return allRv
+        return homeRv
+    }
+
+    /**
+     * Function to set scrolling listener
+     */
+    fun setScrollingListener(listener: ScrollingMemesListener) {
+        this.scrollingListener = listener
+    }
+
+    /**
+     * Function to remove scrolling listener
+     */
+    fun removeScrollingListener() {
+        this.scrollingListener = null
     }
 }
 

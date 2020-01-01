@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,35 +8,47 @@
     android:background="@color/white"
     android:id="@+id/mainRoot">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/mainToolbar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/mainToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:actionBarStyle"
+            android:layout_alignParentTop="true"
+            android:background="@color/white"
+            android:theme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:titleTextColor="@color/textGray" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/layout_activity_main" />
+
+    <com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
+        android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?android:actionBarStyle"
-        android:layout_alignParentTop="true"
-        android:background="@color/white"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_scrollFlags="scroll|enterAlways|snap"
-        app:titleTextColor="@color/textGray"
-        android:elevation="0.5dp">
+        android:layout_gravity="bottom"
+        android:background="@color/colorPrimary"
+        app:labelVisibilityMode="unlabeled"
+        app:itemIconTint="@color/bottom_navigation_selector"
+        app:menu="@menu/menu_bottom_navigation"
+        app:elevation="5dp"
+        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"/>
 
-    </androidx.appcompat.widget.Toolbar>
-
-    <com.gelostech.nonswipableviewpager.NonSwipeableViewPager
-        android:id="@+id/mainViewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/mainToolbar"
-        android:layout_above="@id/bottomNav"
-        android:overScrollMode="never"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-    <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
-        android:id="@+id/bottomNav"
-        android:elevation="@dimen/no_elevation"
-        app:elevation="@dimen/no_elevation"
-        android:layout_width="match_parent"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addMeme"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"/>
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="12dp"
+        app:srcCompat="@drawable/ic_add_black_24dp"
+        app:elevation="16dp"
+        app:backgroundTint="@color/colorAccent"
+        app:tint="@android:color/white"/>
 
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

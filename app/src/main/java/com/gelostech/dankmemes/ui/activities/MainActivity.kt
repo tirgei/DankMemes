@@ -3,55 +3,51 @@ package com.gelostech.dankmemes.ui.activities
 import am.appwise.components.ni.NoInternetDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.SharedPreferences
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigation
-import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.ui.base.BaseActivity
-import com.gelostech.dankmemes.ui.fragments.AllFragment
+import com.gelostech.dankmemes.ui.callbacks.ScrollingMemesListener
+import com.gelostech.dankmemes.ui.fragments.HomeFragment
 import com.gelostech.dankmemes.ui.fragments.FavesFragment
 import com.gelostech.dankmemes.ui.fragments.NotificationsFragment
 import com.gelostech.dankmemes.ui.fragments.ProfileFragment
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
-import com.gelostech.dankmemes.utils.*
 import com.gelostech.dankmemes.utils.AppUtils.setDrawable
+import com.gelostech.dankmemes.utils.Constants
+import com.gelostech.dankmemes.utils.NotificationUtils
+import com.gelostech.dankmemes.utils.runDelayed
+import com.gelostech.dankmemes.utils.setDrawable
 import com.gelostech.pageradapter.PagerAdapter
 import com.google.firebase.messaging.FirebaseMessaging
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
-import com.wooplr.spotlight.SpotlightView
 import com.yarolegovich.slidingrootnav.SlidingRootNav
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.drawer_layout.*
+import kotlinx.android.synthetic.main.layout_activity_main.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 
-class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
-        AHBottomNavigation.OnNavigationPositionListener, ViewPager.OnPageChangeListener {
+class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
     private var doubleBackToExit = false
-    private var newMeme: MenuItem? = null
     private var editProfile: MenuItem? = null
     private lateinit var slidingDrawer: SlidingRootNav
     private lateinit var favesFragment: FavesFragment
     private lateinit var profileFragment: ProfileFragment
-    private lateinit var allFragment: AllFragment
+    private lateinit var homeFragment: HomeFragment
     private lateinit var notifFragment: NotificationsFragment
     private lateinit var noInternetDialog: NoInternetDialog
     private val usersViewModel: UsersViewModel by viewModel()
@@ -71,7 +67,7 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
 
         profileFragment = ProfileFragment()
         favesFragment = FavesFragment()
-        allFragment = AllFragment()
+        homeFragment = HomeFragment()
         notifFragment = NotificationsFragment()
 
         APP_NAME = getString(R.string.app_name)
@@ -82,7 +78,6 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         PLAY_STORE_LINK = getString(R.string.label_play_store_link) + this.packageName
 
         setupToolbar()
-        setupBottomNav()
         setupViewPager()
         setupDrawer()
 
@@ -97,39 +92,23 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         supportActionBar?.setDisplayShowHomeEnabled(true)
     }
 
-    //Setup the bottom navigation bar
-    private fun setupBottomNav() {
-        val homeIcon = setDrawable(this, Ionicons.Icon.ion_fireball, R.color.secondaryText, 18)
-        val collectionsIcon = setDrawable(this, Ionicons.Icon.ion_ios_heart, R.color.secondaryText, 18)
-        val notificationsIcon = setDrawable(this, Ionicons.Icon.ion_ios_bell, R.color.secondaryText, 18)
-        val profileIcon = setDrawable(this, FontAwesome.Icon.faw_user2, R.color.secondaryText, 18)
-
-        bottomNav.addItem(AHBottomNavigationItem(HOME, homeIcon))
-        bottomNav.addItem(AHBottomNavigationItem(FAVES, collectionsIcon))
-        bottomNav.addItem(AHBottomNavigationItem(NOTIFICATIONS, notificationsIcon))
-        bottomNav.addItem(AHBottomNavigationItem(PROFILE, profileIcon))
-
-        bottomNav.defaultBackgroundColor = ContextCompat.getColor(this, R.color.white)
-        bottomNav.inactiveColor = ContextCompat.getColor(this, R.color.inactiveColor)
-        bottomNav.accentColor = ContextCompat.getColor(this, R.color.colorAccent)
-        bottomNav.isBehaviorTranslationEnabled = false
-        bottomNav.titleState = AHBottomNavigation.TitleState.ALWAYS_HIDE
-        bottomNav.setUseElevation(true, 5f)
-
-        bottomNav.setOnTabSelectedListener(this)
-        bottomNav.setOnNavigationPositionListener(this)
-    }
-
     //Setup the main view pager
     private fun setupViewPager() {
         val adapter = PagerAdapter(supportFragmentManager, this)
 
-        adapter.addAllFragments(allFragment, favesFragment, notifFragment, profileFragment)
-        adapter.addAllTitles(HOME, FAVES, NOTIFICATIONS, PROFILE)
+        // Add empty fragment and title at the center to accommodate for the new meme FAB
+        adapter.addAllFragments(homeFragment, favesFragment, Fragment(), notifFragment, profileFragment)
+        adapter.addAllTitles(HOME, FAVES,"", NOTIFICATIONS, PROFILE)
 
         mainViewPager.adapter = adapter
         mainViewPager.addOnPageChangeListener(this)
-        mainViewPager.offscreenPageLimit = 3
+        mainViewPager.offscreenPageLimit = 4
+
+        bottomNavigation.setupWithViewPager(mainViewPager)
+        addMeme.setOnClickListener {
+            startActivity(Intent(this, PostActivity::class.java))
+            overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+        }
     }
 
     //Setup drawer
@@ -284,90 +263,28 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         })
     }
 
-    override fun onTabSelected(position: Int, wasSelected: Boolean): Boolean {
-        mainViewPager.setCurrentItem(position, true)
-        newMeme?.isVisible = position == 0
-        editProfile?.isVisible = position == 3
+    override fun onPageSelected(position: Int) {
+        editProfile?.isVisible = position == 4
 
         when(position) {
             0 -> supportActionBar?.title = APP_NAME
             1 -> supportActionBar?.title = FAVES
-            2 -> supportActionBar?.title = NOTIFICATIONS
-            3 -> supportActionBar?.title = PROFILE
+            3 -> supportActionBar?.title = NOTIFICATIONS
+            4 -> supportActionBar?.title = PROFILE
         }
-
-        try {
-            if (position == 0 && wasSelected) allFragment.getRecyclerView().smoothScrollToPosition(0)
-        } catch (e: Exception) {
-            Timber.e("Error scrolling to top: ${e.localizedMessage}")
-        }
-
-        return true
-    }
-
-    override fun onPositionChange(y: Int) {
-        mainViewPager?.setCurrentItem(y, true)
-    }
-
-    override fun onPageSelected(position: Int) {
-        bottomNav.currentItem = position
-    }
-
-    override fun onPageScrollStateChanged(state: Int) {
-
-    }
-
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-
-        newMeme = menu?.findItem(R.id.menu_add_meme)
         editProfile = menu?.findItem(R.id.menu_edit_profile)
 
         editProfile?.icon = setDrawable(this, Ionicons.Icon.ion_edit, R.color.textGray, 16)
-        newMeme?.icon = setDrawable(this, Ionicons.Icon.ion_image, R.color.textGray, 22)
-
-        Handler().post {
-            val view: View = findViewById(R.id.menu_add_meme)
-            showPostMemeTip(view)
-        }
 
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun showPostMemeTip(v: View) {
-        SpotlightView.Builder(this)
-                .introAnimationDuration(400)
-                .enableRevealAnimation(true)
-                .performClick(true)
-                .fadeinTextDuration(400)
-                .headingTvColor(Color.parseColor("#eb273f"))
-                .headingTvSize(32)
-                .headingTvText("Post Meme")
-                .subHeadingTvColor(Color.parseColor("#ffffff"))
-                .subHeadingTvSize(16)
-                .subHeadingTvText("Tap here to share your meme collection :)")
-                .maskColor(Color.parseColor("#dc000000"))
-                .target(v)
-                .lineAnimDuration(400)
-                .lineAndArcColor(Color.parseColor("#eb273f"))
-                .dismissOnTouch(true)
-                .dismissOnBackPress(true)
-                .enableDismissAfterShown(true)
-                .usageId("POST_MEME") //UNIQUE ID
-                .show()
-    }
-
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when(item?.itemId) {
-            R.id.menu_add_meme -> {
-                startActivity(Intent(this, PostActivity::class.java))
-                overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-            }
-
             R.id.menu_edit_profile -> {
                 startActivity(Intent(this, EditProfileActivity::class.java))
                 overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
@@ -377,10 +294,25 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         return true
     }
 
+    override fun onPause() {
+        super.onPause()
+        homeFragment.removeScrollingListener()
+    }
+
     override fun onResume() {
         super.onResume()
         drawerName.text = sessionManager.getUsername()
-        //refreshToken()
+        homeFragment.setScrollingListener(scrollingListener)
+    }
+
+    private val scrollingListener = object : ScrollingMemesListener {
+        override fun hideFab() {
+            addMeme.hide()
+        }
+
+        override fun showFab() {
+            addMeme.show()
+        }
     }
 
     override fun onBackPressed() {
@@ -405,5 +337,8 @@ class MainActivity : BaseActivity(), AHBottomNavigation.OnTabSelectedListener,
         super.onDestroy()
     }
 
+    // Unused methods
+    override fun onPageScrollStateChanged(state: Int) {}
+    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
 }

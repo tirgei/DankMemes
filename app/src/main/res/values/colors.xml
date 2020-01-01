@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#009688</color>
     <color name="colorAccent">#009688</color>
     <color name="colorPrimaryLight">#FFE0B2</color>
@@ -18,6 +18,10 @@
     <color name="timeColor">#A6616161</color>
     <color name="placeholder_bg">#dddddd</color>
     <color name="lightGray">#e6e6e6</color>
+
+    <color name="secondaryGray">#A0A9A6</color>
+
+    <color name="bottom_bar">@color/colorPrimary</color>
 
     <color name="darkWindowBackground">#33343B</color>
     <color name="lightWindowBackground">#F4F4F6</color>
