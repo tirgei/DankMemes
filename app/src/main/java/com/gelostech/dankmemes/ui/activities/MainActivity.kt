@@ -88,8 +88,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     //Setup the main toolbar
     private fun setupToolbar() {
         setSupportActionBar(mainToolbar)
-        supportActionBar?.title = getString(R.string.app_name)
+        supportActionBar?.title = null
         supportActionBar?.setDisplayShowHomeEnabled(true)
+        toolbarTitle.text = getString(R.string.app_name)
     }
 
     //Setup the main view pager
@@ -267,10 +268,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         editProfile?.isVisible = position == 4
 
         when(position) {
-            0 -> supportActionBar?.title = APP_NAME
-            1 -> supportActionBar?.title = FAVES
-            3 -> supportActionBar?.title = NOTIFICATIONS
-            4 -> supportActionBar?.title = PROFILE
+            0 -> toolbarTitle.text = APP_NAME
+            1 -> toolbarTitle.text = FAVES
+            3 -> toolbarTitle.text = NOTIFICATIONS
+            4 -> toolbarTitle.text = PROFILE
         }
     }
 

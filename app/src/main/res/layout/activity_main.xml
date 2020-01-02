@@ -18,11 +18,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="?android:actionBarStyle"
-            android:layout_alignParentTop="true"
             android:background="@color/white"
             android:theme="@style/ThemeOverlay.AppCompat.Light"
             app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:titleTextColor="@color/textGray" />
+            app:titleTextColor="@color/textGray">
+
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAllCaps="true"/>
+
+        </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

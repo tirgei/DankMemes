@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="no_elevation">0dp</dimen>
-    <dimen name="notif_icon">35dp</dimen>
+    <dimen name="notif_icon">40dp</dimen>
     <dimen name="notif_padding_v">15dp</dimen>
     <dimen name="notif_padding_h">10dp</dimen>
     <dimen name="featured_description">14sp</dimen>

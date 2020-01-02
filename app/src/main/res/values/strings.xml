@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">Dank Memes</string>
 
-    // Fragment titles
+    <!-- Fragment titles-->
     <string name="fragment_home">Home</string>
-    <string name="fragment_faves">Faves</string>
-    <string name="fragment_notifications">Notifs</string>
+    <string name="fragment_faves">Favorites</string>
+    <string name="fragment_notifications">Notifications</string>
     <string name="fragment_profile">Profile</string>
 
-    // Menu labels
+    <!-- Menu labels-->
     <string name="menu_save">Save</string>
     <string name="menu_share">Share</string>
     <string name="menu_delete">Delete</string>
@@ -15,7 +15,7 @@
     <string name="menu_post_meme">Post Meme</string>
     <string name="menu_edit_profile">Edit Profile</string>
 
-    // TextView labels
+    <!-- TextView labels-->
     <string name="label_member">Already have an account?</string>
     <string name="label_not_member">Not a member yet?</string>
     <string name="label_forgot_password">Forgot password?</string>
@@ -39,11 +39,11 @@
     <string name="label_invite_body">Ssup fam! Check out these fresh memes!!</string>
     <string name="label_dev_id">https://play.google.com/store/apps/developer?id=Gelos+Technologies</string>
 
-    // Buttons labels
+    <!-- Buttons labels-->
     <string name="button_login">Login</string>
     <string name="button_update_profile">Update Profile</string>
 
-    // EditText hints
+    <!-- EditText hints-->
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="hint_username">Username</string>
@@ -51,80 +51,25 @@
     <string name="hint_new_comment">Add new comment…</string>
     <string name="hint_caption">Write something…</string>
 
-    // Empty State labels
+    <!-- Empty State labels-->
     <string name="empty_comments">No Comments</string>
 
-    // Content Description
+    <!-- Content Description-->
     <string name="content_image">image</string>
     <string name="content_image_button">image button</string>
     <string name="content_select_meme">Select meme</string>
 
-    // Toolbar titles
+    <!-- Toolbar titles-->
     <string name="toolbar_edit_profile">Edit profile</string>
 
-    // Intent labels
+    <!-- Intent labels-->
     <string name="intent_invite_pals">Invite pals…</string>
     <string name="intent_dev_email">mailto: devtirgei@gmail.com</string>
     <string name="intent_send_feedback">Send feedback</string>
 
-    // Links
+    <!-- Links-->
     <string name="link_terms">https://sites.google.com/view/dankmemesapp/terms-and-conditions</string>
     <string name="link_privacy">https://sites.google.com/view/dankmemesapp/privacy-policy</string>
-
-<!--    <string name="profile">Profile</string>-->
-<!--    <string name="collections">Collections</string>-->
-<!--    <string name="faves">Favorites</string>-->
-<!--    <string name="date_picker">Date</string>-->
-<!--    <string name="settings">Settings</string>-->
-<!--    <string name="app_motto">Making life memeingful!</string>-->
-
-<!--    &lt;!&ndash; TODO: Remove or change this placeholder text &ndash;&gt;-->
-<!--    <string name="hello_blank_fragment">Hello blank fragment</string>-->
-<!--    <string name="faves_save_pic">Save</string>-->
-<!--    <string name="faves_share_pic">Share</string>-->
-<!--    <string name="faves_copy_link">Copy Link</string>-->
-<!--    <string name="app_faves_report">Report</string>-->
-<!--    <string name="more_options">Options...</string>-->
-<!--    <string name="enter_comment">Write a comment...</string>-->
-<!--    <string name="send_message">SEND</string>-->
-<!--    <string name="comment_title">Comments</string>-->
-<!--    <string name="new_meme">Upload Meme</string>-->
-<!--    <string name="invite_body"></string>-->
-<!--    <string name="play_store_link"></string>-->
-<!--    <string name="developer_id"></string>-->
-<!--    <string name="fave_item">Fave</string>-->
-<!--    <string name="like_post">Like</string>-->
-<!--    <string name="comment_post">Comment</string>-->
-<!--    <string name="remove_fave">Remove fave</string>-->
-
-<!--    <string name="image">image</string>-->
-<!--    <string name="fave">fave</string>-->
-<!--    <string name="my_posts">MY POSTS</string>-->
-<!--    <string name="posts">POSTS</string>-->
-<!--    <string name="followers">followers</string>-->
-<!--    <string name="following">following</string>-->
-<!--    <string name="select_meme">Select meme</string>-->
-<!--    <string name="add_new_comment">Add new comment...</string>-->
-<!--    <string name="not_a_member_yet">Not a member yet?</string>-->
-<!--    <string name="register">Register</string>-->
-<!--    <string name="login">Login</string>-->
-<!--    <string name="password">Password</string>-->
-<!--    <string name="email_address">Email address</string>-->
-<!--    <string name="already_have_an_account">Already have an account?</string>-->
-<!--    <string name="sign_up">SIGN UP</string>-->
-<!--    <string name="username">Username</string>-->
-<!--    <string name="confirm_password">Confirm password</string>-->
-<!--    <string name="forgot_password">Forgot password?</string>-->
-<!--    <string name="terms">Terms and Conditions</string>-->
-<!--    <string name="agree_to_terms">I accept the</string>-->
-<!--    <string name="button">button</string>-->
-<!--    <string name="edit_profile">Edit profile</string>-->
-<!--    <string name="set_avatar">Set profile picture…</string>-->
-<!--    <string name="bio">About me</string>-->
-<!--    <string name="update_profile">Update profile</string>-->
-<!--    <string name="new_user_bio"></string>-->
-<!--    <string name="POSTS">posts</string>-->
-
 
     <!-- mopub setup -->
     <string name="native_icon_image">native_icon_image</string>
