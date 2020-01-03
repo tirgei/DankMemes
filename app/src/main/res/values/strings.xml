@@ -9,7 +9,7 @@
 
     <!-- Menu labels-->
     <string name="menu_save">Save</string>
-    <string name="menu_share">Share</string>
+    <string name="menu_share">Share</string>30
     <string name="menu_delete">Delete</string>
     <string name="menu_report">Report</string>
     <string name="menu_post_meme">Post Meme</string>
@@ -22,7 +22,7 @@
     <string name="label_register">Register</string>
     <string name="label_sign_up">Sign Up</string>
     <string name="label_agree_to_terms">I accept the</string>
-    <string name="label_terms">Terms and Conditions</string>
+    <string name="label_terms">Terms &amp; Conditions</string>
     <string name="label_username">Username</string>
     <string name="label_bio">About Me</string>
     <string name="label_rate_app">Rate App</string>

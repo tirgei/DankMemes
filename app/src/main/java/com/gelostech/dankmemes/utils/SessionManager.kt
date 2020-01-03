@@ -2,9 +2,11 @@ package com.gelostech.dankmemes.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.appcompat.app.AppCompatDelegate
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.utils.PreferenceHelper.set
 import com.gelostech.dankmemes.utils.PreferenceHelper.get
+import timber.log.Timber
 
 class SessionManager (context: Context) {
     private val prefs: SharedPreferences = PreferenceHelper.defaultPrefs(context)
@@ -90,6 +92,21 @@ class SessionManager (context: Context) {
      */
     fun updateUser(key: String, value: String) {
         prefs[key] = value
+    }
+
+    /**
+     * Set Dark Mode
+     */
+    fun setDarkMode(mode: Int) {
+        Timber.e("Setting Dark Mode: $mode")
+        prefs[Constants.DARK_MODE] = mode
+    }
+
+    /**
+     * Get dark mode
+     */
+    fun themeMode(): Int {
+        return prefs[Constants.DARK_MODE, AppCompatDelegate.MODE_NIGHT_NO]
     }
 
     /**

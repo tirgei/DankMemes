@@ -1,9 +1,11 @@
 package com.gelostech.dankmemes
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
 import com.google.firebase.database.FirebaseDatabase
 import cat.ereza.customactivityoncrash.config.CaocConfig
 import com.gelostech.dankmemes.di.*
+import com.gelostech.dankmemes.utils.SessionManager
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
@@ -18,6 +20,9 @@ class DankMemes : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // Set theme
+        AppCompatDelegate.setDefaultNightMode(SessionManager(this).themeMode())
 
         // Initialize app
         if (FirebaseApp.getApps(this).isNullOrEmpty())

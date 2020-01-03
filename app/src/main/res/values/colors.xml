@@ -26,4 +26,21 @@
     <color name="darkWindowBackground">#33343B</color>
     <color name="lightWindowBackground">#F4F4F6</color>
 
+    <!-- Material Theme -->
+
+    <color name="color_primary">#6200ee</color>
+    <color name="color_primary_variant">#3700b3</color>
+    <color name="color_secondary">#03dac6</color>
+    <color name="color_secondary_variant">#018786</color>
+
+    <color name="color_background">#ffffff</color>
+    <color name="color_surface">#ffffff</color>
+    <color name="color_error">#b00020</color>
+
+    <color name="color_on_primary">#ffffff</color>
+    <color name="color_on_secondary">#000000</color>
+    <color name="color_on_background">#000000</color>
+    <color name="color_on_surface">#000000</color>
+    <color name="color_on_error">#ffffff</color>
+
 </resources>

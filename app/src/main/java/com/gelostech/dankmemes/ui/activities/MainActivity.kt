@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
@@ -27,6 +28,7 @@ import com.gelostech.dankmemes.utils.runDelayed
 import com.gelostech.dankmemes.utils.setDrawable
 import com.gelostech.pageradapter.PagerAdapter
 import com.google.firebase.messaging.FirebaseMessaging
+import com.jakewharton.processphoenix.ProcessPhoenix
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.yarolegovich.slidingrootnav.SlidingRootNav
@@ -38,12 +40,14 @@ import org.jetbrains.anko.alert
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 
 class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
     private var doubleBackToExit = false
     private var editProfile: MenuItem? = null
+    private var isDarkTheme = false
     private lateinit var slidingDrawer: SlidingRootNav
     private lateinit var favesFragment: FavesFragment
     private lateinit var profileFragment: ProfileFragment
@@ -76,6 +80,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         PROFILE = getString(R.string.fragment_profile)
         NOTIFICATIONS = getString(R.string.fragment_notifications)
         PLAY_STORE_LINK = getString(R.string.label_play_store_link) + this.packageName
+
+        // Check Dark Theme
+        isDarkTheme = sessionManager.themeMode() == AppCompatDelegate.MODE_NIGHT_YES
+        Timber.e("Dark Mode: $isDarkTheme")
 
         setupToolbar()
         setupViewPager()
@@ -129,6 +137,12 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
         drawerName.text = sessionManager.getUsername()
         drawerEmail.text = sessionManager.getEmail()
+
+        val themeIcon = when (isDarkTheme) {
+            true -> setDrawable(this, Ionicons.Icon.ion_ios_sunny, R.color.white, 25)
+            false -> setDrawable(this, Ionicons.Icon.ion_ios_moon, R.color.white, 22)
+        }
+        themeSwitch.setImageDrawable(themeIcon)
     }
 
     private fun setupDrawerIcons() {
@@ -224,6 +238,18 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
                     negativeButton("Cancel") {}
                 }.show()
             }, 300)
+        }
+
+        themeSwitch.setOnClickListener {
+            if (isDarkTheme) {
+                sessionManager.setDarkMode(AppCompatDelegate.MODE_NIGHT_NO)
+            } else {
+                sessionManager.setDarkMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+
+            runDelayed(500) {
+                ProcessPhoenix.triggerRebirth(this, Intent(this, LoginActivity::class.java))
+            }
         }
     }
 
