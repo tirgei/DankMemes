@@ -22,7 +22,6 @@
         android:layout_marginStart="20dp"
         android:layout_below="@id/drawerIcon"
         tools:text="Vincent Tirgei"
-        android:textColor="@color/white"
         android:textStyle="bold"
         android:textSize="@dimen/feed_text"/>
 
@@ -32,7 +31,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_below="@id/drawerName"
-        android:textColor="@color/white"
         android:textSize="@dimen/album_desc"
         tools:text="devtirgei@gmail.com"/>
 
@@ -48,7 +46,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
             android:text="@string/label_rate_app"/>
@@ -58,7 +55,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
             android:text="@string/label_share_app"/>
@@ -68,7 +64,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
             android:text="@string/label_feedback"/>
@@ -78,7 +73,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
             android:text="@string/label_terms"/>
@@ -88,7 +82,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
             android:text="@string/label_privacy_policy"/>
@@ -98,7 +91,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
             android:text="@string/label_more_apps"/>
@@ -115,7 +107,6 @@
             android:id="@+id/drawerLogout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
             app:layout_constraintTop_toTopOf="parent"

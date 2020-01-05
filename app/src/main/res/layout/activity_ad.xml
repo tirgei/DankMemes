@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activities.AdActivity"
-    android:background="@color/white">
+    android:background="@android:color/white">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -14,7 +14,7 @@
         style="?android:actionBarStyle"
         android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
-        app:titleTextColor="@color/textGray"
+        app:titleTextColor="@color/color_text"
         android:theme="@style/ThemeOverlay.AppCompat.Light"
         android:elevation="@dimen/no_elevation"/>
 

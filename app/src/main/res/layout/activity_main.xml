@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.activities.MainActivity"
-    android:background="@color/white"
     android:id="@+id/mainRoot">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,10 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="?android:actionBarStyle"
-            android:background="@color/white"
-            android:theme="@style/ThemeOverlay.AppCompat.Light"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:titleTextColor="@color/textGray">
+            app:layout_scrollFlags="scroll|enterAlways|snap">
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -41,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/colorPrimary"
+        android:background="@color/color_primary"
         app:labelVisibilityMode="unlabeled"
         app:itemIconTint="@color/bottom_navigation_selector"
         app:menu="@menu/menu_bottom_navigation"
@@ -56,7 +52,7 @@
         android:layout_marginBottom="12dp"
         app:srcCompat="@drawable/ic_add_black_24dp"
         app:elevation="16dp"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="@color/color_secondary"
         app:tint="@android:color/white"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

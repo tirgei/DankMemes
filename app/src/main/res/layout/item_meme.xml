@@ -63,7 +63,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/feed_user"
                     android:textStyle="bold"
-                    android:textColor="@color/textGray"
                     tools:text="Vincent Tirgei"
                     bind:text="@{meme.memePoster}"
                     android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"/>
@@ -72,7 +71,6 @@
                     android:id="@+id/memeTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/timeColor"
                     android:textSize="@dimen/notif_time"
                     android:layout_marginTop="1dp"
                     tools:text="3 minutes ago"
@@ -102,7 +100,6 @@
             android:ellipsize="end"
             android:layout_below="@id/memeTop"
             android:layout_marginTop="10dp"
-            android:textColor="@color/textGray"
             android:textSize="@dimen/feed_user"
             tools:text="Do y'all agree with this?"
             bind:visibility="@{meme.caption != null &amp;&amp; meme.caption != `` &amp;&amp; meme.caption != ` `}"

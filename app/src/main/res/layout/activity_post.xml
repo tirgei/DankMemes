@@ -5,25 +5,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.PostActivity"
-    android:background="@color/white">
+    tools:context=".ui.activities.PostActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/postToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?android:actionBarStyle"
-        android:layout_alignParentTop="true"
-        android:background="@color/white"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
-        app:titleTextColor="@color/textGray"
-        android:elevation="@dimen/no_elevation"/>
+        android:layout_alignParentTop="true"/>
 
     <EditText
         android:id="@+id/postCaption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:padding="20dp"
         android:layout_below="@id/postToolbar"
         android:textSize="15sp"

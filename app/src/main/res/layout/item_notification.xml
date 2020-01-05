@@ -51,7 +51,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/description"
-            android:textColor="@color/timeColor"
             android:layout_marginStart="10dp"
             android:layout_toEndOf="@id/avatar"
             android:textSize="@dimen/notif_time"

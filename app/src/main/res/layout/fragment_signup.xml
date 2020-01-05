@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragments.SignupFragment"
-    android:background="@color/white"
     android:fillViewport="true">
 
    <RelativeLayout
@@ -20,7 +19,6 @@
            android:layout_marginTop="10dp"
            android:textSize="20sp"
            android:text="@string/label_sign_up"
-           android:textColor="@color/textGray"
            android:textAllCaps="true"
            android:textStyle="bold"/>
 
@@ -101,8 +99,8 @@
                android:layout_height="wrap_content"
                android:background="@drawable/button_solid"
                android:text="@string/label_sign_up"
-               android:textColor="@color/white"
-               app:spinning_bar_color="@color/white"
+               android:textColor="@android:color/white"
+               app:spinning_bar_color="@android:color/white"
                app:spinning_bar_width="4dp"
                app:spinning_bar_padding="2dp"
                android:layout_gravity="center_horizontal"/>
@@ -124,7 +122,6 @@
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:text="@string/label_agree_to_terms"
-                   android:textColor="@color/secondaryText"
                    android:textSize="13sp"
                    android:layout_marginEnd="5dp"/>
 
@@ -133,7 +130,7 @@
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:text="@string/label_terms"
-                   android:textColor="@color/colorAccent"
+                   android:textColor="@color/color_secondary"
                    android:textSize="13sp"
                    android:textStyle="bold" />
 
@@ -156,10 +153,8 @@
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:text="@string/label_member"
-               android:textColor="@color/secondaryText"
                android:textSize="13sp"
-               android:layout_marginEnd="5dp"
-               android:layout_marginRight="5dp"/>
+               android:layout_marginEnd="5dp"/>
 
            <TextView
                android:id="@+id/signupLogin"
@@ -168,7 +163,7 @@
                android:text="@string/button_login"
                android:textStyle="bold"
                android:textSize="15sp"
-               android:textColor="@color/colorAccent"/>
+               android:textColor="@color/color_secondary"/>
 
        </LinearLayout>
 

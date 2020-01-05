@@ -4,19 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.EditProfileActivity"
-    android:background="@color/white">
+    tools:context=".ui.activities.EditProfileActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/editProfileToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?android:actionBarStyle"
         android:layout_alignParentTop="true"
-        android:background="@android:color/transparent"
-        app:titleTextColor="@color/textGray"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
-        android:elevation="@dimen/no_elevation"/>
+        android:theme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -58,7 +53,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_username"
-                android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="@dimen/album_desc"
                 android:layout_marginStart="10dp"/>
@@ -68,7 +62,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:background="@color/white"
                 android:textSize="@dimen/album_title"
                 android:inputType="text"
                 android:hint="@string/hint_username"/>
@@ -77,7 +70,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_bio"
-                android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="@dimen/album_desc"
                 android:layout_marginStart="10dp"
@@ -88,7 +80,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:background="@color/white"
                 android:textSize="@dimen/album_title"
                 android:inputType="textMultiLine"
                 android:hint="@string/label_bio"/>
@@ -100,8 +91,7 @@
                 android:layout_marginTop="20dp"
                 android:background="@drawable/button_solid"
                 android:text="@string/button_update_profile"
-                android:textColor="@color/white"
-                app:spinning_bar_color="@color/white"
+                app:spinning_bar_color="@android:color/white"
                 app:spinning_bar_width="4dp"
                 app:spinning_bar_padding="2dp"
                 android:layout_gravity="center_horizontal"/>

@@ -52,14 +52,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/feed_user"
-                android:textColor="@color/textGray"
                 android:text="@{comment.userName}"/>
 
             <TextView
                 android:id="@+id/commentText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/secondaryText"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:textSize="@dimen/album_title"
@@ -70,7 +68,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="11sp"
-                android:textColor="@color/secondaryText"
                 android:text="@{timeFormatter.getTimeStamp(safeUnbox(comment.timeStamp))}"/>
 
         </LinearLayout>

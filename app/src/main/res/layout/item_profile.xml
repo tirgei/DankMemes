@@ -49,7 +49,6 @@
                 android:id="@+id/profileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/textGray"
                 tools:text="Vincent Tirgei"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -59,7 +58,6 @@
                 android:id="@+id/profileBio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/secondaryText"
                 android:textSize="14sp"
                 android:text="@{user.userBio}"
                 tools:text="Here's some random brief summary about me :)"/>

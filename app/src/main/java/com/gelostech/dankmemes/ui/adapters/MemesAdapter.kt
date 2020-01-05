@@ -112,11 +112,11 @@ class MemesAdapter(private val callback: MemesCallback): PagedListAdapter<ItemVi
 
         init {
             binding.memeMore.apply {
-                setImageDrawable(AppUtils.setDrawable(this.context, Ionicons.Icon.ion_android_more_vertical, R.color.secondaryText, 14))
+                setImageDrawable(AppUtils.setDrawable(this.context, Ionicons.Icon.ion_android_more_vertical, R.color.color_text, 14))
             }
 
             binding.memeComment.apply {
-                this.setDrawable(AppUtils.setDrawable(this.context, Ionicons.Icon.ion_ios_chatboxes_outline, R.color.secondaryText, 20))
+                this.setDrawable(AppUtils.setDrawable(this.context, Ionicons.Icon.ion_ios_chatboxes_outline, R.color.color_text, 20))
             }
         }
 

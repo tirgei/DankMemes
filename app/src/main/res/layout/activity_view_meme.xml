@@ -23,7 +23,6 @@
             android:id="@+id/memeCaptionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
             android:gravity="center_horizontal"
             tools:text="Some random caption"
             android:layout_marginTop="60dp"

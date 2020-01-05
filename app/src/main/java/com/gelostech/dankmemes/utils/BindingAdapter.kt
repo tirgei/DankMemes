@@ -59,13 +59,13 @@ object BindingAdapter : KoinComponent {
         likes?.let {
             when (likes.containsKey(myUserId)) {
                 true -> {
-                    view.setDrawable(AppUtils.setDrawable(context, FontAwesome.Icon.faw_thumbs_up2, R.color.colorAccent, 20))
+                    view.setDrawable(AppUtils.setDrawable(context, FontAwesome.Icon.faw_thumbs_up2, R.color.color_secondary, 20))
                     view.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
                 }
 
                 else -> {
-                    view.setDrawable(AppUtils.setDrawable(context, FontAwesome.Icon.faw_thumbs_up, R.color.secondaryText, 20))
-                    view.setTextColor(ContextCompat.getColor(context, R.color.textGray))
+                    view.setDrawable(AppUtils.setDrawable(context, FontAwesome.Icon.faw_thumbs_up, R.color.color_text, 20))
+                    view.setTextColor(ContextCompat.getColor(context, R.color.color_text))
                 }
             }
         }
@@ -81,9 +81,9 @@ object BindingAdapter : KoinComponent {
 
         faves?.let {
             if (!faves.containsKey(myUserId))
-                view.setImageDrawable(AppUtils.setDrawable(context, Ionicons.Icon.ion_ios_heart_outline, R.color.secondaryText, 19))
+                view.setImageDrawable(AppUtils.setDrawable(context, Ionicons.Icon.ion_ios_heart_outline, R.color.color_text, 19))
             else
-                view.setImageDrawable(AppUtils.setDrawable(context, Ionicons.Icon.ion_ios_heart, R.color.pink, 19))
+                view.setImageDrawable(AppUtils.setDrawable(context, Ionicons.Icon.ion_ios_heart, R.color.color_favorite, 19))
         }
     }
 

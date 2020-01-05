@@ -4,8 +4,7 @@
     xmlns:shimmer="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.HomeFragment"
-    android:background="@color/white">
+    tools:context=".ui.fragments.HomeFragment">
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/homeShimmer"

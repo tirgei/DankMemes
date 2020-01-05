@@ -10,12 +10,8 @@
         android:id="@+id/commentToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?android:actionBarStyle"
         android:layout_alignParentTop="true"
-        android:background="@color/white"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
-        app:titleTextColor="@color/textGray"
-        android:elevation="0.5dp"/>
+        android:theme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <ProgressBar
         android:id="@+id/loading"
@@ -30,8 +26,7 @@
         android:layout_above="@id/commentDivider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:background="@color/white"/>
+        android:overScrollMode="never"/>
 
     <RelativeLayout
         android:id="@+id/commentsEmptyState"
@@ -53,7 +48,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/secondaryText"
             android:layout_below="@id/commentsEmptyStateImage"
             android:text="@string/empty_comments"/>
 
@@ -63,8 +57,7 @@
         android:id="@+id/commentDivider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_above="@id/addCommentLayout"
-        android:background="@color/lightGray"/>
+        android:layout_above="@id/addCommentLayout"/>
 
     <RelativeLayout
         android:id="@+id/addCommentLayout"
@@ -79,7 +72,6 @@
             android:padding="10dp"
             android:maxLines="5"
             android:gravity="center_vertical"
-            android:background="@color/white"
             android:hint="@string/hint_new_comment"
             android:textSize="14sp"
             android:layout_toStartOf="@id/sendCommentLayout"
@@ -94,7 +86,6 @@
                 android:id="@+id/sendComment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
                 android:contentDescription="@string/content_image"/>
 
         </com.gelostech.dankmemes.utils.SquareLayout>
