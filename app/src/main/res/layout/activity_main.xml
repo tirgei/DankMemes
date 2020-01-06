@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.activities.MainActivity"
-    android:id="@+id/mainRoot">
+    android:id="@+id/mainRoot"
+    android:background="@color/color_primary">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
@@ -17,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="?android:actionBarStyle"
+            android:background="@color/color_primary_variant"
             app:layout_scrollFlags="scroll|enterAlways|snap">
 
             <TextView
@@ -24,6 +26,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textColor="@color/color_text_primary"
+                android:textSize="16sp"
                 android:textAllCaps="true"/>
 
         </androidx.appcompat.widget.Toolbar>

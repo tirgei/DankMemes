@@ -298,6 +298,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
             1 -> toolbarTitle.text = FAVES
             3 -> toolbarTitle.text = NOTIFICATIONS
             4 -> toolbarTitle.text = PROFILE
+//            0 -> supportActionBar?.title = APP_NAME
+//            1 -> supportActionBar?.title = FAVES
+//            3 -> supportActionBar?.title = NOTIFICATIONS
+//            4 -> supportActionBar?.title = PROFILE
         }
     }
 
@@ -305,7 +309,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         menuInflater.inflate(R.menu.menu_main, menu)
         editProfile = menu?.findItem(R.id.menu_edit_profile)
 
-        editProfile?.icon = setDrawable(this, Ionicons.Icon.ion_edit, R.color.color_text, 16)
+        editProfile?.icon = setDrawable(this, Ionicons.Icon.ion_edit, R.color.color_text_primary, 16)
 
         return super.onCreateOptionsMenu(menu)
     }

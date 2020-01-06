@@ -27,7 +27,8 @@
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
         android:padding="10dp"
-        android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}">
+        android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"
+        android:background="@color/color_primary">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -65,7 +66,8 @@
                     android:textStyle="bold"
                     tools:text="Vincent Tirgei"
                     bind:text="@{meme.memePoster}"
-                    android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"/>
+                    android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"
+                    android:textColor="@color/color_text_primary"/>
 
                 <TextView
                     android:id="@+id/memeTime"
@@ -74,7 +76,8 @@
                     android:textSize="@dimen/notif_time"
                     android:layout_marginTop="1dp"
                     tools:text="3 minutes ago"
-                    bind:text="@{timeFormatter.getTimeStamp(safeUnbox(meme.time))}"/>
+                    bind:text="@{timeFormatter.getTimeStamp(safeUnbox(meme.time))}"
+                    android:textColor="@color/color_text_secondary"/>
 
             </LinearLayout>
 
@@ -103,7 +106,8 @@
             android:textSize="@dimen/feed_user"
             tools:text="Do y'all agree with this?"
             bind:visibility="@{meme.caption != null &amp;&amp; meme.caption != `` &amp;&amp; meme.caption != ` `}"
-            android:text="@{meme.caption}"/>
+            android:text="@{meme.caption}"
+            android:textColor="@color/color_text_primary"/>
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/memeImage"
@@ -144,7 +148,8 @@
                 tools:text="2 likes"
                 bind:likeStatus="@{meme.likes}"
                 android:text="@{(meme.likesCount > 0 ? meme.likesCount + ` ` : ``) + (meme.likesCount > 1 ? `likes` : `like`)}"
-                android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"/>
+                android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"
+                android:textColor="@color/color_text_secondary"/>
 
             <TextView
                 android:id="@+id/memeComment"
@@ -159,7 +164,8 @@
                 android:gravity="center_vertical"
                 tools:text="34 comments"
                 android:text="@{(meme.commentsCount > 0 ? meme.commentsCount + ` ` : ``) + (meme.commentsCount > 1 ? `comments` : `comment`)}"
-                android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"/>
+                android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"
+                android:textColor="@color/color_text_secondary"/>
 
             <ImageButton
                 android:id="@+id/memeFave"

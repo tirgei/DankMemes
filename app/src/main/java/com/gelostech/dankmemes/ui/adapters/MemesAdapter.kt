@@ -2,7 +2,6 @@ package com.gelostech.dankmemes.ui.adapters
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
-import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -112,11 +111,11 @@ class MemesAdapter(private val callback: MemesCallback): PagedListAdapter<ItemVi
 
         init {
             binding.memeMore.apply {
-                setImageDrawable(AppUtils.setDrawable(this.context, Ionicons.Icon.ion_android_more_vertical, R.color.color_text, 14))
+                setImageDrawable(AppUtils.setDrawable(this.context, Ionicons.Icon.ion_android_more_vertical, R.color.color_text_secondary, 14))
             }
 
             binding.memeComment.apply {
-                this.setDrawable(AppUtils.setDrawable(this.context, Ionicons.Icon.ion_ios_chatboxes_outline, R.color.color_text, 20))
+                this.setDrawable(AppUtils.setDrawable(this.context, Ionicons.Icon.ion_ios_chatboxes_outline, R.color.color_text_secondary, 20))
             }
         }
 

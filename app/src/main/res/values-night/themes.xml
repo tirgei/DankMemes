@@ -4,6 +4,7 @@
     <style name="DankTheme" parent="Base.MaterialThemeBuilder">
         <!-- Status Bar -->
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/color_primary_variant</item>
     </style>
 
 </resources>

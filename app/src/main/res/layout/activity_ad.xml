@@ -14,7 +14,7 @@
         style="?android:actionBarStyle"
         android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
-        app:titleTextColor="@color/color_text"
+        app:titleTextColor="@color/color_text_primary"
         android:theme="@style/ThemeOverlay.AppCompat.Light"
         android:elevation="@dimen/no_elevation"/>
 

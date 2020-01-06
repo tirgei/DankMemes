@@ -19,7 +19,6 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_post.*
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -51,7 +50,7 @@ class PostActivity : BaseActivity() {
             title = "Post new meme"
         }
 
-        postAddImage.setImageDrawable(AppUtils.setDrawable(this, Ionicons.Icon.ion_image, R.color.color_text, 65))
+        postAddImage.setImageDrawable(AppUtils.setDrawable(this, Ionicons.Icon.ion_image, R.color.color_text_primary, 65))
         postAddImage.setOnClickListener {
             AppUtils.requestStoragePermission(this) { granted ->
                 if (granted) {
