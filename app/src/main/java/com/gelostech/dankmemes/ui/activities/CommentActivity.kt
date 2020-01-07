@@ -54,12 +54,12 @@ class CommentActivity : BaseActivity() {
         supportActionBar?.apply {
             setDisplayShowHomeEnabled(true)
             setDisplayHomeAsUpEnabled(true)
-            title = "Comments"
+            title = null
         }
 
         sendComment.setImageDrawable(IconicsDrawable(this)
                 .icon(FontAwesome.Icon.faw_paper_plane)
-                .color(ContextCompat.getColor(this, R.color.colorAccent))
+                .color(ContextCompat.getColor(this, R.color.color_secondary))
                 .sizeDp(22))
 
         commentsAdapter = CommentAdapter(commentsCallback)

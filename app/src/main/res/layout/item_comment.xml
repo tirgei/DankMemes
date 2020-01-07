@@ -52,6 +52,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/feed_user"
+                android:textColor="@color/color_text_primary"
+                android:textStyle="bold"
                 android:text="@{comment.userName}"/>
 
             <TextView
@@ -60,13 +62,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
-                android:textSize="@dimen/album_title"
+                android:textSize="15sp"
+                android:textColor="@color/color_text_primary"
                 android:text="@{comment.comment}"/>
 
             <TextView
                 android:id="@+id/commentTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/color_text_secondary"
                 android:textSize="11sp"
                 android:text="@{timeFormatter.getTimeStamp(safeUnbox(comment.timeStamp))}"/>
 

@@ -61,6 +61,7 @@
 
     <!-- Toolbar titles-->
     <string name="toolbar_edit_profile">Edit profile</string>
+    <string name="toolbar_comments">Comments</string>
 
     <!-- Intent labels-->
     <string name="intent_invite_pals">Invite pals…</string>

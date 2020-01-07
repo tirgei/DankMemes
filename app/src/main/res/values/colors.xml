@@ -33,7 +33,8 @@
     <color name="color_secondary">#009688</color>
     <color name="color_secondary_variant">#03DAC5</color>
 
-    <color name="color_background">#FEFEFE</color>
+    <color name="color_background">@color/color_primary</color>
+    <color name="color_background_variant">#F5F5F5</color>
     <color name="color_surface">@android:color/white</color>
     <color name="color_error">#b00020</color>
 
@@ -46,6 +47,7 @@
     <!-- Other colors -->
     <color name="black">@android:color/black</color>
     <color name="white">@android:color/white</color>
+    <color name="transparent">@android:color/transparent</color>
     <color name="color_feed_divider">#CCe0e0e0</color>
     <color name="color_text_primary">#353858</color>
     <color name="color_text_secondary">#9497AB</color>

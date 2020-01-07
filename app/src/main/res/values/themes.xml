@@ -28,6 +28,7 @@
         <item name="android:statusBarColor" tools:targetApi="lollipop">@color/color_primary_variant</item>
 
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="colorControlNormal">@color/color_text_primary</item>
         <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog</item>
 
     </style>
