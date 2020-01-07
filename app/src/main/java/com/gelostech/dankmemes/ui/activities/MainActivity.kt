@@ -309,7 +309,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         menuInflater.inflate(R.menu.menu_main, menu)
         editProfile = menu?.findItem(R.id.menu_edit_profile)
 
-        editProfile?.icon = setDrawable(this, Ionicons.Icon.ion_edit, R.color.color_text_primary, 16)
+        editProfile?.icon = setDrawable(this, Ionicons.Icon.ion_edit, R.color.color_text_secondary, 16)
 
         return super.onCreateOptionsMenu(menu)
     }

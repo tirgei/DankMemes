@@ -26,11 +26,19 @@
         <item name="android:statusBarColor" tools:targetApi="lollipop">@color/color_primary_variant</item>
 
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog</item>
 
     </style>
 
+    <!-- Drawer Icon color -->
     <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
         <item name="color">@color/color_text_primary</item>
+    </style>
+
+    <!-- BottomSheet style -->
+    <style name="BottomSheet.StyleDialog" parent="BottomSheet.Dialog">
+        <item name="android:textColorPrimary">@color/color_text_primary</item>
+
     </style>
 
 </resources>
