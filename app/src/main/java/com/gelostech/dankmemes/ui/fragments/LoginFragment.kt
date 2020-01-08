@@ -14,10 +14,10 @@ import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.AppUtils
-import com.gelostech.dankmemes.utils.AppUtils.setDrawable
+import com.gelostech.dankmemes.utils.AppUtils.getDrawable
 import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.replaceFragment
-import com.gelostech.dankmemes.utils.setDrawable
+import com.gelostech.dankmemes.utils.getDrawable
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
@@ -50,8 +50,8 @@ class LoginFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loginEmail.setDrawable(setDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.color_text_primary, 18))
-        loginPassword.setDrawable(setDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
+        loginEmail.getDrawable(getDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.color_text_primary, 18))
+        loginPassword.getDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
         googleLogin.setSize(SignInButton.SIZE_WIDE)
 
         loginRegister.setOnClickListener {

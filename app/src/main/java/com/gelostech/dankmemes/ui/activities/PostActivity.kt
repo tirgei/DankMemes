@@ -50,7 +50,7 @@ class PostActivity : BaseActivity() {
             title = "Post new meme"
         }
 
-        postAddImage.setImageDrawable(AppUtils.setDrawable(this, Ionicons.Icon.ion_image, R.color.color_text_primary, 65))
+        postAddImage.setImageDrawable(AppUtils.getDrawable(this, Ionicons.Icon.ion_image, R.color.color_text_primary, 65))
         postAddImage.setOnClickListener {
             AppUtils.requestStoragePermission(this) { granted ->
                 if (granted) {
@@ -135,7 +135,7 @@ class PostActivity : BaseActivity() {
         menuInflater.inflate(R.menu.menu_post_meme, menu)
 
         uploadMeme = menu?.findItem(R.id.menu_post)
-        uploadMeme?.icon = AppUtils.setDrawable(this, Ionicons.Icon.ion_android_send, R.color.colorAccent, 20)
+        uploadMeme?.icon = AppUtils.getDrawable(this, Ionicons.Icon.ion_android_send, R.color.colorAccent, 20)
 
         return super.onCreateOptionsMenu(menu)
     }

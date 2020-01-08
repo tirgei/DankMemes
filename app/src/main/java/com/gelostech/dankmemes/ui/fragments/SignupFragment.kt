@@ -16,7 +16,7 @@ import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.*
-import com.gelostech.dankmemes.utils.AppUtils.setDrawable
+import com.gelostech.dankmemes.utils.AppUtils.getDrawable
 import com.google.firebase.iid.FirebaseInstanceId
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
@@ -45,10 +45,10 @@ class SignupFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        signupUsername.setDrawable(setDrawable(activity!!, Ionicons.Icon.ion_person, R.color.color_text_primary, 18))
-        signupEmail.setDrawable(setDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.color_text_primary, 18))
-        signupPassword.setDrawable(setDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
-        signupConfirmPassword.setDrawable(setDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
+        signupUsername.getDrawable(getDrawable(activity!!, Ionicons.Icon.ion_person, R.color.color_text_primary, 18))
+        signupEmail.getDrawable(getDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.color_text_primary, 18))
+        signupPassword.getDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
+        signupConfirmPassword.getDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
 
         initRegisterObserver()
         initUserObserver()

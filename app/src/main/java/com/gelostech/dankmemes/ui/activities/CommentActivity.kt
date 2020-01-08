@@ -20,7 +20,10 @@ import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.data.models.Comment
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.ui.callbacks.CommentsCallback
+import com.gelostech.dankmemes.ui.callbacks.EditTextCallback
+import com.gelostech.dankmemes.ui.callbacks.EditTextListener
 import com.gelostech.dankmemes.ui.viewmodels.CommentsViewModel
+import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.hideView
 import com.gelostech.dankmemes.utils.showView
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
@@ -57,10 +60,18 @@ class CommentActivity : BaseActivity() {
             title = null
         }
 
-        sendComment.setImageDrawable(IconicsDrawable(this)
-                .icon(FontAwesome.Icon.faw_paper_plane)
-                .color(ContextCompat.getColor(this, R.color.color_secondary))
-                .sizeDp(22))
+        val disabledSendIcon = AppUtils.getDrawable(this, FontAwesome.Icon.faw_paper_plane, R.color.color_secondary_variant, 22)
+        val enabledSendIcon = AppUtils.getDrawable(this, FontAwesome.Icon.faw_paper_plane, R.color.color_secondary, 22)
+
+        sendComment.setImageDrawable(disabledSendIcon)
+        commentET.addTextChangedListener(EditTextListener(object : EditTextCallback {
+            override fun onTextChanged(text: String) {
+                if (text.isEmpty())
+                    sendComment.setImageDrawable(disabledSendIcon)
+                else
+                    sendComment.setImageDrawable(enabledSendIcon)
+            }
+        }))
 
         commentsAdapter = CommentAdapter(commentsCallback)
 

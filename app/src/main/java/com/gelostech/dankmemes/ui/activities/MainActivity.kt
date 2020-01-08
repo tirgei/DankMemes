@@ -21,11 +21,11 @@ import com.gelostech.dankmemes.ui.fragments.FavesFragment
 import com.gelostech.dankmemes.ui.fragments.NotificationsFragment
 import com.gelostech.dankmemes.ui.fragments.ProfileFragment
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
-import com.gelostech.dankmemes.utils.AppUtils.setDrawable
+import com.gelostech.dankmemes.utils.AppUtils.getDrawable
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.NotificationUtils
 import com.gelostech.dankmemes.utils.runDelayed
-import com.gelostech.dankmemes.utils.setDrawable
+import com.gelostech.dankmemes.utils.getDrawable
 import com.gelostech.pageradapter.PagerAdapter
 import com.google.firebase.messaging.FirebaseMessaging
 import com.jakewharton.processphoenix.ProcessPhoenix
@@ -139,20 +139,20 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         drawerEmail.text = sessionManager.getEmail()
 
         val themeIcon = when (isDarkTheme) {
-            true -> setDrawable(this, Ionicons.Icon.ion_ios_sunny, R.color.white, 25)
-            false -> setDrawable(this, Ionicons.Icon.ion_ios_moon, R.color.white, 22)
+            true -> getDrawable(this, Ionicons.Icon.ion_ios_sunny, R.color.white, 25)
+            false -> getDrawable(this, Ionicons.Icon.ion_ios_moon, R.color.white, 22)
         }
         themeSwitch.setImageDrawable(themeIcon)
     }
 
     private fun setupDrawerIcons() {
-        drawerRate.setDrawable(setDrawable(this, Ionicons.Icon.ion_ios_star, R.color.white, 18))
-        drawerShare.setDrawable(setDrawable(this, Ionicons.Icon.ion_android_share, R.color.white, 18))
-        drawerFeedback.setDrawable(setDrawable(this, Ionicons.Icon.ion_ios_email, R.color.white, 18))
-        drawerTerms.setDrawable(setDrawable(this, Ionicons.Icon.ion_clipboard, R.color.white, 18))
-        drawerPolicy.setDrawable(setDrawable(this, Ionicons.Icon.ion_ios_list, R.color.white, 18))
-        drawerLogout.setDrawable(setDrawable(this, Ionicons.Icon.ion_log_out, R.color.white, 18))
-        drawerMoreApps.setDrawable(setDrawable(this, FontAwesome.Icon.faw_google_play, R.color.white, 18))
+        drawerRate.getDrawable(getDrawable(this, Ionicons.Icon.ion_ios_star, R.color.white, 18))
+        drawerShare.getDrawable(getDrawable(this, Ionicons.Icon.ion_android_share, R.color.white, 18))
+        drawerFeedback.getDrawable(getDrawable(this, Ionicons.Icon.ion_ios_email, R.color.white, 18))
+        drawerTerms.getDrawable(getDrawable(this, Ionicons.Icon.ion_clipboard, R.color.white, 18))
+        drawerPolicy.getDrawable(getDrawable(this, Ionicons.Icon.ion_ios_list, R.color.white, 18))
+        drawerLogout.getDrawable(getDrawable(this, Ionicons.Icon.ion_log_out, R.color.white, 18))
+        drawerMoreApps.getDrawable(getDrawable(this, FontAwesome.Icon.faw_google_play, R.color.white, 18))
     }
 
     private fun drawerClickListeners() {
@@ -309,7 +309,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         menuInflater.inflate(R.menu.menu_main, menu)
         editProfile = menu?.findItem(R.id.menu_edit_profile)
 
-        editProfile?.icon = setDrawable(this, Ionicons.Icon.ion_edit, R.color.color_text_secondary, 16)
+        editProfile?.icon = getDrawable(this, Ionicons.Icon.ion_edit, R.color.color_text_secondary, 16)
 
         return super.onCreateOptionsMenu(menu)
     }

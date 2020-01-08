@@ -17,7 +17,7 @@ import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.inflate
-import com.gelostech.dankmemes.utils.setDrawable
+import com.gelostech.dankmemes.utils.getDrawable
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -111,11 +111,11 @@ class MemesAdapter(private val callback: MemesCallback): PagedListAdapter<ItemVi
 
         init {
             binding.memeMore.apply {
-                setImageDrawable(AppUtils.setDrawable(this.context, Ionicons.Icon.ion_android_more_vertical, R.color.color_text_secondary, 14))
+                setImageDrawable(AppUtils.getDrawable(this.context, Ionicons.Icon.ion_android_more_vertical, R.color.color_text_secondary, 14))
             }
 
             binding.memeComment.apply {
-                this.setDrawable(AppUtils.setDrawable(this.context, Ionicons.Icon.ion_ios_chatboxes_outline, R.color.color_text_secondary, 20))
+                this.getDrawable(AppUtils.getDrawable(this.context, Ionicons.Icon.ion_ios_chatboxes_outline, R.color.color_text_secondary, 20))
             }
         }
 

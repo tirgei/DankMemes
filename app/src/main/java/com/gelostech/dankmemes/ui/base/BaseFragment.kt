@@ -54,7 +54,7 @@ open class BaseFragment : Fragment() {
      */
     fun proceedToMainActivity(user: User, button: CircularProgressButton) {
         // Set progress icon status
-        val successIcon = AppUtils.setDrawable(activity!!, Ionicons.Icon.ion_checkmark_round, R.color.white, 25)
+        val successIcon = AppUtils.getDrawable(activity!!, Ionicons.Icon.ion_checkmark_round, R.color.white, 25)
         val successfulButtonIcon: Bitmap = AppUtils.drawableToBitmap(successIcon)
         button.doneLoadingAnimation(AppUtils.getColor(activity!!, R.color.color_favorite), successfulButtonIcon)
 

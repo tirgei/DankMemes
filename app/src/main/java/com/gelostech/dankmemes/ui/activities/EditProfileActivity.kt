@@ -52,7 +52,7 @@ class EditProfileActivity : BaseActivity() {
             setDisplayHomeAsUpEnabled(true)
         }
 
-        editProfilePickImage.setImageDrawable(AppUtils.setDrawable(this, Ionicons.Icon.ion_camera, R.color.white, 18))
+        editProfilePickImage.setImageDrawable(AppUtils.getDrawable(this, Ionicons.Icon.ion_camera, R.color.white, 18))
 
         editProfilePickImage.setOnClickListener {
             AppUtils.requestStoragePermission(this) {granted ->

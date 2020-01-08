@@ -31,7 +31,7 @@
     <color name="color_primary">@android:color/white</color>
     <color name="color_primary_variant">@android:color/white</color>
     <color name="color_secondary">#009688</color>
-    <color name="color_secondary_variant">#03DAC5</color>
+    <color name="color_secondary_variant">#80cbc4</color>
 
     <color name="color_background">@color/color_primary</color>
     <color name="color_background_variant">#F5F5F5</color>
