@@ -1,6 +1,7 @@
 package com.gelostech.dankmemes.ui.activities
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -47,10 +48,9 @@ class PostActivity : BaseActivity() {
         supportActionBar?.apply {
             setDisplayShowHomeEnabled(true)
             setDisplayHomeAsUpEnabled(true)
-            title = "Post new meme"
+            title = null
         }
 
-        postAddImage.setImageDrawable(AppUtils.getDrawable(this, Ionicons.Icon.ion_image, R.color.color_text_primary, 65))
         postAddImage.setOnClickListener {
             AppUtils.requestStoragePermission(this) { granted ->
                 if (granted) {
@@ -135,7 +135,7 @@ class PostActivity : BaseActivity() {
         menuInflater.inflate(R.menu.menu_post_meme, menu)
 
         uploadMeme = menu?.findItem(R.id.menu_post)
-        uploadMeme?.icon = AppUtils.getDrawable(this, Ionicons.Icon.ion_android_send, R.color.colorAccent, 20)
+        uploadMeme?.icon = AppUtils.getDrawable(this, Ionicons.Icon.ion_android_send, R.color.color_secondary, 20)
 
         return super.onCreateOptionsMenu(menu)
     }

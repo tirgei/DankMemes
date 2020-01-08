@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activities.PostActivity">
+    tools:context=".ui.activities.PostActivity"
+    android:background="@color/color_primary">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/postToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?android:actionBarStyle"
-        android:layout_alignParentTop="true"/>
+        android:background="@color/color_primary_variant"
+        android:layout_alignParentTop="true"
+        android:elevation="1.2dp"
+        tools:targetApi="lollipop">
+
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/color_text_primary"
+            android:textSize="18.2sp"
+            android:text="@string/toolbar_post_meme"/>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <EditText
         android:id="@+id/postCaption"
@@ -22,7 +37,10 @@
         android:layout_below="@id/postToolbar"
         android:textSize="15sp"
         android:inputType="textMultiLine"
-        android:hint="@string/hint_caption"/>
+        android:hint="@string/hint_caption"
+        android:textColor="@color/color_text_primary"
+        android:textColorHint="@color/color_text_secondary"
+        android:background="@color/color_primary"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -31,10 +49,12 @@
 
         <ImageButton
             android:id="@+id/postAddImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:scaleType="fitCenter"
             android:layout_centerInParent="true"
             android:contentDescription="@string/content_select_meme"
+            app:srcCompat="@drawable/ic_image_add"
             android:background="@android:color/transparent"/>
 
         <ImageView
