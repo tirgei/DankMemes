@@ -47,7 +47,7 @@ class EditProfileActivity : BaseActivity() {
     private fun initViews() {
         setSupportActionBar(editProfileToolbar)
         supportActionBar?.apply {
-            title = getString(R.string.toolbar_edit_profile)
+            title = null
             setDisplayShowHomeEnabled(true)
             setDisplayHomeAsUpEnabled(true)
         }

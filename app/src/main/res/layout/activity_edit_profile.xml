@@ -10,10 +10,25 @@
         android:id="@+id/editProfileToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="?android:actionBarStyle"
+        android:background="@color/color_primary_variant"
         android:layout_alignParentTop="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"/>
+        android:elevation="1.2dp"
+        tools:targetApi="lollipop">
 
-    <ScrollView
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/color_text_primary"
+            android:textSize="18.2sp"
+            android:text="@string/toolbar_edit_profile"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -29,7 +44,8 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="60dp"
                 android:layout_gravity="center_horizontal">
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -53,44 +69,41 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_username"
-                android:textStyle="bold"
-                android:textSize="@dimen/album_desc"
-                android:layout_marginStart="10dp"/>
+                style="@style/ProfileTextView"/>
 
             <EditText
                 android:id="@+id/editProfileName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:textSize="@dimen/album_title"
                 android:inputType="text"
-                android:hint="@string/hint_username"/>
+                android:hint="@string/hint_username"
+                style="@style/ProfileEditText"
+                android:importantForAutofill="no" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_bio"
-                android:textStyle="bold"
-                android:textSize="@dimen/album_desc"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"/>
+                style="@style/ProfileTextView"
+                android:layout_marginTop="30dp"/>
 
             <EditText
                 android:id="@+id/editProfileBio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:textSize="@dimen/album_title"
+                style="@style/ProfileEditText"
                 android:inputType="textMultiLine"
-                android:hint="@string/label_bio"/>
+                android:hint="@string/label_bio"
+                android:importantForAutofill="no" />
 
             <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
                 android:id="@+id/editProfileButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="30dp"
                 android:background="@drawable/button_solid"
                 android:text="@string/button_update_profile"
+                android:textColor="@color/white"
                 app:spinning_bar_color="@android:color/white"
                 app:spinning_bar_width="4dp"
                 app:spinning_bar_padding="2dp"
@@ -98,6 +111,6 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>
