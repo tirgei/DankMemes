@@ -67,7 +67,8 @@
                     tools:text="Vincent Tirgei"
                     bind:text="@{meme.memePoster}"
                     android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"
-                    android:textColor="@color/color_text_primary"/>
+                    android:textColor="@color/color_text_primary"
+                    android:drawablePadding="10dp"/>
 
                 <TextView
                     android:id="@+id/memeTime"

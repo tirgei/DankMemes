@@ -45,10 +45,10 @@ class SignupFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        signupUsername.getDrawable(getDrawable(activity!!, Ionicons.Icon.ion_person, R.color.color_text_primary, 18))
-        signupEmail.getDrawable(getDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.color_text_primary, 18))
-        signupPassword.getDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
-        signupConfirmPassword.getDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
+        signupUsername.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_person, R.color.color_text_primary, 18))
+        signupEmail.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.color_text_primary, 18))
+        signupPassword.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
+        signupConfirmPassword.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
 
         initRegisterObserver()
         initUserObserver()

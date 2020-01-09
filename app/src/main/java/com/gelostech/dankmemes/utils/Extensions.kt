@@ -72,8 +72,16 @@ fun ImageView.load(url: Any, placeholder: Int, thumbnail: String) {
  * Set drawable to the left of TextView
  * @param - Drawable to set
  */
-fun TextView.getDrawable(icon: Drawable) {
+fun TextView.setDrawable(icon: Drawable) {
     this.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null)
+}
+
+/**
+ * Set drawable to the left of TextView
+ * @param - Drawable to set
+ */
+fun TextView.setRightDrawable(icon: Drawable) {
+    this.setCompoundDrawablesWithIntrinsicBounds(null, null, null, icon)
 }
 
 /**
@@ -94,7 +102,7 @@ fun View.hideView() {
  * Set Drawable to the left of EditText
  * @param icon - Drawable to set
  */
-fun EditText.getDrawable(icon: Drawable) {
+fun EditText.setDrawable(icon: Drawable) {
     this.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null)
 }
 

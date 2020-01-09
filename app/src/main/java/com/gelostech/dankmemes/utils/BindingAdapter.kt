@@ -59,12 +59,12 @@ object BindingAdapter : KoinComponent {
         likes?.let {
             when (likes.containsKey(myUserId)) {
                 true -> {
-                    view.getDrawable(AppUtils.getDrawable(context, FontAwesome.Icon.faw_thumbs_up2, R.color.color_secondary, 20))
+                    view.setDrawable(AppUtils.getDrawable(context, FontAwesome.Icon.faw_thumbs_up2, R.color.color_secondary, 20))
                     view.setTextColor(ContextCompat.getColor(context, R.color.color_secondary))
                 }
 
                 else -> {
-                    view.getDrawable(AppUtils.getDrawable(context, FontAwesome.Icon.faw_thumbs_up, R.color.color_text_secondary, 20))
+                    view.setDrawable(AppUtils.getDrawable(context, FontAwesome.Icon.faw_thumbs_up, R.color.color_text_secondary, 20))
                     view.setTextColor(ContextCompat.getColor(context, R.color.color_text_secondary))
                 }
             }
@@ -140,4 +140,14 @@ object BindingAdapter : KoinComponent {
             }
         }
     }
+
+    /**
+     * Set verified icon
+     */
+    @JvmStatic
+    @BindingAdapter("bind:verified")
+    fun setVerified(view: TextView, verified: Boolean) {
+        if (verified) view.setRightDrawable(ContextCompat.getDrawable(view.context, R.drawable.ic_verified)!!)
+    }
+
 }

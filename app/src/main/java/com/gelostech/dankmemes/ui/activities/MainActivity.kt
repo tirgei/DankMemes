@@ -25,7 +25,7 @@ import com.gelostech.dankmemes.utils.AppUtils.getDrawable
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.NotificationUtils
 import com.gelostech.dankmemes.utils.runDelayed
-import com.gelostech.dankmemes.utils.getDrawable
+import com.gelostech.dankmemes.utils.setDrawable
 import com.gelostech.pageradapter.PagerAdapter
 import com.google.firebase.messaging.FirebaseMessaging
 import com.jakewharton.processphoenix.ProcessPhoenix
@@ -146,13 +146,13 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     }
 
     private fun setupDrawerIcons() {
-        drawerRate.getDrawable(getDrawable(this, Ionicons.Icon.ion_ios_star, R.color.white, 18))
-        drawerShare.getDrawable(getDrawable(this, Ionicons.Icon.ion_android_share, R.color.white, 18))
-        drawerFeedback.getDrawable(getDrawable(this, Ionicons.Icon.ion_ios_email, R.color.white, 18))
-        drawerTerms.getDrawable(getDrawable(this, Ionicons.Icon.ion_clipboard, R.color.white, 18))
-        drawerPolicy.getDrawable(getDrawable(this, Ionicons.Icon.ion_ios_list, R.color.white, 18))
-        drawerLogout.getDrawable(getDrawable(this, Ionicons.Icon.ion_log_out, R.color.white, 18))
-        drawerMoreApps.getDrawable(getDrawable(this, FontAwesome.Icon.faw_google_play, R.color.white, 18))
+        drawerRate.setDrawable(getDrawable(this, Ionicons.Icon.ion_ios_star, R.color.white, 18))
+        drawerShare.setDrawable(getDrawable(this, Ionicons.Icon.ion_android_share, R.color.white, 18))
+        drawerFeedback.setDrawable(getDrawable(this, Ionicons.Icon.ion_ios_email, R.color.white, 18))
+        drawerTerms.setDrawable(getDrawable(this, Ionicons.Icon.ion_clipboard, R.color.white, 18))
+        drawerPolicy.setDrawable(getDrawable(this, Ionicons.Icon.ion_ios_list, R.color.white, 18))
+        drawerLogout.setDrawable(getDrawable(this, Ionicons.Icon.ion_log_out, R.color.white, 18))
+        drawerMoreApps.setDrawable(getDrawable(this, FontAwesome.Icon.faw_google_play, R.color.white, 18))
     }
 
     private fun drawerClickListeners() {

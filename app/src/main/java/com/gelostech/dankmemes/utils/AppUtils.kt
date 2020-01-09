@@ -2,11 +2,9 @@ package com.gelostech.dankmemes.utils
 
 import android.Manifest
 import android.app.Activity
-import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
@@ -16,7 +14,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.StrictMode
-import androidx.core.content.ContextCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextUtils
@@ -26,15 +23,11 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.EditText
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.ui.callbacks.StorageUploadListener
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -43,10 +36,6 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
-import com.nostra13.universalimageloader.core.ImageLoader
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
-import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
@@ -223,8 +212,7 @@ object AppUtils {
     fun highLightName(context: Context, title: String, start: Int, length: Int): SpannableString {
         val newName = SpannableString(title)
         newName.setSpan(StyleSpan(Typeface.BOLD), start, length, 0)
-        newName.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.black)), start, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
+        newName.setSpan(ForegroundColorSpan(ContextCompat.getColor(context, R.color.color_text_primary)), start, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         return newName
     }
 
