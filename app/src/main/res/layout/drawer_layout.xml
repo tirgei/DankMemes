@@ -21,6 +21,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginStart="20dp"
         android:layout_below="@id/drawerIcon"
+        android:textColor="@color/color_primary"
         tools:text="Vincent Tirgei"
         android:textStyle="bold"
         android:textSize="@dimen/feed_text"/>
@@ -31,6 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_below="@id/drawerName"
+        android:textColor="@color/color_primary"
         android:textSize="@dimen/album_desc"
         tools:text="devtirgei@gmail.com"/>
 
@@ -45,54 +47,42 @@
             android:id="@+id/drawerRate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="@dimen/notif_summary"
-            android:drawablePadding="7dp"
+            style="@style/DrawerTextView"
             android:text="@string/label_rate_app"/>
 
         <TextView
             android:id="@+id/drawerShare"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="@dimen/notif_summary"
-            android:drawablePadding="7dp"
+            style="@style/DrawerTextView"
             android:text="@string/label_share_app"/>
 
         <TextView
             android:id="@+id/drawerFeedback"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="@dimen/notif_summary"
-            android:drawablePadding="7dp"
+            style="@style/DrawerTextView"
             android:text="@string/label_feedback"/>
 
         <TextView
             android:id="@+id/drawerTerms"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="@dimen/notif_summary"
-            android:drawablePadding="7dp"
+            style="@style/DrawerTextView"
             android:text="@string/label_terms"/>
 
         <TextView
             android:id="@+id/drawerPolicy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="@dimen/notif_summary"
-            android:drawablePadding="7dp"
+            style="@style/DrawerTextView"
             android:text="@string/label_privacy_policy"/>
 
         <TextView
             android:id="@+id/drawerMoreApps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="@dimen/notif_summary"
-            android:drawablePadding="7dp"
+            style="@style/DrawerTextView"
             android:text="@string/label_more_apps"/>
 
     </LinearLayout>
@@ -109,6 +99,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/notif_summary"
             android:drawablePadding="7dp"
+            android:textColor="@color/color_primary"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

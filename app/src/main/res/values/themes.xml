@@ -44,4 +44,12 @@
 
     </style>
 
+    <!-- Drawer Layout TextViews style -->
+    <style name="DrawerTextView">
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:textSize">15.5sp</item>
+        <item name="android:drawablePadding">7dp</item>
+        <item name="android:textColor">@color/color_primary</item>
+    </style>
+
 </resources>

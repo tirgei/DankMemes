@@ -139,20 +139,20 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         drawerEmail.text = sessionManager.getEmail()
 
         val themeIcon = when (isDarkTheme) {
-            true -> getDrawable(this, Ionicons.Icon.ion_ios_sunny, R.color.white, 25)
-            false -> getDrawable(this, Ionicons.Icon.ion_ios_moon, R.color.white, 22)
+            true -> getDrawable(this, Ionicons.Icon.ion_ios_sunny, R.color.color_primary, 25)
+            false -> getDrawable(this, Ionicons.Icon.ion_ios_moon, R.color.color_primary, 22)
         }
         themeSwitch.setImageDrawable(themeIcon)
     }
 
     private fun setupDrawerIcons() {
-        drawerRate.setDrawable(getDrawable(this, Ionicons.Icon.ion_ios_star, R.color.white, 18))
-        drawerShare.setDrawable(getDrawable(this, Ionicons.Icon.ion_android_share, R.color.white, 18))
-        drawerFeedback.setDrawable(getDrawable(this, Ionicons.Icon.ion_ios_email, R.color.white, 18))
-        drawerTerms.setDrawable(getDrawable(this, Ionicons.Icon.ion_clipboard, R.color.white, 18))
-        drawerPolicy.setDrawable(getDrawable(this, Ionicons.Icon.ion_ios_list, R.color.white, 18))
-        drawerLogout.setDrawable(getDrawable(this, Ionicons.Icon.ion_log_out, R.color.white, 18))
-        drawerMoreApps.setDrawable(getDrawable(this, FontAwesome.Icon.faw_google_play, R.color.white, 18))
+        drawerRate.setDrawable(getDrawable(this, Ionicons.Icon.ion_ios_star, R.color.color_primary, 18))
+        drawerShare.setDrawable(getDrawable(this, Ionicons.Icon.ion_android_share, R.color.color_primary, 18))
+        drawerFeedback.setDrawable(getDrawable(this, Ionicons.Icon.ion_ios_email, R.color.color_primary, 18))
+        drawerTerms.setDrawable(getDrawable(this, Ionicons.Icon.ion_clipboard, R.color.color_primary, 18))
+        drawerPolicy.setDrawable(getDrawable(this, Ionicons.Icon.ion_ios_list, R.color.color_primary, 18))
+        drawerLogout.setDrawable(getDrawable(this, Ionicons.Icon.ion_log_out, R.color.color_primary, 18))
+        drawerMoreApps.setDrawable(getDrawable(this, FontAwesome.Icon.faw_google_play, R.color.color_primary, 18))
     }
 
     private fun drawerClickListeners() {
