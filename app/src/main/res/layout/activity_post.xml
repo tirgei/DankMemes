@@ -29,43 +29,99 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <EditText
-        android:id="@+id/postCaption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:layout_below="@id/postToolbar"
-        android:textSize="15sp"
-        android:inputType="textMultiLine"
-        android:hint="@string/hint_caption"
-        android:textColor="@color/color_text_primary"
-        android:textColorHint="@color/color_text_secondary"
-        android:background="@color/color_primary"/>
-
-    <RelativeLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/postCaption">
+        android:fillViewport="true"
+        android:layout_below="@id/postToolbar">
 
-        <ImageButton
-            android:id="@+id/postAddImage"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:scaleType="fitCenter"
-            android:layout_centerInParent="true"
-            android:contentDescription="@string/content_select_meme"
-            app:srcCompat="@drawable/ic_image_add"
-            android:background="@android:color/transparent"/>
-
-        <ImageView
-            android:id="@+id/postSelectImage"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:contentDescription="@string/content_image"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    </RelativeLayout>
+            <EditText
+                android:id="@+id/postCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:textSize="15sp"
+                android:inputType="textMultiLine"
+                android:hint="@string/hint_caption"
+                android:textColor="@color/color_text_primary"
+                android:textColorHint="@color/color_text_secondary"
+                android:background="@color/color_primary"
+                android:importantForAutofill="no" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/postAddImage"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_centerInParent="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/content_select_meme"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_image_add" />
+
+                <ImageView
+                    android:id="@+id/postSelectImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/content_image"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+<!--    <EditText-->
+<!--        android:id="@+id/postCaption"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="20dp"-->
+<!--        android:layout_below="@id/postToolbar"-->
+<!--        android:textSize="15sp"-->
+<!--        android:inputType="textMultiLine"-->
+<!--        android:hint="@string/hint_caption"-->
+<!--        android:textColor="@color/color_text_primary"-->
+<!--        android:textColorHint="@color/color_text_secondary"-->
+<!--        android:background="@color/color_primary"/>-->
+
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_below="@id/postCaption">-->
+
+<!--        <ImageButton-->
+<!--            android:id="@+id/postAddImage"-->
+<!--            android:layout_width="90dp"-->
+<!--            android:layout_height="90dp"-->
+<!--            android:scaleType="fitCenter"-->
+<!--            android:layout_centerInParent="true"-->
+<!--            android:contentDescription="@string/content_select_meme"-->
+<!--            app:srcCompat="@drawable/ic_image_add"-->
+<!--            android:background="@android:color/transparent"/>-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/postSelectImage"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:visibility="gone"-->
+<!--            android:contentDescription="@string/content_image"-->
+<!--            android:scaleType="fitCenter"-->
+<!--            android:background="@android:color/transparent"/>-->
+
+<!--    </RelativeLayout>-->
 
 </RelativeLayout>
