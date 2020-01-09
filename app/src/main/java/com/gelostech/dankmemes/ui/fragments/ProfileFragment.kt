@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
@@ -21,6 +22,7 @@ import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import com.gelostech.dankmemes.ui.activities.CommentActivity
 import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
 import com.gelostech.dankmemes.ui.adapters.MemesAdapter
+import com.gelostech.dankmemes.ui.adapters.ProfileMemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
@@ -40,7 +42,7 @@ import timber.log.Timber
 
 
 class ProfileFragment : BaseFragment() {
-    private lateinit var memesAdapter: MemesAdapter
+    private lateinit var memesAdapter: ProfileMemesAdapter
     private lateinit var bs: BottomSheet.Builder
     private val memesViewModel: MemesViewModel by viewModel()
     private val usersViewModel: UsersViewModel by viewModel()
@@ -62,12 +64,22 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        memesAdapter = MemesAdapter(memesCallback)
+        memesAdapter = ProfileMemesAdapter(memesCallback)
+
+        val gridLayoutManager  = GridLayoutManager(activity, 3)
+        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (memesAdapter.getItemViewType(position)) {
+                    ProfileMemesAdapter.VIEW_TYPE.PROFILE.ordinal -> 3
+                    else -> 1
+                }
+            }
+        }
 
         profileRv.apply {
             setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(activity)
-            addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
+            layoutManager = gridLayoutManager
+            addItemDecoration(RecyclerFormatter.GridItemDecoration(activity!!, R.dimen.grid_layout_margin))
             itemAnimator = DefaultItemAnimator()
             (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
             adapter = memesAdapter
@@ -129,37 +141,39 @@ class ProfileFragment : BaseFragment() {
         override fun onMemeClicked(view: View, meme: Meme) {
             val memeId = meme.id!!
 
-            when(view.id) {
-                R.id.memeComment -> showComments(memeId)
-                R.id.memeIcon, R.id.memeUser -> { Timber.e("Clicked on my profile") }
+            toast("Meme: $memeId")
 
-                R.id.memeFave -> {
-                    AppUtils.animateView(view)
-                    memesViewModel.faveMeme(memeId, getUid())
-                }
-
-                R.id.memeLike -> {
-                    AppUtils.animateView(view)
-                    memesViewModel.likeMeme(memeId, getUid())
-                }
-
-                else -> {
-                    doAsync {
-                        // Get bitmap of shown meme
-                        val imageBitmap = when(view.id) {
-                            R.id.memeImage, R.id.memeMore -> AppUtils.loadBitmapFromUrl(activity!!, meme.imageUrl!!)
-                            else -> null
-                        }
-
-                        uiThread {
-                            imageBitmap?.let {
-                                if (view.id == R.id.memeMore) showBottomSheet(meme, imageBitmap)
-                                else showMeme(meme, imageBitmap)
-                            }
-                        }
-                    }
-                }
-            }
+//            when(view.id) {
+//                R.id.memeComment -> showComments(memeId)
+//                R.id.memeIcon, R.id.memeUser -> { Timber.e("Clicked on my profile") }
+//
+//                R.id.memeFave -> {
+//                    AppUtils.animateView(view)
+//                    memesViewModel.faveMeme(memeId, getUid())
+//                }
+//
+//                R.id.memeLike -> {
+//                    AppUtils.animateView(view)
+//                    memesViewModel.likeMeme(memeId, getUid())
+//                }
+//
+//                else -> {
+//                    doAsync {
+//                        // Get bitmap of shown meme
+//                        val imageBitmap = when(view.id) {
+//                            R.id.memeImage, R.id.memeMore -> AppUtils.loadBitmapFromUrl(activity!!, meme.imageUrl!!)
+//                            else -> null
+//                        }
+//
+//                        uiThread {
+//                            imageBitmap?.let {
+//                                if (view.id == R.id.memeMore) showBottomSheet(meme, imageBitmap)
+//                                else showMeme(meme, imageBitmap)
+//                            }
+//                        }
+//                    }
+//                }
+//            }
         }
 
         override fun onProfileClicked(view: View, user: User) {

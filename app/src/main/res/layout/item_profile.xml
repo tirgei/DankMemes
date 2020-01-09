@@ -17,53 +17,54 @@
 
     </data>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/profileTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="20dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
         android:clipToPadding="false"
-        android:paddingBottom="10dp">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImage"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="10dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="20dp"
             bind:image="@{user.userAvatar}"
             bind:placeholder="@{R.drawable.person}"
             tools:src="@drawable/person"
             android:onClick="@{(v) -> callback.onProfileClicked(v, user)}"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/profileName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/profileImage"
-            android:layout_marginStart="10dp"
-            android:layout_centerVertical="true"
-            android:orientation="vertical">
+            tools:text="Vincent Tirgei"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="@{user.userName}"
+            android:gravity="center"
+            android:textColor="@color/color_text_primary"
+            android:drawablePadding="10dp"/>
 
-            <TextView
-                android:id="@+id/profileName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Vincent Tirgei"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:text="@{user.userName}"/>
+        <TextView
+            android:id="@+id/profileBio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="center_horizontal"
+            android:textSize="14sp"
+            android:text="@{user.userBio}"
+            android:textColor="@color/color_text_secondary"
+            tools:text="Here's some random brief summary about me :)"/>
 
-            <TextView
-                android:id="@+id/profileBio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:text="@{user.userBio}"
-                tools:text="Here's some random brief summary about me :)"/>
-
-        </LinearLayout>
-
-    </RelativeLayout>
+    </LinearLayout>
 
 </layout>

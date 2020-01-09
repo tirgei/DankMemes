@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
@@ -20,6 +21,7 @@ import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import com.gelostech.dankmemes.ui.adapters.MemesAdapter
+import com.gelostech.dankmemes.ui.adapters.ProfileMemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
@@ -32,7 +34,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class ProfileActivity : BaseActivity() {
-    private lateinit var memesAdapter: MemesAdapter
+    private lateinit var memesAdapter: ProfileMemesAdapter
     private lateinit var bs: BottomSheet.Builder
     private val memesViewModel: MemesViewModel by viewModel()
     private val usersViewModel: UsersViewModel by viewModel()
@@ -59,12 +61,22 @@ class ProfileActivity : BaseActivity() {
             setDisplayHomeAsUpEnabled(true)
         }
 
-        memesAdapter = MemesAdapter(memesCallback)
+        memesAdapter = ProfileMemesAdapter(memesCallback)
+
+        val gridLayoutManager  = GridLayoutManager(this, 3)
+        gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (memesAdapter.getItemViewType(position)) {
+                    ProfileMemesAdapter.VIEW_TYPE.PROFILE.ordinal -> 3
+                    else -> 1
+                }
+            }
+        }
 
         viewProfileRv.apply {
             setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(this@ProfileActivity)
-            addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(this@ProfileActivity))
+            layoutManager = gridLayoutManager
+            addItemDecoration(RecyclerFormatter.GridItemDecoration(this@ProfileActivity, R.dimen.grid_layout_margin))
             itemAnimator = DefaultItemAnimator()
             (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
             adapter = memesAdapter

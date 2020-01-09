@@ -9,16 +9,17 @@
 
         <variable
             name="meme"
-            type="com.gelostech.dankmemes.data.models.Fave" />
+            type="com.gelostech.dankmemes.data.models.Meme" />
 
         <variable
             name="callback"
-            type="com.gelostech.dankmemes.ui.callbacks.FavesCallback" />
+            type="com.gelostech.dankmemes.ui.callbacks.MemesCallback" />
     </data>
 
     <com.gelostech.dankmemes.utils.SquareLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}">
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/faveImage"
@@ -26,9 +27,7 @@
             android:layout_height="match_parent"
             android:scaleType="center"
             bind:image="@{meme.imageUrl}"
-            bind:placeholder="@{R.drawable.loading}"
-            bind:fave="@{meme}"
-            bind:callback="@{callback}"/>
+            bind:placeholder="@{R.drawable.loading}"/>
 
     </com.gelostech.dankmemes.utils.SquareLayout>
 </layout>

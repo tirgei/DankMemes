@@ -81,7 +81,7 @@ fun TextView.setDrawable(icon: Drawable) {
  * @param - Drawable to set
  */
 fun TextView.setRightDrawable(icon: Drawable) {
-    this.setCompoundDrawablesWithIntrinsicBounds(null, null, null, icon)
+    this.setCompoundDrawablesWithIntrinsicBounds(null, null, icon, null)
 }
 
 /**

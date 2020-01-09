@@ -65,4 +65,15 @@ class RecyclerFormatter {
             outRect.set(space, space, space, space)
         }
     }
+
+    class ProfileGridItemDecoration(private val space: Int) : RecyclerView.ItemDecoration() {
+
+        constructor(context: Context, space: Int) : this(context.resources.getDimensionPixelSize(space)) {}
+
+        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+            super.getItemOffsets(outRect, view, parent, state)
+
+            outRect.set(space, space, space, space)
+        }
+    }
 }
