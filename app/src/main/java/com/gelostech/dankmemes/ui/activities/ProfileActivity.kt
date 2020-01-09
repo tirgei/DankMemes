@@ -178,7 +178,7 @@ class ProfileActivity : BaseActivity() {
 
         val i = Intent(this, ViewMemeActivity::class.java)
         i.putExtra(Constants.PIC_URL, meme.imageUrl)
-        i.putExtra("caption", meme.caption)
+        i.putExtra(Constants.CAPTION, meme.caption)
         startActivity(i)
         AppUtils.fadeIn(this)
     }

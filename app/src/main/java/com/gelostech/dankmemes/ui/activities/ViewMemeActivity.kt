@@ -32,7 +32,7 @@ class ViewMemeActivity : BaseActivity() {
         val url = intent.getStringExtra(Constants.PIC_URL)
         url?.let { viewMemeImage.load(it, R.drawable.loading) }
 
-        val caption = intent.getStringExtra("caption")
+        val caption = intent.getStringExtra(Constants.CAPTION)
         if (!caption.isNullOrEmpty()) {
             memeCaptionText.text = caption
 

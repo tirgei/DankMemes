@@ -23,6 +23,7 @@ object Constants {
     const val DARK_MODE = "dark_mode"
 
     const val PIC_URL = "pic_url"
+    const val CAPTION = "caption"
     const val MEME_ID = "meme_id"
 
     // Firebase
