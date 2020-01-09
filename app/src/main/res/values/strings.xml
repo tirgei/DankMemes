@@ -63,6 +63,7 @@
     <string name="toolbar_edit_profile">Edit profile</string>
     <string name="toolbar_comments">Comments</string>
     <string name="toolbar_post_meme">Post Meme</string>
+    <string name="toolbar_profile">Profile</string>
 
     <!-- Intent labels-->
     <string name="intent_invite_pals">Invite pals…</string>

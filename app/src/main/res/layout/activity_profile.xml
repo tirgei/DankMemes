@@ -11,7 +11,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?android:actionBarStyle"
-        android:layout_alignParentTop="true"/>
+        android:background="@color/color_primary_variant"
+        android:layout_alignParentTop="true"
+        android:elevation="1.2dp"
+        tools:targetApi="lollipop">
+
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/color_text_primary"
+            android:textSize="18.2sp"
+            android:text="@string/toolbar_profile"/>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <RelativeLayout
         android:layout_height="match_parent"
