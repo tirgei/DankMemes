@@ -18,6 +18,7 @@ import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_post.*
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -205,7 +206,12 @@ class PostActivity : BaseActivity() {
 
     override fun onBackPressed() {
         if (imageSelected) {
-            showSelectImage()
+            alert("Remove selected image?") {
+                positiveButton("Remove") {
+                    showSelectImage()
+                }
+                negativeButton("Cancel") {}
+            }.show()
         } else {
             super.onBackPressed()
             overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
