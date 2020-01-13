@@ -10,5 +10,8 @@ data class User(
         var userEmail: String? = null,
         var dateCreated: String? = null,
         var userBio: String? = null,
-        var admin: Int? = null
+        var admin: Int? = null,
+        var posts: Int? = 0,
+        var followers: MutableMap<String, Boolean> = mutableMapOf(),
+        var following: MutableMap<String, Boolean> = mutableMapOf()
 ): Serializable {}
