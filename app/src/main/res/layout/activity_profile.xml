@@ -13,20 +13,8 @@
         style="?android:actionBarStyle"
         android:background="@color/color_primary_variant"
         android:layout_alignParentTop="true"
-        android:elevation="1.2dp"
-        tools:targetApi="lollipop">
-
-        <TextView
-            android:id="@+id/toolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textStyle="bold"
-            android:textColor="@color/color_text_primary"
-            android:textSize="18.2sp"
-            android:text="@string/toolbar_profile"/>
-
-    </androidx.appcompat.widget.Toolbar>
+        android:elevation="0dp"
+        tools:targetApi="lollipop"/>
 
     <RelativeLayout
         android:layout_height="match_parent"
@@ -45,7 +33,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never"
-            tools:listitem="@layout/item_meme"/>
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:clipToPadding="false"
+            tools:listitem="@layout/item_profile_meme"/>
 
         <RelativeLayout
             android:id="@+id/viewProfileEmptyState"
