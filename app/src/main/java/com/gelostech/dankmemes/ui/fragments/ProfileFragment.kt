@@ -64,7 +64,7 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun initViews() {
-        memesAdapter = ProfileMemesAdapter(memesCallback)
+        memesAdapter = ProfileMemesAdapter(memesCallback, true)
 
         val gridLayoutManager  = GridLayoutManager(activity, 3)
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
