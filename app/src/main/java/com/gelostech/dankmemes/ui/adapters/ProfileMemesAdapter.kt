@@ -25,7 +25,7 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
 
-class ProfileMemesAdapter(private val callback: MemesCallback): PagedListAdapter<ItemViewModel, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+class ProfileMemesAdapter(private val callback: MemesCallback, private val isMe: Boolean = false): PagedListAdapter<ItemViewModel, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     enum class VIEW_TYPE {
         PROFILE,
@@ -62,7 +62,7 @@ class ProfileMemesAdapter(private val callback: MemesCallback): PagedListAdapter
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            VIEW_TYPE.PROFILE.ordinal -> ProfileHolder(parent.inflate(R.layout.item_profile), callback)
+            VIEW_TYPE.PROFILE.ordinal -> ProfileHolder(parent.inflate(R.layout.item_profile), callback, isMe)
             else -> MemeHolder(parent.inflate(R.layout.item_profile_meme), callback)
         }
     }
@@ -95,13 +95,14 @@ class ProfileMemesAdapter(private val callback: MemesCallback): PagedListAdapter
         if (holder is ProfileHolder) holder.apply { disposables.clear() }
     }
 
-    inner class ProfileHolder(private val binding: ItemProfileBinding, private val callback: MemesCallback):
+    inner class ProfileHolder(private val binding: ItemProfileBinding, private val callback: MemesCallback, private val isMe: Boolean):
             RecyclerView.ViewHolder(binding.root) {
         val disposables = CompositeDisposable()
 
         fun bind(user: User) {
             binding.user = user
             binding.callback = callback
+            binding.isMe = isMe
         }
 
     }
