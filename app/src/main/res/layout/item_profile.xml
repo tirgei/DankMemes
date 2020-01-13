@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="com.gelostech.dankmemes.R"/>
+
+        <import type="com.gelostech.dankmemes.R" />
 
         <variable
             name="user"
@@ -15,43 +17,47 @@
             name="callback"
             type="com.gelostech.dankmemes.ui.callbacks.MemesCallback" />
 
+        <variable
+            name="isMe"
+            type="Boolean" />
+
     </data>
 
     <LinearLayout
         android:id="@+id/profileTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="30dp"
-        android:paddingBottom="30dp"
         android:clipToPadding="false"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:paddingStart="10dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="20dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImage"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="20dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="10dp"
+            android:onClick="@{(v) -> callback.onProfileClicked(v, user)}"
             bind:image="@{user.userAvatar}"
             bind:placeholder="@{R.drawable.person}"
-            tools:src="@drawable/person"
-            android:onClick="@{(v) -> callback.onProfileClicked(v, user)}"/>
+            tools:src="@drawable/person" />
 
         <TextView
             android:id="@+id/profileName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Vincent Tirgei"
-            android:textSize="18sp"
-            android:textStyle="bold"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:text="@{user.userName}"
+            android:drawablePadding="10dp"
             android:gravity="center"
+            android:text="@{user.userName}"
             android:textColor="@color/color_text_primary"
-            android:drawablePadding="10dp"/>
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="Vincent Tirgei" />
 
         <TextView
             android:id="@+id/profileBio"
@@ -60,10 +66,124 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:gravity="center_horizontal"
-            android:textSize="14sp"
             android:text="@{user.userBio}"
             android:textColor="@color/color_text_secondary"
-            tools:text="Here's some random brief summary about me :)"/>
+            android:textSize="14sp"
+            tools:text="Here's some random brief summary about me :)" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/recycler_divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:weightSum="3"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{`` + user.posts}"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="14sp"
+                    tools:text="123" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_memes"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="12sp"
+                    tools:text="Memes" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{`` + user.followers.size()}"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="14sp"
+                    tools:text="123" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_followers"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="12sp"
+                    tools:text="Followers" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{`` + user.followers.size()}"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="14sp"
+                    tools:text="123" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_following"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="12sp"
+                    tools:text="Following" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/editProfileButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="20dp"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_solid"
+            android:text="@string/button_follow"
+            android:textColor="@color/white"
+            app:spinning_bar_color="@android:color/white"
+            app:spinning_bar_width="4dp"
+            app:spinning_bar_padding="2dp"
+            android:layout_gravity="center_horizontal"
+            bind:visibility="@{isMe == false}"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@drawable/recycler_divider"
+            bind:visibility="@{isMe == true}"/>
 
     </LinearLayout>
 

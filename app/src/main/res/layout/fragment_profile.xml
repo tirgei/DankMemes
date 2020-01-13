@@ -16,7 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
-        tools:listitem="@layout/item_meme"/>
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_profile_meme"/>
 
     <RelativeLayout
         android:id="@+id/profileEmptyState"
