@@ -20,26 +20,11 @@ class LoginActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        checkIfLoggedIn()
 
         signUpFragment = SignupFragment()
         loginFragment = LoginFragment()
 
         addFragment(loginFragment, loginHolder.id)
-    }
-
-    private fun checkIfLoggedIn() {
-        signUpFragment = SignupFragment()
-        val user = FirebaseAuth.getInstance().currentUser
-
-        if (user != null && !user.isAnonymous) {
-            startActivity(Intent(this, MainActivity::class.java))
-            overridePendingTransition(0,0)
-            finish()
-
-        } else if (user!= null && user.isAnonymous) {
-            addFragment(signUpFragment, loginHolder.id)
-        }
     }
 
     override fun onBackPressed() {

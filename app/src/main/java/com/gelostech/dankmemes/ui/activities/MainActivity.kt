@@ -276,7 +276,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
                         FirebaseMessaging.getInstance().unsubscribeFromTopic(Constants.TOPIC_GLOBAL)
                         sessionManager.clearSession()
 
-                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        startActivity(Intent(this@MainActivity, SplashActivity::class.java))
                         overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
                         finish()
                     }

@@ -73,4 +73,9 @@
         <item name="android:backgroundTint" tools:targetApi="lollipop">@color/color_text_secondary</item>
     </style>
 
+    <!-- Theme for Splash Activity -->
+    <style name="SplashTheme" parent="Base.MaterialThemeBuilder">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
 </resources>
