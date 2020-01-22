@@ -3,18 +3,20 @@ package com.gelostech.dankmemes.data.repositories
 import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.Comment
 import com.gelostech.dankmemes.data.models.Meme
+import com.gelostech.dankmemes.data.wrappers.ObservableComment
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.get
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import io.reactivex.Observable
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 
-class CommentsRepository constructor(private val firebaseDatabase: DatabaseReference,
-                                     private val firestoreDatabase: FirebaseFirestore) {
+class CommentsRepository constructor(private val firestoreDatabase: FirebaseFirestore) {
 
-    private val db = firebaseDatabase.child(Constants.COMMENTS)
+    private val db = firestoreDatabase.collection(Constants.COMMENTS)
     private val memesDb = firestoreDatabase.collection(Constants.MEMES)
 
     /**
@@ -22,15 +24,15 @@ class CommentsRepository constructor(private val firebaseDatabase: DatabaseRefer
      * @param comment - The comment model
      */
     suspend fun postComment(comment: Comment): Result<Boolean> {
-        val id = db.push().key
-        val memeId = comment.picKey!!
+        val id = db.document().id
+        val memeId = comment.memeId!!
 
         comment.apply {
-            this.commentKey = id
+            this.commentId = id
         }
 
         return try {
-            db.child(memeId).child(id!!).setValue(comment).await()
+            db.document(memeId).collection(Constants.MEME_COMMENTS).document(id).set(comment).await()
             updateCommentsCount(memeId, true)
             Result.Success(true)
 
@@ -47,7 +49,7 @@ class CommentsRepository constructor(private val firebaseDatabase: DatabaseRefer
      */
     suspend fun deleteComment(memeId: String, commentId: String): Result<Boolean> {
         return try {
-            db.child(memeId).child(commentId).removeValue().await()
+            db.document(memeId).collection(Constants.MEME_COMMENTS).document(commentId).delete().await()
             updateCommentsCount(memeId, false)
             Result.Success(true)
 
@@ -61,17 +63,27 @@ class CommentsRepository constructor(private val firebaseDatabase: DatabaseRefer
      * Function to fetch all comments for a Meme
      * @param memeId - ID of the meme
      */
-    suspend fun fetchComments(memeId: String): Result<List<Comment>> {
-        return try {
-            val snapshot = db.child(memeId).get().await()
-            val comments = snapshot.children.map { it.getValue(Comment::class.java)!! }
-            Result.Success(comments)
+    suspend fun fetchComments(memeId: String): List<ObservableComment> {
+        val query = db.document(memeId).collection(Constants.MEME_COMMENTS)
+                .orderBy(Constants.TIME, Query.Direction.ASCENDING)
 
-        } catch (e: Exception) {
-            Timber.e("Error fetching comments: ${e.localizedMessage}")
-            Result.Error("No comments found")
-        }
+        return query.get().await().map { ObservableComment(it.id, getObservableComment(memeId, it.id)) }
+    }
 
+    /**
+     * Create an observable comment object
+     * @param commentId - ID of the comment
+     */
+    private fun getObservableComment(memeId: String, commentId: String): Observable<Comment> = Observable.create<Comment> { emitter ->
+        db.document(memeId).collection(Constants.MEME_COMMENTS).document(commentId)
+                .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+                    if (firebaseFirestoreException != null)
+                        emitter.onError(firebaseFirestoreException)
+                    else if (documentSnapshot != null && documentSnapshot.exists())
+                        emitter.onNext(documentSnapshot.toObject(Comment::class.java)!!)
+                    else
+                        emitter.onError(Throwable("Comment not found"))
+                }
     }
 
     /**

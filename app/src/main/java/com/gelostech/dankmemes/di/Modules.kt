@@ -30,7 +30,7 @@ val repositoriesModule = module {
     single { UsersRepository(get(), get(), get()) }
     single { MemesRepository(get(), get()) }
     single { NotificationsRepository(get()) }
-    single { CommentsRepository(get(), get()) }
+    single { CommentsRepository(get()) }
 }
 
 val viewModelsModule = module {

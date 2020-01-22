@@ -86,6 +86,15 @@ class CommentActivity : BaseActivity() {
     }
 
     /**
+     * Initialize function to fetch comments
+     */
+    private fun initCommentsObserver() {
+        commentsViewModel.fetchComments(memeId).observe(this, Observer {
+            commentsAdapter.submitList(it)
+        })
+    }
+
+    /**
      * Initialize observer for GenericResponse LiveData
      */
     private fun initResponseObserver() {
@@ -99,13 +108,12 @@ class CommentActivity : BaseActivity() {
                     when (it.item) {
                         GenericResponse.ITEM_RESPONSE.DELETE_COMMENT -> {
                             toast("Comment deleted \uD83D\uDEAE")
-                            commentsAdapter.removeComment(it.value!!)
                         }
 
                         GenericResponse.ITEM_RESPONSE.POST_COMMENT -> {
                             commentET.setText("")
                             playNotificationSound()
-                            commentsViewModel.fetchComments(memeId)
+                            commentsAdapter.currentList?.dataSource?.invalidate()
                         }
 
                         else -> Timber.e("Success")
@@ -120,30 +128,6 @@ class CommentActivity : BaseActivity() {
         })
     }
 
-    /**
-     * Initialize Comments LiveData observer
-     */
-    private fun initCommentsObserver() {
-        commentsViewModel.commentsLiveData.observe(this, Observer {
-            when (it.status) {
-                Status.LOADING -> {
-                    commentsEmptyState.hideView()
-                    loading.showView()
-                }
-
-                Status.SUCCESS -> {
-                    loading.hideView()
-                    commentsAdapter.clear()
-                    commentsAdapter.addComments(it.data!!)
-                }
-
-                Status.ERROR -> {
-                    loading.hideView()
-                    commentsEmptyState.showView()
-                }
-            }
-        })
-    }
 
     private fun postComment() {
         if (TextUtils.isEmpty(commentET.text)) {
@@ -154,14 +138,14 @@ class CommentActivity : BaseActivity() {
         showLoading("Posting comment...")
 
         val comment = Comment()
-        comment.authorId = getUid()
+        comment.userId = getUid()
         comment.userName = sessionManager.getUsername()
         comment.userAvatar = sessionManager.getUserAvatar()
         comment.comment = commentET.text.toString().trim()
         comment.hates = 0
         comment.likes = 0
-        comment.timeStamp = System.currentTimeMillis()
-        comment.picKey = memeId
+        comment.time = System.currentTimeMillis()
+        comment.memeId = memeId
 
         commentsViewModel.postComment(comment)
     }
@@ -184,22 +168,22 @@ class CommentActivity : BaseActivity() {
     }
 
     private fun handleClick (comment: Comment) {
-        if (comment.authorId != getUid()) {
+        if (comment.userId != getUid()) {
             val i = Intent(this, ProfileActivity::class.java)
-            i.putExtra(Constants.USER_ID, comment.authorId)
+            i.putExtra(Constants.USER_ID, comment.userId)
             startActivity(i)
             overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
         }
     }
 
     private fun handleLongClick (comment: Comment) {
-        if (comment.authorId == getUid()) {
+        if (comment.userId == getUid()) {
             alert ("Delete this comment?") {
                 title = "Delete Comment"
 
                 positiveButton("Delete") {
                     showLoading("Deleting comment...")
-                    commentsViewModel.deleteComment(memeId, comment.commentKey!!)
+                    commentsViewModel.deleteComment(memeId, comment.commentId!!)
                 }
                 negativeButton("Cancel"){}
             }.show()

@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/color_text_secondary"
                 android:textSize="11sp"
-                android:text="@{timeFormatter.getTimeStamp(safeUnbox(comment.timeStamp))}"/>
+                android:text="@{timeFormatter.getTimeStamp(safeUnbox(comment.time))}"/>
 
         </LinearLayout>
 

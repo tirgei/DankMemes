@@ -1,23 +1,24 @@
 package com.gelostech.dankmemes.ui.viewmodels
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.gelostech.dankmemes.data.Result
+import com.gelostech.dankmemes.data.datasource.CommentsDataSource
 import com.gelostech.dankmemes.data.models.Comment
 import com.gelostech.dankmemes.data.repositories.CommentsRepository
 import com.gelostech.dankmemes.data.responses.CommentsResponse
 import com.gelostech.dankmemes.data.responses.GenericResponse
+import com.gelostech.dankmemes.data.wrappers.ObservableComment
 import kotlinx.coroutines.launch
 
 class CommentsViewModel constructor(private val repository: CommentsRepository): ViewModel() {
     private val _genericResponseLiveData = MutableLiveData<GenericResponse>()
     val genericResponseLiveData: MutableLiveData<GenericResponse>
         get() = _genericResponseLiveData
-
-    private val _commentsLiveData = MutableLiveData<CommentsResponse>()
-    val commentsLiveData: MutableLiveData<CommentsResponse>
-        get() = _commentsLiveData
 
     /**
      * Function to post new comment
@@ -65,19 +66,14 @@ class CommentsViewModel constructor(private val repository: CommentsRepository):
     /**
      * Function to fetch all comments for a Meme
      */
-    fun fetchComments(memeId: String) {
-        viewModelScope.launch {
-            _commentsLiveData.value = CommentsResponse.loading()
+    fun fetchComments(memeId: String): LiveData<PagedList<ObservableComment>> {
+        val pagingConfig = PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPrefetchDistance(5)
+                .build()
 
-            when (val result = repository.fetchComments(memeId)) {
-                is Result.Success -> {
-                    _commentsLiveData.value = CommentsResponse.success(result.data)
-                }
+        val commentFactory = CommentsDataSource.Factory(repository, viewModelScope, memeId)
 
-                is Result.Error -> {
-                    _commentsLiveData.value = CommentsResponse.error(result.error)
-                }
-            }
-        }
+        return LivePagedListBuilder<String, ObservableComment>(commentFactory, pagingConfig).build()
     }
 }

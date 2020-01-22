@@ -49,6 +49,7 @@ object Constants {
     const val USER_AVATAR = "userAvatar"
     const val USER_TOKEN = "userToken"
     const val COMMENTS = "comments"
+    const val MEME_COMMENTS = "meme-comments"
 
     // Admin type
     const val ADMIN = 1
