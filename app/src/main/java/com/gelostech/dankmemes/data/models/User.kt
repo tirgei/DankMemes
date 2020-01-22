@@ -9,6 +9,7 @@ data class User(
         var userAvatar: String? = null,
         var userEmail: String? = null,
         var dateCreated: String? = null,
+        var dateUpdated: String? = null,
         var userBio: String? = null,
         var admin: Int? = null,
         var posts: Int? = 0,

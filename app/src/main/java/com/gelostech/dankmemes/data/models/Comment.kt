@@ -1,15 +1,15 @@
 package com.gelostech.dankmemes.data.models
 
 data class Comment(
-        var commentKey: String? = null,
-        var authorId: String? = null,
-        var timeStamp: Long? = null,
+        var commentId: String? = null,
+        var userId: String? = null,
+        var time: Long? = null,
         var comment: String? = null,
         var hates: Int? = null,
         var likes: Int? = null,
         var userName: String? = null,
         var userAvatar: String? = null,
-        var picKey: String? = null
+        var memeId: String? = null
 ) {
-    fun equals(comment: Comment): Boolean = this.commentKey == comment.commentKey
+    fun equals(comment: Comment): Boolean = this.commentId == comment.commentId
 }
