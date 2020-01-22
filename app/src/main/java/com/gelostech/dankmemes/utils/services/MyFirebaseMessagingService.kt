@@ -7,7 +7,7 @@ import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.NotificationUtils
 import com.gelostech.dankmemes.utils.SessionManager
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
@@ -33,8 +33,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             // sending reg id to your server
             val userID = FirebaseAuth.getInstance().currentUser?.uid
             if (userID != null) {
-                val dbRef = FirebaseDatabase.getInstance().reference
-                dbRef.child(Constants.USERS).child(userID).child(Constants.USER_TOKEN).setValue(it)
+                val dbRef = FirebaseFirestore.getInstance()
+                dbRef.collection(Constants.USERS).document(userID).update(Constants.USER_TOKEN, it)
             }
         }
 

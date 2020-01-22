@@ -50,15 +50,6 @@ open class BaseActivity : AppCompatActivity() {
     // Get user ID
     fun getUid(): String = sessionManager.getUserId()
 
-    fun refreshToken() {
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            if (it.isSuccessful) {
-                val token = it.result?.token
-                firebaseDatabase.child(Constants.USERS).child(getUid()).child(Constants.USER_TOKEN).setValue(token)
-            }
-        }
-    }
-
     private fun updateLastActive() {
         firebaseDatabase.child(Constants.METADATA)
                 .child(Constants.LAST_ACTIVE)

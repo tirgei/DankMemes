@@ -8,6 +8,7 @@ import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import com.gelostech.dankmemes.ui.callbacks.StorageUploadListener
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.Constants
+import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.get
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
@@ -16,6 +17,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
@@ -25,11 +27,11 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class UsersRepository constructor(private val firebaseDatabase: DatabaseReference,
+class UsersRepository constructor(private val firestoreDatabase: FirebaseFirestore,
                                   private val firebaseAuth: FirebaseAuth,
                                   private val storageReference: StorageReference) {
 
-    private val db = firebaseDatabase.child(Constants.USERS)
+    private val db = firestoreDatabase.collection(Constants.USERS)
 
     /**
      * Function to register an anonymous User
@@ -97,7 +99,7 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
                                 user.userAvatar = downloadUrl
                             }
 
-                            db.child(user.userId!!).setValue(user).await()
+                            db.document(user.userId!!).set(user).await()
                             callback(Result.Success(user))
 
                         } catch (e: java.lang.Exception) {
@@ -160,7 +162,7 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
         val errorMessage = "Error signing up"
 
         return try {
-            db.child(user.userId!!).setValue(user).await()
+            db.document(user.userId!!).set(user).await()
             Result.Success(user)
 
         } catch (e: Exception) {
@@ -196,11 +198,11 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
      */
     suspend fun fetchUserById(userId: String): Result<User> {
         return try {
-            val user = db.child(userId)
+            val user = db.document(userId)
                     .get()
                     .await()
 
-            Result.Success(user.getValue(User::class.java)!!)
+            Result.Success(user.toObject(User::class.java)!!)
         } catch (e: java.lang.Exception) {
             Timber.e("Error fetching User: ${e.localizedMessage}")
             Result.Error("User not found")
@@ -212,11 +214,11 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
      */
     suspend fun fetchObservableUserById(userId: String): Result<ObservableUser> {
         return try {
-            val user = db.child(userId)
+            val user = db.document(userId)
                     .get()
                     .await()
 
-            Result.Success(ObservableUser(user.key!!, getObservableUser(user.key!!)))
+            Result.Success(ObservableUser(user.id, getObservableUser(user.id)))
         } catch (e: java.lang.Exception) {
             Timber.e("Error fetching User: ${e.localizedMessage}")
             Result.Error("User not found")
@@ -254,10 +256,14 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
      */
     suspend fun updateUserDetails(userId: String, username: String, bio: String, avatar: String?): Result<Boolean> {
         return try {
-            val userReference = db.child(userId)
-            userReference.child(Constants.USER_NAME).setValue(username).await()
-            userReference.child(Constants.USER_BIO).setValue(bio).await()
-            avatar?.let { userReference.child(Constants.USER_AVATAR).setValue(it).await() }
+            val userReference = db.document(userId)
+            userReference.update(Constants.USER_NAME, username).await()
+            userReference.update(Constants.USER_BIO, bio).await()
+            avatar?.let { userReference.update(Constants.USER_AVATAR, it).await() }
+
+            val dateUpdated = TimeFormatter().getNormalYear(System.currentTimeMillis())
+            userReference.update(Constants.DATE_UPDATED, dateUpdated).await()
+
             Result.Success(true)
         } catch (e: Exception) {
             Timber.e("Error updating user details: ${e.localizedMessage}")
@@ -283,14 +289,13 @@ class UsersRepository constructor(private val firebaseDatabase: DatabaseReferenc
      * Wrap User object in Observable
      */
     private fun getObservableUser(userId: String): Observable<User> = Observable.create<User> { emitter ->
-        db.child(userId).addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                emitter.onError(p0.toException())
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                emitter.onNext(p0.getValue(User::class.java)!!)
-            }
-        })
+        db.document(userId).addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+            if (firebaseFirestoreException != null)
+                emitter.onError(firebaseFirestoreException)
+            else if (documentSnapshot != null && documentSnapshot.exists())
+                emitter.onNext(documentSnapshot.toObject(User::class.java)!!)
+            else
+                emitter.onError(Throwable("User not found"))
+        }
     }
 }

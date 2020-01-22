@@ -14,6 +14,7 @@ import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.Constants
+import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.load
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
