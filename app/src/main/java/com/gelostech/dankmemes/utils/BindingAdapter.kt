@@ -105,13 +105,15 @@ object BindingAdapter : KoinComponent {
      * Handle comments click
      */
     @JvmStatic
-    @BindingAdapter(value = ["bind:comment", "bind:callback"], requireAll = true)
-    fun commentsClick(view: View, comment: Comment, callback: CommentsCallback) {
-        view.setOnClickListener { callback.onCommentClicked(view, comment, false) }
+    @BindingAdapter(value = ["bind:comment", "bind:callback"])
+    fun commentsClick(view: View, comment: Comment?, callback: CommentsCallback?) {
+        comment?.let {
+            view.setOnClickListener { callback?.onCommentClicked(view, comment, false) }
 
-        view.setOnLongClickListener {
-            callback.onCommentClicked(view, comment, true)
-            return@setOnLongClickListener true
+            view.setOnLongClickListener {
+                callback?.onCommentClicked(view, comment, true)
+                return@setOnLongClickListener true
+            }
         }
     }
 
