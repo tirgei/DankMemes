@@ -61,16 +61,27 @@
     </style>
 
     <!-- Profile EditText style -->
-    <style name="ProfileEditText">
+    <style name="ProfileEditText" parent="InputEditText">
         <item name="android:paddingBottom">15dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingStart">10dp</item>
         <item name="android:paddingEnd">10dp</item>
+    </style>
+
+    <!-- Auth EditText style -->
+    <style name="AuthEditText" parent="InputEditText">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:drawablePadding">10dp</item>
+    </style>
+
+    <style name="InputEditText">
         <item name="android:includeFontPadding">true</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/color_text_primary</item>
         <item name="android:textColorHint">@color/color_text_secondary</item>
-        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/color_text_secondary</item>
+        <item name="android:background">@drawable/input_background</item>
     </style>
 
     <!-- Theme for Splash Activity -->

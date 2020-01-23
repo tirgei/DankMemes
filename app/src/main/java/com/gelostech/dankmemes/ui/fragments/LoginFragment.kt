@@ -50,9 +50,9 @@ class LoginFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loginEmail.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.color_text_primary, 18))
-        loginPassword.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
-        googleLogin.setSize(SignInButton.SIZE_WIDE)
+        loginEmail.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.color_text_secondary, 18))
+        loginPassword.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_secondary, 18))
+//        googleLogin.setSize(SignInButton.SIZE_WIDE)
 
         loginRegister.setOnClickListener {
             if (!isLoggingIn)

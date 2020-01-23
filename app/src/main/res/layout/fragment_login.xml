@@ -7,15 +7,17 @@
     tools:context=".ui.fragments.LoginFragment"
     android:fillViewport="true">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:gravity="center_horizontal">
 
         <ImageView
             android:id="@+id/loginIcon"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="50dp"
             android:contentDescription="@string/content_image"
             android:src="@mipmap/ic_launcher"/>
@@ -23,60 +25,41 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/loginIcon"
-            android:layout_marginTop="5dp"
-            android:textSize="20sp"
+            android:layout_marginTop="20dp"
+            android:textSize="25sp"
             android:text="@string/app_name"
+            android:textColor="@color/color_text_primary"
             android:textStyle="bold"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginBottom="30dp"
-            android:orientation="vertical"
-            android:layout_above="@id/loginRegisterLayout">
+            android:orientation="vertical">
 
             <EditText
                 android:id="@+id/loginEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:background="@drawable/wire_drawable"
-                android:drawablePadding="10dp"
                 android:hint="@string/hint_email"
-                android:textSize="13sp"
-                android:inputType="textEmailAddress"/>
+                style="@style/AuthEditText"
+                android:inputType="textEmailAddress"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/loginPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/wire_drawable"
-                android:drawablePadding="10dp"
+                android:layout_marginTop="20dp"
                 android:hint="@string/hint_password"
-                android:textSize="13sp"
-                android:inputType="textPassword"/>
-
-            <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-                android:id="@+id/loginButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/button_solid"
-                android:text="@string/button_login"
-                android:textColor="@android:color/white"
-                app:spinning_bar_color="@android:color/white"
-                app:spinning_bar_width="4dp"
-                app:spinning_bar_padding="2dp"
-                android:layout_gravity="center_horizontal"/>
+                style="@style/AuthEditText"
+                android:inputType="textPassword"
+                android:importantForAutofill="no" />
 
             <TextView
                 android:id="@+id/loginForgotPassword"
@@ -85,13 +68,29 @@
                 android:text="@string/label_forgot_password"
                 android:textSize="13sp"
                 android:layout_marginTop="10dp"
+                android:layout_gravity="end"/>
+
+            <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                android:id="@+id/loginButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/button_solid"
+                android:text="@string/button_login"
+                android:textColor="@android:color/white"
+                app:spinning_bar_color="@android:color/white"
+                app:spinning_bar_width="4dp"
+                app:spinning_bar_padding="2dp"
                 android:layout_gravity="center_horizontal"/>
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/googleLogin"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
                 android:layout_gravity="center_horizontal"/>
 
         </LinearLayout>
@@ -101,10 +100,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:padding="5dp"
-            android:layout_marginBottom="20dp">
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -124,6 +123,6 @@
 
         </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </ScrollView>
