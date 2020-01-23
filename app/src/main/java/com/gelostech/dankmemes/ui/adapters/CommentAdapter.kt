@@ -12,6 +12,8 @@ import com.gelostech.dankmemes.databinding.ItemCommentBinding
 import com.gelostech.dankmemes.ui.callbacks.CommentsCallback
 import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.inflate
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
 
@@ -38,6 +40,11 @@ class CommentAdapter(val callback: CommentsCallback): PagedListAdapter<Observabl
         return CommentHolder(parent.inflate(R.layout.item_comment), callback)
     }
 
+    override fun onViewRecycled(holder: CommentHolder) {
+        super.onViewRecycled(holder)
+        holder.disposables.clear()
+    }
+
     override fun onBindViewHolder(holder: CommentHolder, position: Int) {
         val comment = getItem(position)
         comment?.comment?.subscribeBy(
@@ -45,11 +52,12 @@ class CommentAdapter(val callback: CommentsCallback): PagedListAdapter<Observabl
                 onError = {
                     Timber.e("Error fetching Comment: $it")
                 }
-        )
+        )?.addTo(holder.disposables)
     }
 
     class CommentHolder(private val binding: ItemCommentBinding, private val callback: CommentsCallback):
             RecyclerView.ViewHolder(binding.root) {
+        val disposables = CompositeDisposable()
 
         fun bind(comment: Comment) {
             binding.comment = comment
