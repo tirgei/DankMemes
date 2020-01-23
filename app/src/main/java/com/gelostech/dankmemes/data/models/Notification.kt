@@ -10,7 +10,8 @@ data class Notification(
         var time: Long? = null,
         var title: String? = null,
         var description: String? = null,
-        var imageUrl: String? = null
+        var imageUrl: String? = null,
+        var notifiedUserId: String? = null
 ) {
     companion object {
         const val NOTIFICATION_TYPE_LIKE = 0
