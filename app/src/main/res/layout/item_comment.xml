@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <import type="com.gelostech.dankmemes.R"/>
@@ -33,6 +34,7 @@
             android:id="@+id/commentIcon"
             android:layout_width="35dp"
             android:layout_height="35dp"
+            android:layout_marginTop="5dp"
             android:scaleType="centerCrop"
             android:src="@drawable/person"
             android:layout_alignParentStart="true"
@@ -54,7 +56,8 @@
                 android:textSize="@dimen/feed_user"
                 android:textColor="@color/color_text_primary"
                 android:textStyle="bold"
-                android:text="@{comment.userName}"/>
+                android:text="@{comment.userName}"
+                tools:text="Vincent Tirgei"/>
 
             <TextView
                 android:id="@+id/commentText"
