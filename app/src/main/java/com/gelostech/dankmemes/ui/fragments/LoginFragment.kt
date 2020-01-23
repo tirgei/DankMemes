@@ -52,7 +52,7 @@ class LoginFragment : BaseFragment() {
 
         loginEmail.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.color_text_secondary, 18))
         loginPassword.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_secondary, 18))
-//        googleLogin.setSize(SignInButton.SIZE_WIDE)
+        googleLogin.setSize(SignInButton.SIZE_WIDE)
 
         loginRegister.setOnClickListener {
             if (!isLoggingIn)

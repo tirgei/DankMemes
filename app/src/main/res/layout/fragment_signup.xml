@@ -7,146 +7,129 @@
     tools:context=".ui.fragments.SignupFragment"
     android:fillViewport="true">
 
-   <RelativeLayout
+   <LinearLayout
        android:layout_width="match_parent"
-       android:layout_height="wrap_content">
+       android:layout_height="wrap_content"
+       android:orientation="vertical"
+       android:paddingStart="25dp"
+       android:paddingEnd="25dp"
+       android:paddingTop="20dp"
+       android:paddingBottom="20dp"
+       android:gravity="center_horizontal">
 
        <TextView
            android:id="@+id/signupTitle"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:layout_centerHorizontal="true"
            android:layout_marginTop="10dp"
            android:textSize="20sp"
            android:text="@string/label_sign_up"
-           android:textAllCaps="true"
+           android:textAllCaps="false"
+           android:textColor="@color/color_text_primary"
            android:textStyle="bold"/>
 
-       <LinearLayout
+       <de.hdodenhof.circleimageview.CircleImageView
+           android:id="@+id/signupAvatar"
+           android:layout_width="80dp"
+           android:layout_height="80dp"
+           android:layout_marginTop="20dp"
+           android:layout_gravity="center_horizontal"
+           android:src="@drawable/person"
+           android:contentDescription="@string/content_image"/>
+
+       <EditText
+           android:id="@+id/signupUsername"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           android:padding="10dp"
-           android:layout_marginStart="30dp"
-           android:layout_marginLeft="30dp"
-           android:layout_marginEnd="30dp"
-           android:layout_marginRight="30dp"
-           android:layout_marginTop="10dp"
-           android:layout_marginBottom="20dp"
-           android:layout_below="@id/signupTitle"
-           android:layout_above="@id/signupLoginLayout"
-           android:orientation="vertical">
+           android:layout_marginTop="25dp"
+           android:hint="@string/hint_username"
+           style="@style/AuthEditText"
+           android:inputType="textEmailAddress"/>
 
-           <de.hdodenhof.circleimageview.CircleImageView
-               android:id="@+id/signupAvatar"
-               android:layout_width="80dp"
-               android:layout_height="80dp"
-               android:layout_gravity="center_horizontal"
-               android:src="@drawable/person"
-               android:contentDescription="@string/content_image"/>
+       <EditText
+           android:id="@+id/signupEmail"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="20dp"
+           android:hint="@string/hint_email"
+           style="@style/AuthEditText"
+           android:inputType="textEmailAddress"/>
 
-           <EditText
-               android:id="@+id/signupUsername"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:padding="15dp"
-               android:layout_marginTop="20dp"
-               android:background="@drawable/wire_drawable"
-               android:drawablePadding="10dp"
-               android:hint="@string/hint_username"
-               android:textSize="13sp"
-               android:inputType="textEmailAddress"/>
+       <EditText
+           android:id="@+id/signupPassword"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="20dp"
+           android:hint="@string/hint_password"
+           style="@style/AuthEditText"
+           android:inputType="textPassword"/>
 
-           <EditText
-               android:id="@+id/signupEmail"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:padding="15dp"
-               android:layout_marginTop="10dp"
-               android:background="@drawable/wire_drawable"
-               android:drawablePadding="10dp"
-               android:hint="@string/hint_email"
-               android:textSize="13sp"
-               android:inputType="textEmailAddress"/>
+       <EditText
+           android:id="@+id/signupConfirmPassword"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="20dp"
+           android:hint="@string/hint_confirm_password"
+           style="@style/AuthEditText"
+           android:inputType="textPassword"/>
 
-           <EditText
-               android:id="@+id/signupPassword"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:padding="15dp"
-               android:layout_marginTop="10dp"
-               android:background="@drawable/wire_drawable"
-               android:drawablePadding="10dp"
-               android:hint="@string/hint_password"
-               android:textSize="13sp"
-               android:inputType="textPassword"/>
+       <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+           android:id="@+id/signupButton"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="20dp"
+           android:background="@drawable/button_solid"
+           android:text="@string/label_sign_up"
+           android:textColor="@android:color/white"
+           app:spinning_bar_color="@android:color/white"
+           app:spinning_bar_width="4dp"
+           app:spinning_bar_padding="2dp"
+           android:layout_gravity="center_horizontal"/>
 
-           <EditText
-               android:id="@+id/signupConfirmPassword"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:padding="15dp"
-               android:layout_marginTop="10dp"
-               android:layout_marginBottom="20dp"
-               android:background="@drawable/wire_drawable"
-               android:drawablePadding="10dp"
-               android:hint="@string/hint_confirm_password"
-               android:textSize="13sp"
-               android:inputType="textPassword"/>
+       <LinearLayout
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:layout_gravity="center_horizontal"
+           android:layout_marginTop="5dp"
+           android:padding="5dp">
 
-           <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-               android:id="@+id/signupButton"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:background="@drawable/button_solid"
-               android:text="@string/label_sign_up"
-               android:textColor="@android:color/white"
-               app:spinning_bar_color="@android:color/white"
-               app:spinning_bar_width="4dp"
-               app:spinning_bar_padding="2dp"
-               android:layout_gravity="center_horizontal"/>
+           <CheckBox
+               android:id="@+id/signupCheckBox"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content" />
 
-           <LinearLayout
+           <TextView
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:orientation="horizontal"
-               android:layout_gravity="center_horizontal"
-               android:layout_marginTop="5dp"
-               android:padding="5dp">
+               android:text="@string/label_agree_to_terms"
+               android:textSize="13sp"
+               android:layout_marginEnd="5dp"/>
 
-               <CheckBox
-                   android:id="@+id/signupCheckBox"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content" />
-
-               <TextView
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:text="@string/label_agree_to_terms"
-                   android:textSize="13sp"
-                   android:layout_marginEnd="5dp"/>
-
-               <TextView
-                   android:id="@+id/signupTerms"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:text="@string/label_terms"
-                   android:textColor="@color/color_secondary"
-                   android:textSize="13sp"
-                   android:textStyle="bold" />
-
-           </LinearLayout>
+           <TextView
+               android:id="@+id/signupTerms"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/label_terms"
+               android:textColor="@color/color_secondary"
+               android:textSize="13sp"
+               android:textStyle="bold" />
 
        </LinearLayout>
+
+       <View
+           android:layout_width="match_parent"
+           android:layout_height="0dp"
+           android:layout_weight="1"/>
 
        <LinearLayout
            android:id="@+id/signupLoginLayout"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
+           android:layout_marginTop="20dp"
            android:orientation="horizontal"
-           android:layout_alignParentBottom="true"
-           android:layout_centerHorizontal="true"
            android:padding="5dp"
-           android:layout_marginBottom="20dp">
+           android:gravity="center_vertical">
 
            <TextView
                android:id="@+id/signupRegisterTitle"
@@ -167,8 +150,6 @@
 
        </LinearLayout>
 
-
-
-   </RelativeLayout>
+   </LinearLayout>
 
 </ScrollView>

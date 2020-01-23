@@ -20,7 +20,7 @@
     <string name="label_not_member">Not a member yet?</string>
     <string name="label_forgot_password">Forgot password?</string>
     <string name="label_register">Register</string>
-    <string name="label_sign_up">Sign Up</string>
+    <string name="label_sign_up">Create Account</string>
     <string name="label_agree_to_terms">I accept the</string>
     <string name="label_terms">Terms &amp; Conditions</string>
     <string name="label_username">Username</string>

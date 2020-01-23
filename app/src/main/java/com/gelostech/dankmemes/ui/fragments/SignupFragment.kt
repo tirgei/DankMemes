@@ -45,10 +45,10 @@ class SignupFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        signupUsername.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_person, R.color.color_text_primary, 18))
-        signupEmail.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.color_text_primary, 18))
-        signupPassword.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
-        signupConfirmPassword.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_primary, 18))
+        signupUsername.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_person, R.color.color_text_secondary, 18))
+        signupEmail.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_ios_email, R.color.color_text_secondary, 18))
+        signupPassword.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_secondary, 18))
+        signupConfirmPassword.setDrawable(getDrawable(activity!!, Ionicons.Icon.ion_android_lock, R.color.color_text_secondary, 18))
 
         initRegisterObserver()
         initUserObserver()
@@ -104,7 +104,7 @@ class SignupFragment : BaseFragment() {
 
         // Check if user has agreed to terms and conditions
         if (!signupCheckBox.isChecked) {
-            activity?.toast("Please check the terms and conditions")
+            activity?.toast("Accept the terms and conditions to sign up")
             return
         }
 
