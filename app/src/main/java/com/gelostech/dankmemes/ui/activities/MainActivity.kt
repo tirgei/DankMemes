@@ -276,7 +276,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
                         FirebaseMessaging.getInstance().unsubscribeFromTopic(Constants.TOPIC_GLOBAL)
                         sessionManager.clearSession()
 
-                        startActivity(Intent(this@MainActivity, SplashActivity::class.java))
+                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                         overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
                         finish()
                     }
@@ -298,10 +298,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
             1 -> toolbarTitle.text = FAVES
             3 -> toolbarTitle.text = NOTIFICATIONS
             4 -> toolbarTitle.text = PROFILE
-//            0 -> supportActionBar?.title = APP_NAME
-//            1 -> supportActionBar?.title = FAVES
-//            3 -> supportActionBar?.title = NOTIFICATIONS
-//            4 -> supportActionBar?.title = PROFILE
         }
     }
 
