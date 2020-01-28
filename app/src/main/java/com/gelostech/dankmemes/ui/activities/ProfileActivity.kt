@@ -136,37 +136,10 @@ class ProfileActivity : BaseActivity() {
         override fun onMemeClicked(view: View, meme: Meme) {
             val memeId = meme.id!!
 
-            when(view.id) {
-                R.id.memeComment -> showComments(memeId)
-                R.id.memeIcon, R.id.memeUser -> { Timber.e("Clicked on current profile") }
-
-                R.id.memeFave -> {
-                    AppUtils.animateView(view)
-                    memesViewModel.faveMeme(memeId, getUid())
-                }
-
-                R.id.memeLike -> {
-                    AppUtils.animateView(view)
-                    memesViewModel.likeMeme(memeId, getUid())
-                }
-
-                else -> {
-                    doAsync {
-                        // Get bitmap of shown meme
-                        val imageBitmap = when(view.id) {
-                            R.id.memeImage, R.id.memeMore -> AppUtils.loadBitmapFromUrl(this@ProfileActivity, meme.imageUrl!!)
-                            else -> null
-                        }
-
-                        uiThread {
-                            imageBitmap?.let {
-                                if (view.id == R.id.memeMore) showBottomSheet(meme, imageBitmap)
-                                else showMeme(meme, imageBitmap)
-                            }
-                        }
-                    }
-                }
-            }
+            val i = Intent(this@ProfileActivity, MemeActivity::class.java)
+            i.putExtra(Constants.MEME_ID, memeId)
+            startActivity(i)
+            AppUtils.animateEnterRight(this@ProfileActivity)
         }
 
         override fun onProfileClicked(view: View, user: User) {

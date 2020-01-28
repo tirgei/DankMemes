@@ -20,6 +20,7 @@ import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import com.gelostech.dankmemes.ui.activities.CommentActivity
+import com.gelostech.dankmemes.ui.activities.MemeActivity
 import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
 import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.ui.adapters.ProfileMemesAdapter
@@ -141,39 +142,10 @@ class ProfileFragment : BaseFragment() {
         override fun onMemeClicked(view: View, meme: Meme) {
             val memeId = meme.id!!
 
-            toast("Meme: $memeId")
-
-//            when(view.id) {
-//                R.id.memeComment -> showComments(memeId)
-//                R.id.memeIcon, R.id.memeUser -> { Timber.e("Clicked on my profile") }
-//
-//                R.id.memeFave -> {
-//                    AppUtils.animateView(view)
-//                    memesViewModel.faveMeme(memeId, getUid())
-//                }
-//
-//                R.id.memeLike -> {
-//                    AppUtils.animateView(view)
-//                    memesViewModel.likeMeme(memeId, getUid())
-//                }
-//
-//                else -> {
-//                    doAsync {
-//                        // Get bitmap of shown meme
-//                        val imageBitmap = when(view.id) {
-//                            R.id.memeImage, R.id.memeMore -> AppUtils.loadBitmapFromUrl(activity!!, meme.imageUrl!!)
-//                            else -> null
-//                        }
-//
-//                        uiThread {
-//                            imageBitmap?.let {
-//                                if (view.id == R.id.memeMore) showBottomSheet(meme, imageBitmap)
-//                                else showMeme(meme, imageBitmap)
-//                            }
-//                        }
-//                    }
-//                }
-//            }
+            val i = Intent(activity, MemeActivity::class.java)
+            i.putExtra(Constants.MEME_ID, memeId)
+            startActivity(i)
+            AppUtils.animateEnterRight(activity!!)
         }
 
         override fun onProfileClicked(view: View, user: User) {
