@@ -73,9 +73,10 @@
             android:id="@+id/actions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:animateLayoutChanges="true"
             android:weightSum="3"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:orientation="horizontal"
             android:layout_alignParentBottom="true"
             android:gravity="center_vertical">
@@ -84,10 +85,10 @@
                 android:id="@+id/memeLike"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.2"
                 android:drawablePadding="5dp"
-                android:padding="5dp"
-                android:textSize="12.5sp"
+                android:padding="10dp"
+                android:textSize="13sp"
                 android:gravity="center_vertical"
                 tools:text="2 likes"
                 bind:likeStatus="@{meme.likes}"
@@ -99,10 +100,10 @@
                 android:id="@+id/memeComment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.2"
                 android:drawablePadding="5dp"
-                android:padding="5dp"
-                android:textSize="12.5sp"
+                android:padding="10dp"
+                android:textSize="13sp"
                 android:gravity="center_vertical"
                 tools:text="34 comments"
                 android:text="@{(meme.commentsCount > 0 ? meme.commentsCount + ` ` : ``) + (meme.commentsCount > 1 ? `Comments` : `Comment`)}"
@@ -112,7 +113,7 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1">
+                android:layout_weight="0.6">
 
                 <ImageButton
                     android:id="@+id/memeFave"
