@@ -13,9 +13,9 @@ import com.gelostech.dankmemes.data.datasource.MemesDataSource
 import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
-import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.repositories.MemesRepository
 import com.gelostech.dankmemes.data.responses.GenericResponse
+import com.gelostech.dankmemes.data.responses.MemesResponse
 import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import kotlinx.coroutines.launch
@@ -24,6 +24,10 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
     private val _genericResponseLiveData = MutableLiveData<GenericResponse>()
     val genericResponseLiveData: MutableLiveData<GenericResponse>
         get() = _genericResponseLiveData
+
+    private val _memeResponseLiveData = MutableLiveData<MemesResponse>()
+    val memeResponseLiveData: MutableLiveData<MemesResponse>
+        get() = _memeResponseLiveData
 
     /**
      * Function to post new Meme
@@ -85,6 +89,25 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
 
         val memeFactory = MemesDataSource.Factory(repository, viewModelScope, user)
         return LivePagedListBuilder<String, ItemViewModel>(memeFactory, pagingConfig).build()
+    }
+
+    /**
+     * Function to fetch meme
+     */
+    fun fetchMeme(memeId: String) {
+        viewModelScope.launch {
+            _memeResponseLiveData.value = MemesResponse.loading()
+
+            when (val result = repository.fetchMeme(memeId)) {
+                is Result.Success -> {
+                    _memeResponseLiveData.value = MemesResponse.success(result.data)
+                }
+
+                is Result.Error -> {
+                    _memeResponseLiveData.value = MemesResponse.error(result.error)
+                }
+            }
+        }
     }
 
     /**

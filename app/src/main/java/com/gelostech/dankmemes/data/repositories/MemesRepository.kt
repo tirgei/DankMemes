@@ -105,6 +105,23 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
                 .map { ObservableMeme(it.id, getObservableMeme(it.id)) }.toMutableList()
     }
 
+    /**
+     * Function to fetch single meme
+     * @param memeId - ID of the meme
+     */
+    suspend fun fetchMeme(memeId: String): Result<ObservableMeme> {
+        return try {
+            val meme = db.document(memeId)
+                    .get()
+                    .await()
+
+            Result.Success(ObservableMeme(meme.id, getObservableMeme(memeId)))
+        } catch (e: Exception) {
+            Timber.e("Error fetching meme: ${e.localizedMessage}")
+            Result.Error("Error fetching meme")
+        }
+    }
+
 
     /**
      * Create an observable meme object
