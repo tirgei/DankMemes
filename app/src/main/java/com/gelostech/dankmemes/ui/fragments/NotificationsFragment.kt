@@ -15,6 +15,7 @@ import com.gelostech.dankmemes.ui.adapters.NotificationsAdapter
 import com.gelostech.dankmemes.ui.callbacks.NotificationsCallback
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.data.models.Notification
+import com.gelostech.dankmemes.ui.activities.MemeActivity
 import com.gelostech.dankmemes.ui.viewmodels.NotificationsViewModel
 import com.gelostech.dankmemes.utils.*
 import kotlinx.android.synthetic.main.fragment_notifications.*
@@ -68,6 +69,13 @@ class NotificationsFragment : BaseFragment() {
                 R.id.avatar -> {
                     val i = Intent(activity, ProfileActivity::class.java)
                     i.putExtra(Constants.USER_ID, notification.userId)
+                    startActivity(i)
+                    AppUtils.animateEnterRight(activity!!)
+                }
+
+                else -> {
+                    val i = Intent(activity, MemeActivity::class.java)
+                    i.putExtra(Constants.MEME_ID, notification.memeId)
                     startActivity(i)
                     AppUtils.animateEnterRight(activity!!)
                 }
