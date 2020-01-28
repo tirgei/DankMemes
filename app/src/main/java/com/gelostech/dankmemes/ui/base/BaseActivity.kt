@@ -1,8 +1,12 @@
 package com.gelostech.dankmemes.ui.base
 
 import android.app.ProgressDialog
+import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.SessionManager
 import com.gelostech.dankmemes.utils.TimeFormatter
@@ -34,6 +38,15 @@ open class BaseActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateLastActive()
+    }
+
+    // Set dark status bar
+    fun setDarkStatusBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val window = window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        }
     }
 
     // Show progress dialog
