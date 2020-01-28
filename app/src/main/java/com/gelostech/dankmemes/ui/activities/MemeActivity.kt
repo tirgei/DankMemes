@@ -2,6 +2,7 @@ package com.gelostech.dankmemes.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -15,6 +16,7 @@ import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.Constants
+import com.mikepenz.ionicons_typeface_library.Ionicons
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -48,6 +50,8 @@ class MemeActivity : BaseActivity() {
         supportActionBar?.title = null
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        memeToolbar.navigationIcon = AppUtils.getDrawable(this, Ionicons.Icon.ion_android_arrow_back, R.color.white, 18)
+        memeToolbar?.setNavigationOnClickListener { onBackPressed() }
     }
 
     /**

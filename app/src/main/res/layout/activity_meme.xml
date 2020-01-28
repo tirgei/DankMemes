@@ -27,6 +27,15 @@
         android:background="@android:color/black"
         android:animateLayoutChanges="true">
 
+        <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/viewMemeImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/actions"
+            bind:image="@{meme.imageUrl}"
+            bind:placeholder="@{R.drawable.loading}"
+            bind:thumbnail="@{meme.thumbnail}"/>
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/memeToolbar"
             android:layout_width="match_parent"
@@ -36,15 +45,6 @@
             android:layout_alignParentTop="true"
             android:elevation="0dp"
             tools:targetApi="lollipop"/>
-
-        <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/viewMemeImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/actions"
-            bind:image="@{meme.imageUrl}"
-            bind:placeholder="@{R.drawable.loading}"
-            bind:thumbnail="@{meme.thumbnail}"/>
 
         <RelativeLayout
             android:id="@+id/memeCaption"
