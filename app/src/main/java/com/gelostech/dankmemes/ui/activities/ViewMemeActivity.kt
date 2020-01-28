@@ -17,13 +17,7 @@ class ViewMemeActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Set dark status bar
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window = window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-        }
+        setDarkStatusBar()
         setContentView(R.layout.activity_view_meme)
 
         val image = BitmapFactory.decodeStream(openFileInput("image"))
@@ -45,8 +39,6 @@ class ViewMemeActivity : BaseActivity() {
         } else {
             memeCaption.visibility = View.GONE
         }
-
-
 
     }
 
