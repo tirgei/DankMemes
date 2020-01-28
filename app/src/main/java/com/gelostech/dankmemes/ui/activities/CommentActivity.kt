@@ -108,6 +108,7 @@ class CommentActivity : BaseActivity() {
                     when (it.item) {
                         GenericResponse.ITEM_RESPONSE.DELETE_COMMENT -> {
                             toast("Comment deleted \uD83D\uDEAE")
+                            commentsAdapter.currentList?.dataSource?.invalidate()
                         }
 
                         GenericResponse.ITEM_RESPONSE.POST_COMMENT -> {
