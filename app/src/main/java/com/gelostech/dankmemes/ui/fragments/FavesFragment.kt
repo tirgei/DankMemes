@@ -20,6 +20,7 @@ import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.ui.callbacks.FavesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.utils.RecyclerFormatter
+import com.gelostech.dankmemes.utils.runDelayed
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.fragment_faves.*
@@ -53,6 +54,11 @@ class FavesFragment : BaseFragment() {
             layoutManager = GridLayoutManager(activity!!, 3)
             addItemDecoration(RecyclerFormatter.GridItemDecoration(activity!!, R.dimen.grid_layout_margin))
             adapter = favesAdapter
+        }
+
+        favesRefresh.setOnRefreshListener {
+            favesAdapter.currentList?.dataSource?.invalidate()
+            runDelayed(2500) { favesRefresh.isRefreshing = false }
         }
     }
 

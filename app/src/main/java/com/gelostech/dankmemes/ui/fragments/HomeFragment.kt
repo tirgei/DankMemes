@@ -29,7 +29,7 @@ import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.callbacks.ScrollingMemesListener
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.utils.*
-import kotlinx.android.synthetic.main.fragment_all.*
+import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -43,7 +43,7 @@ class HomeFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_all, container, false)
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,7 +57,6 @@ class HomeFragment : BaseFragment() {
 
     private fun initViews() {
         memesAdapter = MemesAdapter(memesCallback)
-        homeRefresh.isEnabled = false
 
         homeRv.apply {
             setHasFixedSize(true)
@@ -76,6 +75,11 @@ class HomeFragment : BaseFragment() {
                 else if (dy < 0) scrollingListener?.showFab()
             }
         })
+
+        homeRefresh.setOnRefreshListener {
+            memesAdapter.currentList?.dataSource?.invalidate()
+            runDelayed(2500) { homeRefresh.isRefreshing = false }
+        }
     }
 
     /**

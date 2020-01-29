@@ -16,16 +16,13 @@ import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.ui.adapters.CommentAdapter
 import com.gelostech.dankmemes.ui.base.BaseActivity
-import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.data.models.Comment
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.ui.callbacks.CommentsCallback
 import com.gelostech.dankmemes.ui.callbacks.EditTextCallback
 import com.gelostech.dankmemes.ui.callbacks.EditTextListener
 import com.gelostech.dankmemes.ui.viewmodels.CommentsViewModel
-import com.gelostech.dankmemes.utils.AppUtils
-import com.gelostech.dankmemes.utils.hideView
-import com.gelostech.dankmemes.utils.showView
+import com.gelostech.dankmemes.utils.*
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.iconics.IconicsDrawable
 import kotlinx.android.synthetic.main.activity_comment.*
@@ -80,6 +77,11 @@ class CommentActivity : BaseActivity() {
             layoutManager = LinearLayoutManager(this@CommentActivity)
             itemAnimator = DefaultItemAnimator()
             adapter = commentsAdapter
+        }
+
+        commentsRefresh.setOnRefreshListener {
+            commentsAdapter.currentList?.dataSource?.invalidate()
+            runDelayed(2500) { commentsRefresh.isRefreshing = false }
         }
 
         sendComment.setOnClickListener { postComment() }

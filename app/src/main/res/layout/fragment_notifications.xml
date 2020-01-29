@@ -5,31 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.NotificationsFragment">
 
-    <RelativeLayout
-        android:id="@+id/notifsEmptyState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/emptyImage"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/feed"
-            android:contentDescription="@string/content_image"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/emptyImage"
-            android:text="@string/label_no_notifications"/>
-
-    </RelativeLayout>
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/notifRefresh"
         android:layout_width="match_parent"

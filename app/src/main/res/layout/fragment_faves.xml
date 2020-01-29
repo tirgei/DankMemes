@@ -5,38 +5,20 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.FavesFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/favesRv"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/favesRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:padding="2dp"
-        android:clipToPadding="false"
-        tools:listitem="@layout/item_fave"/>
+        android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/collectionsEmptyState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favesRv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:padding="2dp"
+            android:clipToPadding="false"
+            tools:listitem="@layout/item_fave"/>
 
-        <ImageView
-            android:id="@+id/collectionsEmptyStateImage"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/feed"
-            android:contentDescription="@string/content_image"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/collectionsEmptyStateImage"
-            android:text="@string/label_no_faves"/>
-
-    </RelativeLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

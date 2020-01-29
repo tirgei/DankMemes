@@ -11,15 +11,22 @@
         android:layout_centerInParent="true"
         android:visibility="gone"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/profileRv"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/profileRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:clipToPadding="false"
-        tools:listitem="@layout/item_profile_meme"/>
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/profileRv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:clipToPadding="false"
+            tools:listitem="@layout/item_profile_meme"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <RelativeLayout
         android:id="@+id/profileEmptyState"

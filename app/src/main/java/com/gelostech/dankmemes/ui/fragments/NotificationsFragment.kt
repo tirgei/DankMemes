@@ -1,6 +1,5 @@
 package com.gelostech.dankmemes.ui.fragments
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -21,7 +20,6 @@ import com.gelostech.dankmemes.utils.*
 import kotlinx.android.synthetic.main.fragment_notifications.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 class NotificationsFragment : BaseFragment() {
     private lateinit var notificationsAdapter: NotificationsAdapter
@@ -50,11 +48,10 @@ class NotificationsFragment : BaseFragment() {
             adapter = notificationsAdapter
         }
 
-        notifRefresh.isEnabled = false
         notifRefresh.setOnRefreshListener {
-            Handler().postDelayed({notifRefresh?.isRefreshing = false}, 2500)
+            notificationsAdapter.currentList?.dataSource?.invalidate()
+            runDelayed(2500) { notifRefresh.isRefreshing = false }
         }
-
     }
 
     private fun initNotificationsObserver() {
@@ -83,14 +80,5 @@ class NotificationsFragment : BaseFragment() {
         }
     }
 
-    private fun noNotifs() {
-        notifRefresh?.hideView()
-        notifsEmptyState?.showView()
-    }
-
-    private fun hasNotifs() {
-        notifsEmptyState?.hideView()
-        notifRefresh?.showView()
-    }
 }
 

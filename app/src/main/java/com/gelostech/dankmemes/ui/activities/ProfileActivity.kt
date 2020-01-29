@@ -1,21 +1,16 @@
 package com.gelostech.dankmemes.ui.activities
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
-import android.widget.FrameLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
-import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.data.models.Meme
-import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.wrappers.ObservableUser
@@ -27,13 +22,13 @@ import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.*
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_profile.*
-import org.jetbrains.anko.*
+import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class ProfileActivity : BaseActivity() {
     private lateinit var memesAdapter: ProfileMemesAdapter
-    private lateinit var bs: BottomSheet.Builder
     private val memesViewModel: MemesViewModel by viewModel()
     private val usersViewModel: UsersViewModel by viewModel()
     private lateinit var userId: String
@@ -78,6 +73,11 @@ class ProfileActivity : BaseActivity() {
             itemAnimator = DefaultItemAnimator()
             (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
             adapter = memesAdapter
+        }
+
+        profileRefresh.setOnRefreshListener {
+            memesAdapter.currentList?.dataSource?.invalidate()
+            runDelayed(2500) { profileRefresh.isRefreshing = false }
         }
     }
 
@@ -153,90 +153,6 @@ class ProfileActivity : BaseActivity() {
         }
     }
 
-    /**
-     * Launch activity to view full meme photo
-     */
-    private fun showMeme(meme: Meme, image: Bitmap) {
-        AppUtils.saveTemporaryImage(this, image)
-
-        val i = Intent(this, ViewMemeActivity::class.java)
-        i.putExtra(Constants.PIC_URL, meme.imageUrl)
-        i.putExtra(Constants.CAPTION, meme.caption)
-        startActivity(i)
-        AppUtils.fadeIn(this)
-    }
-
-    /**
-     * Show BottomSheet with extra actions
-     */
-    private fun showBottomSheet(meme: Meme, image: Bitmap) {
-        bs = when (sessionManager.getAdminStatus()) {
-            Constants.ADMIN, Constants.SUPER_ADMIN -> BottomSheet.Builder(this).sheet(R.menu.main_bottomsheet_admin)
-            else -> BottomSheet.Builder(this).sheet(R.menu.main_bottomsheet)
-        }
-
-        bs.listener { _, which ->
-            when(which) {
-                R.id.bs_share -> AppUtils.shareImage(this, image)
-
-                R.id.bs_save -> {
-                    AppUtils.requestStoragePermission(this) { granted ->
-                        if (granted) AppUtils.saveImage(this, image)
-                        else longToast("Storage permission is required to save memes")
-                    }
-                }
-
-                R.id.bs_report -> showReportDialog(meme)
-            }
-
-        }.show()
-
-    }
-
-    /**
-     * Launch the comments activity
-     */
-    private fun showComments(memeId: String) {
-        val i = Intent(this, CommentActivity::class.java)
-        i.putExtra(Constants.MEME_ID, memeId)
-        startActivity(i)
-        overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
-    }
-
-    /**
-     * Show dialog for reporting meme
-     * @param meme - Meme to report
-     */
-    private fun showReportDialog(meme: Meme) {
-        val editText = EditText(this)
-        val layout = FrameLayout(this)
-        layout.setPaddingRelative(45,15,45,0)
-        layout.addView(editText)
-
-        alert("Please provide a reason for reporting") {
-            customView = layout
-
-            positiveButton("Report") {
-                if (!AppUtils.validated(editText)) {
-                    toast("Please enter a reason to report")
-                    return@positiveButton
-                }
-
-                val report = Report()
-                report.memeId = meme.id
-                report.memePosterId = meme.memePosterID
-                report.reporterId = getUid()
-                report.memeUrl = meme.imageUrl
-                report.reason = editText.text.toString().trim()
-                report.time = System.currentTimeMillis()
-
-                memesViewModel.reportMeme(report)
-            }
-
-            negativeButton("Cancel"){}
-        }.show()
-    }
-
     private fun errorFetchingProfile() {
         loading.hideView()
         longToast("Error fetching user profile")
@@ -253,7 +169,7 @@ class ProfileActivity : BaseActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
+        AppUtils.animateEnterLeft(this)
     }
 
 }
