@@ -29,6 +29,14 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
     val memeResponseLiveData: MutableLiveData<MemesResponse>
         get() = _memeResponseLiveData
 
+    private val _showEmptyStateLiveData = MutableLiveData<Boolean>()
+    val showEmptyStateLiveData: MutableLiveData<Boolean>
+        get() = _showEmptyStateLiveData
+
+    init {
+        _showEmptyStateLiveData.value = false
+    }
+
     /**
      * Function to post new Meme
      * @param imageUri - Uri of the selected meme
@@ -61,7 +69,9 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 .setPrefetchDistance(5)
                 .build()
 
-        val memeFactory = MemesDataSource.Factory(repository, viewModelScope)
+        val memeFactory = MemesDataSource.Factory(repository, viewModelScope) {
+            _showEmptyStateLiveData.value = true
+        }
         return LivePagedListBuilder<String, ItemViewModel>(memeFactory, pagingConfig).build()
     }
 
@@ -87,7 +97,9 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 .setPrefetchDistance(5)
                 .build()
 
-        val memeFactory = MemesDataSource.Factory(repository, viewModelScope, user)
+        val memeFactory = MemesDataSource.Factory(repository, viewModelScope, user) {
+            _showEmptyStateLiveData.value = true
+        }
         return LivePagedListBuilder<String, ItemViewModel>(memeFactory, pagingConfig).build()
     }
 

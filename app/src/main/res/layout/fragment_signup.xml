@@ -37,6 +37,12 @@
            android:src="@drawable/person"
            android:contentDescription="@string/content_image"/>
 
+       <View
+           android:layout_width="match_parent"
+           android:layout_height="0dp"
+           android:layout_weight="1"
+           android:background="@android:color/transparent"/>
+
        <EditText
            android:id="@+id/signupUsername"
            android:layout_width="match_parent"
