@@ -109,7 +109,7 @@
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:text="@string/label_agree_to_terms"
-               android:textSize="13sp"
+               android:textSize="15sp"
                android:layout_marginEnd="5dp"/>
 
            <TextView
@@ -118,7 +118,7 @@
                android:layout_height="wrap_content"
                android:text="@string/label_terms"
                android:textColor="@color/color_secondary"
-               android:textSize="13sp"
+               android:textSize="15sp"
                android:textStyle="bold" />
 
        </LinearLayout>
@@ -142,7 +142,7 @@
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:text="@string/label_member"
-               android:textSize="13sp"
+               android:textSize="15sp"
                android:layout_marginEnd="5dp"/>
 
            <TextView
