@@ -134,7 +134,7 @@
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:animateLayoutChanges="true"
-            android:weightSum="3"
+            android:weightSum="4"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
@@ -142,7 +142,7 @@
                 android:id="@+id/memeLike"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:drawablePadding="5dp"
                 android:padding="5dp"
                 android:textSize="12.5sp"
@@ -157,7 +157,7 @@
                 android:id="@+id/memeComment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:drawablePadding="5dp"
                 android:padding="5dp"
                 android:textSize="12.5sp"

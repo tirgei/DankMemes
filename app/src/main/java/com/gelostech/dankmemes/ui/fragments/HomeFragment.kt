@@ -67,8 +67,6 @@ class HomeFragment : BaseFragment() {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(activity)
             addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
-            itemAnimator = DefaultItemAnimator()
-            (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
             adapter = memesAdapter
         }
 
