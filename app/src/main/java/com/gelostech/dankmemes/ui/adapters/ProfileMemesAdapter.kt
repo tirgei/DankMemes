@@ -100,6 +100,7 @@ class ProfileMemesAdapter(private val callback: MemesCallback, private val isMe:
         val disposables = CompositeDisposable()
 
         fun bind(user: User) {
+            Timber.e("Binding User: $user")
             binding.user = user
             binding.callback = callback
             binding.isMe = isMe

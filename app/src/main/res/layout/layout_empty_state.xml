@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="message"
+            type="String" />
+
+        <variable
+            name="show"
+            type="Boolean" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/profileEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        bind:visibility="@{show}">
+
+        <ImageView
+            android:id="@+id/profileEmptyStateImage"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/content_image"
+            android:scaleType="centerInside"
+            android:src="@drawable/feed" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{message}" />
+
+    </LinearLayout>
+
+</layout>

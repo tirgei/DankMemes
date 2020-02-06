@@ -72,8 +72,6 @@ class ProfileFragment : BaseFragment() {
             setHasFixedSize(true)
             layoutManager = gridLayoutManager
             addItemDecoration(RecyclerFormatter.GridItemDecoration(activity!!, R.dimen.grid_layout_margin))
-            itemAnimator = DefaultItemAnimator()
-            (itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
             adapter = memesAdapter
         }
 
