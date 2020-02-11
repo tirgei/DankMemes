@@ -113,7 +113,7 @@
             android:id="@+id/memeImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxHeight="400dp"
+            android:maxHeight="500dp"
             android:layout_marginTop="12dp"
             android:layout_below="@id/memeCaption"
             android:contentDescription="@string/content_image"
