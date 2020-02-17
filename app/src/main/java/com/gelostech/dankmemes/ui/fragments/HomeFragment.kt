@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,7 @@ import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
+import com.gelostech.dankmemes.data.wrappers.ObservableMeme
 import com.gelostech.dankmemes.databinding.FragmentHomeBinding
 import com.gelostech.dankmemes.ui.activities.CommentActivity
 import com.gelostech.dankmemes.ui.activities.ProfileActivity
@@ -62,10 +64,12 @@ class HomeFragment : BaseFragment() {
 
     private fun initViews() {
         memesAdapter = MemesAdapter(memesCallback)
+        memesAdapter.setHasStableIds(false)
 
         homeRv.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(activity)
+            itemAnimator = null
             addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
             adapter = memesAdapter
         }
@@ -92,7 +96,7 @@ class HomeFragment : BaseFragment() {
         memesViewModel.fetchMemes().observe(this, Observer {
             homeShimmer?.stopShimmerAnimation()
             homeShimmer?.visibility = View.GONE
-            memesAdapter.submitList(it)
+            memesAdapter.submitList(it as PagedList<ObservableMeme>)
         })
     }
 

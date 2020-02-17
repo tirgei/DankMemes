@@ -1,5 +1,5 @@
 package com.gelostech.dankmemes.data.wrappers
 
-interface ItemViewModel {
+abstract interface ItemViewModel {
     val id: String
 }
