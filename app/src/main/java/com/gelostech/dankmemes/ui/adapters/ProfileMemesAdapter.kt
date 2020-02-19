@@ -83,7 +83,10 @@ class ProfileMemesAdapter(private val callback: MemesCallback, private val isMe:
 
                 meme.meme.subscribeBy(
                         onNext = { holder.bind(it) },
-                        onError = { Timber.e("Meme deleted") }
+                        onError = {
+                            Timber.e("Meme deleted")
+                            this.currentList?.dataSource?.invalidate()
+                        }
                 ).addTo(holder.disposables)
             }
         }

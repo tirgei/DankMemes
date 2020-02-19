@@ -48,7 +48,10 @@ class MemesAdapter(private val callback: MemesCallback): PagedListAdapter<Observ
 
         meme.meme.subscribeBy(
                 onNext = { holder.bind(it) },
-                onError = { Timber.e("Meme deleted") }
+                onError = {
+                    Timber.e("Meme deleted")
+                    this.currentList?.dataSource?.invalidate()
+                }
         ).addTo(holder.disposables)
     }
 
