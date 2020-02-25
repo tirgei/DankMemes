@@ -22,6 +22,7 @@ import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
 import com.gelostech.dankmemes.ui.adapters.ProfileMemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
+import com.gelostech.dankmemes.ui.callbacks.ProfileMemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.*
@@ -132,7 +133,7 @@ class ProfileFragment : BaseFragment() {
         })
     }
 
-    private val memesCallback = object : MemesCallback {
+    private val memesCallback = object : ProfileMemesCallback {
         override fun onMemeClicked(view: View, meme: Meme) {
             val memeId = meme.id!!
 
@@ -140,6 +141,10 @@ class ProfileFragment : BaseFragment() {
             i.putExtra(Constants.MEME_ID, memeId)
             startActivity(i)
             AppUtils.animateEnterRight(activity!!)
+        }
+
+        override fun onMemeLongClicked(meme: Meme) {
+            toast("Long pressed profile meme")
         }
 
         override fun onProfileClicked(view: View, user: User) {

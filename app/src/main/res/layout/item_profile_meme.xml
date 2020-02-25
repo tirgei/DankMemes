@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <import type="com.gelostech.dankmemes.R"/>
@@ -13,13 +13,14 @@
 
         <variable
             name="callback"
-            type="com.gelostech.dankmemes.ui.callbacks.MemesCallback" />
+            type="com.gelostech.dankmemes.ui.callbacks.ProfileMemesCallback" />
     </data>
 
     <com.gelostech.dankmemes.utils.SquareLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}">
+        android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"
+        app:onLongClick="@{callback.onMemeLongClicked(meme)}">
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/faveImage"

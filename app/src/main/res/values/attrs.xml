@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="primaryTextColor" format="color"/>
-    <attr name="secondaryTextColor" format="color"/>
-    <attr name="dividerColor" format="color"/>
-    <attr name="backgroundCardColor" format="color"/>
-    <attr name="iconPlaceholder" format="integer"/>
-
-    <declare-styleable name="FaveRoundImageView">
-        <attr name="onKeyLongPress" format="string"/>
+    <declare-styleable name="SquareLayout">
+        <attr name="onLongClick" format="string"/>
     </declare-styleable>
-
-    <declare-styleable name="FabBottomNavigationView">
-        <attr name="fab_cradle_margin" format="dimension"/>
-        <attr name="fab_cradle_rounded_corner_radius" format="dimension"/>
-        <attr name="cradle_vertical_offset" format="dimension"/>
-        <attr name="fab_size" format="dimension"/>
-    </declare-styleable>
-
 </resources>

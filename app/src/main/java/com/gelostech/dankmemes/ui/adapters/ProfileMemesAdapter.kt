@@ -11,21 +11,17 @@ import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableMeme
 import com.gelostech.dankmemes.data.wrappers.ObservableUser
-import com.gelostech.dankmemes.databinding.ItemMemeBinding
 import com.gelostech.dankmemes.databinding.ItemProfileBinding
 import com.gelostech.dankmemes.databinding.ItemProfileMemeBinding
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
-import com.gelostech.dankmemes.utils.AppUtils
-import com.gelostech.dankmemes.utils.TimeFormatter
+import com.gelostech.dankmemes.ui.callbacks.ProfileMemesCallback
 import com.gelostech.dankmemes.utils.inflate
-import com.gelostech.dankmemes.utils.setDrawable
-import com.mikepenz.ionicons_typeface_library.Ionicons
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
 
-class ProfileMemesAdapter(private val callback: MemesCallback, private val isMe: Boolean = false): PagedListAdapter<ItemViewModel, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+class ProfileMemesAdapter(private val callback: ProfileMemesCallback, private val isMe: Boolean = false): PagedListAdapter<ItemViewModel, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     enum class VIEW_TYPE {
         PROFILE,
@@ -111,7 +107,7 @@ class ProfileMemesAdapter(private val callback: MemesCallback, private val isMe:
 
     }
 
-    inner class MemeHolder(private val binding: ItemProfileMemeBinding, private val callback: MemesCallback):
+    inner class MemeHolder(private val binding: ItemProfileMemeBinding, private val callback: ProfileMemesCallback):
             RecyclerView.ViewHolder(binding.root) {
         val disposables = CompositeDisposable()
 
