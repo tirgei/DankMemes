@@ -219,9 +219,10 @@ object AppUtils {
     /**
      * Function to check provided username is valid
      */
-    fun isValidUsername(name: String): Boolean {
-        val username = name.toLowerCase(Locale.getDefault())
+    fun isValidUsername(name: String?): Boolean {
+        if (name.isNullOrEmpty()) return false
 
+        val username = name.toLowerCase(Locale.getDefault())
         if (username == "dank memes"
                 || username.contains("dank")
                 || username.contains("dank_memes")
