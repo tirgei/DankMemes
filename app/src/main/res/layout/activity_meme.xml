@@ -94,7 +94,7 @@
                 bind:likeStatus="@{meme.likes}"
                 android:text="@{(meme.likesCount > 0 ? meme.likesCount + ` ` : ``) + (meme.likesCount > 1 ? `Likes` : `Like`)}"
                 android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"
-                android:textColor="@color/color_text_secondary"/>
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/memeComment"
@@ -108,7 +108,7 @@
                 tools:text="34 comments"
                 android:text="@{(meme.commentsCount > 0 ? meme.commentsCount + ` ` : ``) + (meme.commentsCount > 1 ? `Comments` : `Comment`)}"
                 android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"
-                android:textColor="@color/color_text_secondary"/>
+                android:textColor="@color/white"/>
 
             <RelativeLayout
                 android:layout_width="0dp"

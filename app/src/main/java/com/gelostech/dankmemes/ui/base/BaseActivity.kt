@@ -3,6 +3,7 @@ package com.gelostech.dankmemes.ui.base
 import android.app.ProgressDialog
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -44,6 +45,7 @@ open class BaseActivity : AppCompatActivity() {
     fun setDarkStatusBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val window = window
+            window.decorView.systemUiVisibility = 0
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
             window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         }
