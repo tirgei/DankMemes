@@ -43,7 +43,6 @@ class ProfileFragment : BaseFragment() {
         // Inflate the layout for this fragment
         val binding = DataBindingUtil.inflate<FragmentProfileBinding>(inflater, R.layout.fragment_profile, container, false)
         binding.lifecycleOwner = this
-        binding.viewModel = memesViewModel
         return binding.root
     }
 
@@ -96,11 +95,26 @@ class ProfileFragment : BaseFragment() {
 
                 Status.SUCCESS -> {
                     loading.hideView()
-                    if (it.user != null) initMemesObserver(it.user)
+                    if (it.user != null) {
+                        initEmptyStateObserver()
+                        initMemesObserver(it.user)
+                    }
                     else errorFetchingProfile()
                 }
 
                 Status.ERROR -> errorFetchingProfile()
+            }
+        })
+    }
+
+    /**
+     * Initialize function to observer Empty State LiveData
+     */
+    private fun initEmptyStateObserver() {
+        memesViewModel.showEmptyStateLiveData.observe(this, Observer {
+            when (it) {
+                true -> emptyState.showView()
+                else -> emptyState.hideView()
             }
         })
     }

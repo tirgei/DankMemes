@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,6 +15,7 @@ import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.wrappers.ObservableUser
+import com.gelostech.dankmemes.databinding.ActivityProfileBinding
 import com.gelostech.dankmemes.ui.adapters.ProfileMemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
@@ -30,13 +32,15 @@ import timber.log.Timber
 
 class ProfileActivity : BaseActivity() {
     private lateinit var memesAdapter: ProfileMemesAdapter
+    private lateinit var binding: ActivityProfileBinding
     private val memesViewModel: MemesViewModel by viewModel()
     private val usersViewModel: UsersViewModel by viewModel()
     private lateinit var userId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_profile)
+        binding.lifecycleOwner = this
 
         userId = intent.getStringExtra(Constants.USER_ID)!!
 
@@ -95,7 +99,10 @@ class ProfileActivity : BaseActivity() {
 
                 Status.SUCCESS -> {
                     loading.hideView()
-                    if (it.user != null) initMemesObserver(it.user)
+                    if (it.user != null) {
+                        initEmptyStateObserver()
+                        initMemesObserver(it.user)
+                    }
                     else errorFetchingProfile()
                 }
 
@@ -114,6 +121,18 @@ class ProfileActivity : BaseActivity() {
     }
 
     /**
+     * Initialize function to observer Empty State LiveData
+     */
+    private fun initEmptyStateObserver() {
+        memesViewModel.showEmptyStateLiveData.observe(this, Observer {
+            when (it) {
+                true -> emptyState.showView()
+                else -> emptyState.hideView()
+            }
+        })
+    }
+
+        /**
      * Initialize observer for Generic Response LiveData
      */
     private fun initResponseObserver() {

@@ -70,7 +70,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 .build()
 
         val memeFactory = MemesDataSource.Factory(repository, viewModelScope) {
-            _showEmptyStateLiveData.value = true
+            _showEmptyStateLiveData.value = it
         }
         return LivePagedListBuilder<String, ItemViewModel>(memeFactory, pagingConfig).build()
     }
@@ -84,7 +84,9 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 .setPrefetchDistance(5)
                 .build()
 
-        val faveFactory = FavesDataSource.Factory(repository, viewModelScope)
+        val faveFactory = FavesDataSource.Factory(repository, viewModelScope) {
+            _showEmptyStateLiveData.value = it
+        }
         return LivePagedListBuilder<String, Fave>(faveFactory, pagingConfig).build()
     }
 
@@ -98,7 +100,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 .build()
 
         val memeFactory = MemesDataSource.Factory(repository, viewModelScope, user) {
-            _showEmptyStateLiveData.value = true
+            _showEmptyStateLiveData.value = it
         }
         return LivePagedListBuilder<String, ItemViewModel>(memeFactory, pagingConfig).build()
     }

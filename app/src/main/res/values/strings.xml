@@ -31,7 +31,8 @@
     <string name="label_privacy_policy">Privacy Policy</string>
     <string name="label_more_apps">More Apps</string>
     <string name="label_logout">Log Out</string>
-    <string name="label_no_faves">No faves found</string>
+    <string name="label_no_faves">No favorites found</string>
+    <string name="label_no_comments">No comments found</string>
     <string name="label_no_notifications">No notifications found</string>
     <string name="label_no_memes">No memes found</string>
     <string name="label_new_user">Hello there. I\'m here for the memes too :)</string>

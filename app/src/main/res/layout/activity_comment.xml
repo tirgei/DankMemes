@@ -1,116 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.activities.CommentActivity"
-    android:background="@color/color_primary">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/commentToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:actionBarStyle"
-        android:background="@color/color_primary_variant"
-        android:layout_alignParentTop="true"
-        android:elevation="1.2dp"
-        tools:targetApi="lollipop">
-
-        <TextView
-            android:id="@+id/toolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textStyle="bold"
-            android:textColor="@color/color_text_primary"
-            android:textSize="18.2sp"
-            android:text="@string/toolbar_comments"/>
-
-    </androidx.appcompat.widget.Toolbar>
-
-    <ProgressBar
-        android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/commentsRefresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/commentToolbar"
-        android:layout_above="@id/addCommentLayout">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/commentsRv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:overScrollMode="never"/>
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
-        android:id="@+id/commentsEmptyState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="gone">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.activities.CommentActivity"
+        android:background="@color/color_primary">
 
-        <ImageView
-            android:id="@+id/commentsEmptyStateImage"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/feed"
-            android:contentDescription="@string/content_image"/>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/commentToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:actionBarStyle"
+            android:background="@color/color_primary_variant"
+            android:layout_alignParentTop="true"
+            android:elevation="1.2dp"
+            tools:targetApi="lollipop">
 
-        <TextView
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textColor="@color/color_text_primary"
+                android:textSize="18.2sp"
+                android:text="@string/toolbar_comments"/>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <ProgressBar
+            android:id="@+id/loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/commentsEmptyStateImage"
-            android:text="@string/empty_comments"/>
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/commentsRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/commentToolbar"
+            android:layout_above="@id/addCommentLayout">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/commentsRv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <include
+            android:id="@+id/emptyState"
+            layout="@layout/layout_empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/commentToolbar"
+            android:visibility="gone"
+            app:icon="@{@drawable/ic_empty_memes}"
+            app:message="@{@string/label_no_comments}" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/addCommentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_alignParentBottom="true">
+
+            <EditText
+                android:id="@+id/commentET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/sendComment"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:hint="@string/hint_new_comment"
+                android:textColorHint="@color/color_text_secondary"
+                android:textColor="@color/color_text_primary"
+                android:textSize="14sp"
+                android:inputType="text|textAutoComplete|textNoSuggestions|textAutoCorrect|textLongMessage|textMultiLine|textShortMessage"
+                android:background="@drawable/edittext_light_gray"
+                android:importantForAutofill="no" />
+
+            <ImageButton
+                android:id="@+id/sendComment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@id/commentET"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:padding="10dp"
+                android:background="@color/transparent"
+                android:contentDescription="@string/content_image"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </RelativeLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/addCommentLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:layout_alignParentBottom="true">
-
-        <EditText
-            android:id="@+id/commentET"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/sendComment"
-            android:gravity="center_vertical"
-            android:padding="12dp"
-            android:hint="@string/hint_new_comment"
-            android:textColorHint="@color/color_text_secondary"
-            android:textColor="@color/color_text_primary"
-            android:textSize="14sp"
-            android:inputType="text|textAutoComplete|textNoSuggestions|textAutoCorrect|textLongMessage|textMultiLine|textShortMessage"
-            android:background="@drawable/edittext_light_gray"
-            android:importantForAutofill="no" />
-
-        <ImageButton
-            android:id="@+id/sendComment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@id/commentET"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:padding="10dp"
-            android:background="@color/transparent"
-            android:contentDescription="@string/content_image"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</RelativeLayout>
+</layout>

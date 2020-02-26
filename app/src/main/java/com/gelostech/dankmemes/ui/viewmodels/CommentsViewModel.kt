@@ -20,6 +20,14 @@ class CommentsViewModel constructor(private val repository: CommentsRepository):
     val genericResponseLiveData: MutableLiveData<GenericResponse>
         get() = _genericResponseLiveData
 
+    private val _showEmptyStateLiveData = MutableLiveData<Boolean>()
+    val showEmptyStateLiveData: MutableLiveData<Boolean>
+        get() = _showEmptyStateLiveData
+
+    init {
+        _showEmptyStateLiveData.value = false
+    }
+
     /**
      * Function to post new comment
      * @param comment - The comment model
@@ -72,7 +80,9 @@ class CommentsViewModel constructor(private val repository: CommentsRepository):
                 .setPrefetchDistance(5)
                 .build()
 
-        val commentFactory = CommentsDataSource.Factory(repository, viewModelScope, memeId)
+        val commentFactory = CommentsDataSource.Factory(repository, viewModelScope, memeId) {
+            _showEmptyStateLiveData.value = it
+        }
 
         return LivePagedListBuilder<String, ObservableComment>(commentFactory, pagingConfig).build()
     }

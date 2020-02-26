@@ -12,15 +12,17 @@ import org.koin.core.inject
 import timber.log.Timber
 
 class NotificationsDataSource constructor(private val repository: NotificationsRepository,
-                                  private val scope: CoroutineScope): ItemKeyedDataSource<String, Notification>(), KoinComponent {
+                                  private val scope: CoroutineScope,
+                                  private val onEmptyAction: (Boolean) -> Unit): ItemKeyedDataSource<String, Notification>(), KoinComponent {
 
     private val sessionManager: SessionManager by inject()
     private val userId = sessionManager.getUserId()
 
     class Factory(private val repository: NotificationsRepository,
-                  private val scope: CoroutineScope): DataSource.Factory<String, Notification>() {
+                  private val scope: CoroutineScope,
+                  private val onEmptyAction: (Boolean) -> Unit): DataSource.Factory<String, Notification>() {
         override fun create(): DataSource<String, Notification> {
-            return NotificationsDataSource(repository, scope)
+            return NotificationsDataSource(repository, scope, onEmptyAction)
         }
     }
 
@@ -29,7 +31,8 @@ class NotificationsDataSource constructor(private val repository: NotificationsR
 
         scope.launch {
             val notifications = repository.fetchNotifications(userId)
-            Timber.e("Notifications fetched: ${notifications.size}")
+
+            onEmptyAction(notifications.isEmpty())
             callback.onResult(notifications)
         }
     }

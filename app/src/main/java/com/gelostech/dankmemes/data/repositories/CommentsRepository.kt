@@ -20,7 +20,7 @@ class CommentsRepository constructor(private val firestoreDatabase: FirebaseFire
     private val memesDb = firestoreDatabase.collection(Constants.MEMES)
 
     /**
-     * Funtion to post new comment
+     * Function to post new comment
      * @param comment - The comment model
      */
     suspend fun postComment(comment: Comment): Result<Boolean> {

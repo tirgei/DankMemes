@@ -11,14 +11,16 @@ import timber.log.Timber
 
 class CommentsDataSource constructor(private val repository: CommentsRepository,
                                      private val scope: CoroutineScope,
-                                     private val memeId: String) : ItemKeyedDataSource<String, ObservableComment>() {
+                                     private val memeId: String,
+                                     private val onEmptyAction: (Boolean) -> Unit) : ItemKeyedDataSource<String, ObservableComment>() {
 
     class Factory(private val repository: CommentsRepository,
                   private val scope: CoroutineScope,
-                  private val memeId: String) : DataSource.Factory<String, ObservableComment>() {
+                  private val memeId: String,
+                  private val onEmptyAction: (Boolean) -> Unit) : DataSource.Factory<String, ObservableComment>() {
 
         override fun create(): DataSource<String, ObservableComment> {
-            return CommentsDataSource(repository, scope, memeId)
+            return CommentsDataSource(repository, scope, memeId, onEmptyAction)
         }
     }
 
@@ -27,6 +29,7 @@ class CommentsDataSource constructor(private val repository: CommentsRepository,
 
         scope.launch {
             val comments = repository.fetchComments(memeId)
+            onEmptyAction(comments.isEmpty())
             callback.onResult(comments)
         }
     }

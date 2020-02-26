@@ -12,12 +12,12 @@ import timber.log.Timber
 class MemesDataSource constructor(private val repository: MemesRepository,
                                   private val scope: CoroutineScope,
                                   private val user: ObservableUser? = null,
-                                  private val onEmptyAction: () -> Unit): ItemKeyedDataSource<String, ItemViewModel>() {
+                                  private val onEmptyAction: (Boolean) -> Unit): ItemKeyedDataSource<String, ItemViewModel>() {
 
     class Factory(private val repository: MemesRepository,
                   private val scope: CoroutineScope,
                   private val user: ObservableUser? = null,
-                  private val onEmptyAction: () -> Unit): DataSource.Factory<String, ItemViewModel>() {
+                  private val onEmptyAction: (Boolean) -> Unit): DataSource.Factory<String, ItemViewModel>() {
 
         override fun create(): DataSource<String, ItemViewModel> {
             return MemesDataSource(repository, scope, user, onEmptyAction)
@@ -30,17 +30,14 @@ class MemesDataSource constructor(private val repository: MemesRepository,
         scope.launch {
             if (user == null) {
                 val memes = repository.fetchMemes()
-                if (memes.isEmpty()) {
-                    onEmptyAction()
-                } else {
-                    callback.onResult(memes)
-                }
+
+                onEmptyAction(memes.isEmpty())
+                callback.onResult(memes)
             } else {
                 val memes = repository.fetchMemesByUser(user.id)
                 memes.add(0, user)
-                if (memes.size == 1) {
-                    onEmptyAction()
-                }
+
+                onEmptyAction(memes.size == 1)
                 callback.onResult(memes)
             }
         }

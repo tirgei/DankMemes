@@ -7,26 +7,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
 import com.gelostech.dankmemes.ui.adapters.FavesAdapter
-import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.ui.base.BaseFragment
-import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.data.models.Fave
+import com.gelostech.dankmemes.databinding.FragmentFavesBinding
 import com.gelostech.dankmemes.ui.callbacks.FavesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
-import com.gelostech.dankmemes.utils.RecyclerFormatter
-import com.gelostech.dankmemes.utils.runDelayed
+import com.gelostech.dankmemes.utils.*
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.fragment_faves.*
 import org.jetbrains.anko.alert
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class FavesFragment : BaseFragment() {
     private lateinit var favesAdapter: FavesAdapter
@@ -35,7 +35,9 @@ class FavesFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_faves, container, false)
+        val binding = DataBindingUtil.inflate<FragmentFavesBinding>(inflater, R.layout.fragment_faves, container, false)
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,6 +45,7 @@ class FavesFragment : BaseFragment() {
 
         initViews()
         initFavesObserver()
+        initEmptyStateObserver()
         initResponseObserver()
     }
 
@@ -72,6 +75,24 @@ class FavesFragment : BaseFragment() {
     }
 
     /**
+     * Initialize function to observer Empty State LiveData
+     */
+    private fun initEmptyStateObserver() {
+        memesViewModel.showEmptyStateLiveData.observe(this, Observer {
+            when (it) {
+                true -> {
+                    favesRv.hideView()
+                    emptyState.showView()
+                }
+                else -> {
+                    emptyState.hideView()
+                    favesRv.showView()
+                }
+            }
+        })
+    }
+
+    /**
      * Initialize observer for (Delete) Response LiveData
      */
     private fun initResponseObserver() {
@@ -79,7 +100,10 @@ class FavesFragment : BaseFragment() {
             when (it.status) {
                 Status.LOADING -> toast("Deleting fave \uD83D\uDC94...")
 
-                Status.SUCCESS -> toast("Fave deleted \uD83D\uDEAE")
+                Status.SUCCESS -> {
+                    toast("Fave deleted \uD83D\uDEAE")
+                    favesAdapter.currentList?.dataSource?.invalidate()
+                }
 
                 Status.ERROR -> toast("${it.error}. Please try again")
             }

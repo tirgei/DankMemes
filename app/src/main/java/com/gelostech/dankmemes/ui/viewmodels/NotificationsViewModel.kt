@@ -1,6 +1,7 @@
 package com.gelostech.dankmemes.ui.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
@@ -11,9 +12,13 @@ import com.gelostech.dankmemes.data.repositories.NotificationsRepository
 
 class NotificationsViewModel constructor(private val repository: NotificationsRepository): ViewModel() {
     private var _notificationsLiveData: LiveData<PagedList<Notification>>
+    private val _showEmptyStateLiveData = MutableLiveData<Boolean>()
+    val showEmptyStateLiveData: MutableLiveData<Boolean>
+        get() = _showEmptyStateLiveData
 
     init {
         _notificationsLiveData = initializePagedNotificationsBuilder().build()
+        _showEmptyStateLiveData.value = false
     }
 
     /**
@@ -30,7 +35,9 @@ class NotificationsViewModel constructor(private val repository: NotificationsRe
                 .setPrefetchDistance(5)
                 .build()
 
-        val faveFactory = NotificationsDataSource.Factory(repository, viewModelScope)
+        val faveFactory = NotificationsDataSource.Factory(repository, viewModelScope) {
+            _showEmptyStateLiveData.value = it
+        }
         return LivePagedListBuilder<String, Notification>(faveFactory, pagingConfig)
     }
 

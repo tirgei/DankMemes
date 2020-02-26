@@ -9,6 +9,7 @@ import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,7 @@ import com.gelostech.dankmemes.ui.adapters.CommentAdapter
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.data.models.Comment
 import com.gelostech.dankmemes.data.responses.GenericResponse
+import com.gelostech.dankmemes.databinding.ActivityCommentBinding
 import com.gelostech.dankmemes.ui.callbacks.CommentsCallback
 import com.gelostech.dankmemes.ui.callbacks.EditTextCallback
 import com.gelostech.dankmemes.ui.callbacks.EditTextListener
@@ -34,16 +36,19 @@ import timber.log.Timber
 class CommentActivity : BaseActivity() {
     private lateinit var commentsAdapter: CommentAdapter
     private lateinit var memeId: String
+    private lateinit var binding: ActivityCommentBinding
     private val commentsViewModel: CommentsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_comment)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_comment)
+        binding.lifecycleOwner = this
 
         memeId = intent.getStringExtra(Constants.MEME_ID)!!
 
         initViews()
         initResponseObserver()
+        initEmptyStateObserver()
         initCommentsObserver()
 
         commentsViewModel.fetchComments(memeId)
@@ -93,6 +98,24 @@ class CommentActivity : BaseActivity() {
     private fun initCommentsObserver() {
         commentsViewModel.fetchComments(memeId).observe(this, Observer {
             commentsAdapter.submitList(it)
+        })
+    }
+
+    /**
+     * Initialize function to observer Empty State LiveData
+     */
+    private fun initEmptyStateObserver() {
+        commentsViewModel.showEmptyStateLiveData.observe(this, Observer {
+            when (it) {
+                true -> {
+                    commentsRv.hideView()
+                    emptyState.showView()
+                }
+                else -> {
+                    emptyState.hideView()
+                    commentsRv.showView()
+                }
+            }
         })
     }
 

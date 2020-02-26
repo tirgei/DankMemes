@@ -6,6 +6,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.gelostech.dankmemes.R
@@ -14,12 +15,14 @@ import com.gelostech.dankmemes.ui.adapters.NotificationsAdapter
 import com.gelostech.dankmemes.ui.callbacks.NotificationsCallback
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.data.models.Notification
+import com.gelostech.dankmemes.databinding.FragmentNotificationsBinding
 import com.gelostech.dankmemes.ui.activities.MemeActivity
 import com.gelostech.dankmemes.ui.viewmodels.NotificationsViewModel
 import com.gelostech.dankmemes.utils.*
 import kotlinx.android.synthetic.main.fragment_notifications.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class NotificationsFragment : BaseFragment() {
     private lateinit var notificationsAdapter: NotificationsAdapter
@@ -28,13 +31,16 @@ class NotificationsFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notifications, container, false)
+        val binding = DataBindingUtil.inflate<FragmentNotificationsBinding>(inflater, R.layout.fragment_notifications, container, false)
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
+        initEmptyStateObserver()
         initNotificationsObserver()
     }
 
@@ -57,6 +63,24 @@ class NotificationsFragment : BaseFragment() {
     private fun initNotificationsObserver() {
         notificationsViewModel.fetchNotifications().observe(this, Observer {
             notificationsAdapter.submitList(it)
+        })
+    }
+
+    /**
+     * Initialize function to observer Empty State LiveData
+     */
+    private fun initEmptyStateObserver() {
+        notificationsViewModel.showEmptyStateLiveData.observe(this, Observer {
+            when (it) {
+                true -> {
+                    notifRv.hideView()
+                    emptyState.showView()
+                }
+                else -> {
+                    emptyState.hideView()
+                    notifRv.showView()
+                }
+            }
         })
     }
 

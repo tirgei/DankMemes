@@ -4,47 +4,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable
-            name="viewModel"
-            type="com.gelostech.dankmemes.ui.viewmodels.MemesViewModel" />
+        <import type="com.gelostech.dankmemes.R"/>
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/profileRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".ui.fragments.ProfileFragment">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ProgressBar
-                android:id="@+id/loading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:visibility="gone" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/profileRv"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:minHeight="10dp"
-                android:overScrollMode="never"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                tools:listitem="@layout/item_profile_meme" />
+                android:layout_height="wrap_content">
+
+                <ProgressBar
+                    android:id="@+id/loading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/profileRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:minHeight="10dp"
+                    android:overScrollMode="never"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    tools:listitem="@layout/item_profile_meme" />
+
+            </RelativeLayout>
 
             <include
+                android:id="@+id/emptyState"
                 layout="@layout/layout_empty_state"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/profileRv"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="gone"
                 app:message="@{@string/label_no_memes}"
-                app:show="@{viewModel.showEmptyStateLiveData.booleanValue()}"/>
+                app:icon="@{@drawable/ic_empty_memes}"/>
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

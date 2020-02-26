@@ -1,75 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.activities.ProfileActivity"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
+<layout>
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/viewProfileToolbar"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?android:actionBarStyle"
-        android:background="@color/color_primary_variant"
-        android:layout_alignParentTop="true"
-        android:elevation="0dp"
-        tools:targetApi="lollipop"/>
-
-    <RelativeLayout
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_below="@id/viewProfileToolbar">
+        tools:context=".ui.activities.ProfileActivity">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/viewProfileToolbar"
+            style="?android:actionBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@color/color_primary_variant"
+            android:elevation="0dp"
+            tools:targetApi="lollipop" />
 
         <ProgressBar
             android:id="@+id/loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/profileRefresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_below="@id/viewProfileToolbar">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/viewProfileRv"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:overScrollMode="never"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:clipToPadding="false"
-                tools:listitem="@layout/item_profile_meme"/>
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/viewProfileRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    tools:listitem="@layout/item_profile_meme" />
+
+                <include
+                    android:id="@+id/emptyState"
+                    layout="@layout/layout_empty_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    app:icon="@{@drawable/ic_empty_memes}"
+                    app:message="@{@string/label_no_memes}" />
+
+            </LinearLayout>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <RelativeLayout
-            android:id="@+id/viewProfileEmptyState"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/viewProfileEmptyStateImage"
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/feed"
-                android:contentDescription="@string/content_image"/>
-
-            <TextView
-                android:id="@+id/viewProfileEmptyStateText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/viewProfileEmptyStateImage"
-                android:layout_centerHorizontal="true"/>
-
-        </RelativeLayout>
-
     </RelativeLayout>
-
-</RelativeLayout>
+</layout>
