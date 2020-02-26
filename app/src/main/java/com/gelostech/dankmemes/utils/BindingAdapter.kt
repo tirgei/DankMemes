@@ -26,7 +26,7 @@ object BindingAdapter : KoinComponent {
      * Bind Image to layout
      */
     @JvmStatic
-    @BindingAdapter(value = ["bind:image", "bind:placeholder", "bind:thumbnail"], requireAll = false)
+    @BindingAdapter(value = ["image", "placeholder", "thumbnail"], requireAll = false)
     fun loadImage(view: ImageView, image: Any?, placeholder: Int, thumbnail: String? = null) {
         image?.let {
             if (thumbnail.isNullOrEmpty())
@@ -40,7 +40,7 @@ object BindingAdapter : KoinComponent {
      * Set layout visibility
      */
     @JvmStatic
-    @BindingAdapter("bind:visibility")
+    @BindingAdapter("visibility")
     fun setVisibility(view: View, visible: Boolean) {
         when (visible) {
             true -> view.showView()
@@ -52,7 +52,7 @@ object BindingAdapter : KoinComponent {
      * Set likes to Meme post
      */
     @JvmStatic
-    @BindingAdapter("bind:likeStatus")
+    @BindingAdapter("likeStatus")
     fun setLikeStatus(view: TextView, likes: MutableMap<String, Boolean>?) {
         val context = view.context
 
@@ -75,7 +75,7 @@ object BindingAdapter : KoinComponent {
      * Set favorite status to Meme post
      */
     @JvmStatic
-    @BindingAdapter("bind:faveStatus")
+    @BindingAdapter("faveStatus")
     fun setFaveStatus(view: ImageButton, faves: MutableMap<String, Boolean>?) {
         val context = view.context
 
@@ -91,7 +91,7 @@ object BindingAdapter : KoinComponent {
      * Handle faves click
      */
     @JvmStatic
-    @BindingAdapter(value = ["bind:fave", "bind:callback"], requireAll = true)
+    @BindingAdapter(value = ["fave", "callback"], requireAll = true)
     fun favesClick(view: RoundedImageView, fave: Fave, callback: FavesCallback) {
         view.setOnClickListener { callback.onFaveClick(view, fave, false) }
 
@@ -105,7 +105,7 @@ object BindingAdapter : KoinComponent {
      * Handle comments click
      */
     @JvmStatic
-    @BindingAdapter(value = ["bind:comment", "bind:callback"])
+    @BindingAdapter(value = ["comment", "callback"])
     fun commentsClick(view: View, comment: Comment?, callback: CommentsCallback?) {
         comment?.let {
             view.setOnClickListener { callback?.onCommentClicked(view, comment, false) }
@@ -121,7 +121,7 @@ object BindingAdapter : KoinComponent {
      * Handle notification click
      */
     @JvmStatic
-    @BindingAdapter("bind:notification")
+    @BindingAdapter("notification")
     fun setNotification(view: TextView, notification: Notification) {
         val user = notification.username!!
 
@@ -147,7 +147,7 @@ object BindingAdapter : KoinComponent {
      * Set verified icon
      */
     @JvmStatic
-    @BindingAdapter("bind:verified")
+    @BindingAdapter("verified")
     fun setVerified(view: TextView, verified: Boolean) {
         if (verified) view.setRightDrawable(ContextCompat.getDrawable(view.context, R.drawable.ic_verified)!!)
     }
