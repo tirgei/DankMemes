@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.gelostech.dankmemes.R
@@ -211,18 +213,25 @@ class LoginFragment : BaseFragment() {
      * Function to send email with reset password instructions
      */
     private fun forgotPassword() {
-        if (!AppUtils.validated(loginEmail)) return
-        val email = loginEmail.text.toString().trim()
+        val editText = EditText(activity)
+        val layout = FrameLayout(activity!!)
+        layout.setPaddingRelative(45,15,45,0)
+        layout.addView(editText)
 
-        activity?.alert("Instructions to reset your password will be sent to $email") {
-            title = "Forgot password"
+        activity!!.alert("Enter email to send password reset instructions") {
+            customView = layout
 
             positiveButton("SEND EMAIL") {
-                usersViewModel.sendResetPasswordEmail(email)
+                if (!AppUtils.validated(editText)) {
+                    activity!!.toast("Please enter a valid email")
+                    return@positiveButton
+                }
+
+                usersViewModel.sendResetPasswordEmail(editText.text.toString().trim())
             }
 
-            negativeButton("CANCEL") {}
-        }!!.show()
+            negativeButton("CANCEL"){}
+        }.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
