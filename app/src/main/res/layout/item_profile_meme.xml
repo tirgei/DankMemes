@@ -17,10 +17,10 @@
     </data>
 
     <com.gelostech.dankmemes.utils.SquareLayout
+        android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"
-        app:onLongClick="@{callback.onMemeLongClicked(meme)}">
+        android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}">
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/faveImage"

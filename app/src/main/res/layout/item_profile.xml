@@ -15,7 +15,7 @@
 
         <variable
             name="callback"
-            type="com.gelostech.dankmemes.ui.callbacks.MemesCallback" />
+            type="com.gelostech.dankmemes.ui.callbacks.ProfileMemesCallback" />
 
         <variable
             name="isMe"

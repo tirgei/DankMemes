@@ -144,7 +144,7 @@ class ProfileActivity : BaseActivity() {
         }
 
         override fun onMemeLongClicked(meme: Meme) {
-
+            // Report meme
         }
 
         override fun onProfileClicked(view: View, user: User) {

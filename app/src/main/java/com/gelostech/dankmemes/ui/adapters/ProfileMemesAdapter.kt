@@ -94,7 +94,7 @@ class ProfileMemesAdapter(private val callback: ProfileMemesCallback, private va
         if (holder is ProfileHolder) holder.apply { disposables.clear() }
     }
 
-    inner class ProfileHolder(private val binding: ItemProfileBinding, private val callback: MemesCallback, private val isMe: Boolean):
+    inner class ProfileHolder(private val binding: ItemProfileBinding, private val callback: ProfileMemesCallback, private val isMe: Boolean):
             RecyclerView.ViewHolder(binding.root) {
         val disposables = CompositeDisposable()
 
@@ -117,6 +117,10 @@ class ProfileMemesAdapter(private val callback: ProfileMemesCallback, private va
 
             binding.meme = meme
             binding.callback = callback
+            binding.parent.setOnLongClickListener {
+                callback.onMemeLongClicked(meme)
+                true
+            }
         }
     }
 

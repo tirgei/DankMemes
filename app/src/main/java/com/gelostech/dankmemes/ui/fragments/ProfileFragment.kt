@@ -29,6 +29,7 @@ import com.gelostech.dankmemes.utils.*
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.loading
+import org.jetbrains.anko.alert
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
@@ -144,7 +145,11 @@ class ProfileFragment : BaseFragment() {
         }
 
         override fun onMemeLongClicked(meme: Meme) {
-            toast("Long pressed profile meme")
+            activity!!.alert("Delete this meme?") {
+                title = "Delete Meme"
+                positiveButton("Delete") { memesViewModel.deleteMeme(meme.id!!) }
+                negativeButton("Cancel") {}
+            }.show()
         }
 
         override fun onProfileClicked(view: View, user: User) {
