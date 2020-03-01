@@ -46,6 +46,7 @@ class ProfileActivity : BaseActivity() {
 
         initViews()
         initUserObserver()
+        initEmptyStateObserver()
         initResponseObserver()
 
         usersViewModel.fetchObservableUser(userId)
@@ -100,7 +101,6 @@ class ProfileActivity : BaseActivity() {
                 Status.SUCCESS -> {
                     loading.hideView()
                     if (it.user != null) {
-                        initEmptyStateObserver()
                         initMemesObserver(it.user)
                     }
                     else errorFetchingProfile()

@@ -42,6 +42,7 @@
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
                     android:overScrollMode="never"
+                    android:minHeight="10dp"
                     android:paddingStart="5dp"
                     android:paddingEnd="5dp"
                     tools:listitem="@layout/item_profile_meme" />

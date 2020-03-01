@@ -108,7 +108,7 @@
                 tools:text="34 comments"
                 android:text="@{(meme.commentsCount > 0 ? meme.commentsCount + ` ` : ``) + (meme.commentsCount > 1 ? `Comments` : `Comment`)}"
                 android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"
-                android:textColor="@color/white"/>
+                android:textColor="@color/color_text_secondary"/>
 
             <RelativeLayout
                 android:layout_width="0dp"
