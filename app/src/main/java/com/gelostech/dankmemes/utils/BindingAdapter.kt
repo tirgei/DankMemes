@@ -1,5 +1,6 @@
 package com.gelostech.dankmemes.utils
 
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -28,6 +29,20 @@ object BindingAdapter : KoinComponent {
     @JvmStatic
     @BindingAdapter(value = ["image", "placeholder", "thumbnail"], requireAll = false)
     fun loadImage(view: ImageView, image: Any?, placeholder: Int, thumbnail: String? = null) {
+        image?.let {
+            if (thumbnail.isNullOrEmpty())
+                view.load(it, placeholder)
+            else
+                view.load(it, placeholder, thumbnail)
+        }
+    }
+
+    /**
+     * Bind Image to layout
+     */
+    @JvmStatic
+    @BindingAdapter(value = ["image", "placeholder", "thumbnail"], requireAll = false)
+    fun loadImage(view: ImageView, image: Any?, placeholder: Drawable, thumbnail: String? = null) {
         image?.let {
             if (thumbnail.isNullOrEmpty())
                 view.load(it, placeholder)

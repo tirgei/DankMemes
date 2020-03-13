@@ -56,6 +56,20 @@ fun ImageView.load(url: Any, placeholder: Int) {
  * Load image to ImageView
  * @param url - Url of the image, can be Int, drawable or String
  * @param placeholder - Placeholder to show when loading image
+ */
+fun ImageView.load(url: Any, placeholder: Drawable) {
+    Glide.with(context)
+            .setDefaultRequestOptions(RequestOptions().placeholder(placeholder))
+            .load(url)
+            .thumbnail(0.05f)
+            .error(placeholder)
+            .into(this)
+}
+
+/**
+ * Load image to ImageView
+ * @param url - Url of the image, can be Int, drawable or String
+ * @param placeholder - Placeholder to show when loading image
  * @param thumbnail - Image thumbnail url
  */
 fun ImageView.load(url: Any, placeholder: Int, thumbnail: String) {
@@ -67,6 +81,20 @@ fun ImageView.load(url: Any, placeholder: Int, thumbnail: String) {
             .into(this)
 }
 
+/**
+ * Load image to ImageView
+ * @param url - Url of the image, can be Int, drawable or String
+ * @param placeholder - Placeholder to show when loading image
+ * @param thumbnail - Image thumbnail url
+ */
+fun ImageView.load(url: Any, placeholder: Drawable, thumbnail: String) {
+    Glide.with(context)
+            .setDefaultRequestOptions(RequestOptions()
+                    .placeholder(placeholder))
+            .load(url)
+            .thumbnail(Glide.with(context).asDrawable().load(thumbnail).thumbnail(0.1f))
+            .into(this)
+}
 
 /**
  * Set drawable to the left of TextView
