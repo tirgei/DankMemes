@@ -50,6 +50,7 @@ object Constants {
     const val USER_TOKEN = "userToken"
     const val COMMENTS = "comments"
     const val MEME_COMMENTS = "meme-comments"
+    const val MEME_MUTED = "meme-false"
     const val DATE_UPDATED = "dateUpdated"
 
     // Admin type

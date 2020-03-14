@@ -10,6 +10,7 @@ import com.gelostech.dankmemes.data.wrappers.ObservableMeme
 import com.gelostech.dankmemes.ui.callbacks.StorageUploadListener
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.Constants
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.StorageReference
@@ -81,7 +82,17 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
             query = memesQuery.startAfter(meme)
         }
 
-        return query.get().await().map { ObservableMeme(it.id, getObservableMeme(it.id)) }
+        val myUserId = FirebaseAuth.getInstance().currentUser?.uid!!
+        return query.get().await()
+                .filter {
+                    val meme = it.toObject(Meme::class.java)
+                    if (myUserId != meme.memePosterID) {
+                        !meme.muted
+                    } else {
+                        true
+                    }
+                }
+                .map { ObservableMeme(it.id, getObservableMeme(it.id)) }
     }
 
     /**
