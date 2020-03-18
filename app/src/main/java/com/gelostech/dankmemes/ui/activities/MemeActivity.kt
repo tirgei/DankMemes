@@ -16,11 +16,13 @@ import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.Constants
+import com.gelostech.dankmemes.utils.setDrawable
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_meme.*
+import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -52,6 +54,9 @@ class MemeActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         memeToolbar.navigationIcon = AppUtils.getDrawable(this, Ionicons.Icon.ion_android_arrow_back, R.color.white, 18)
         memeToolbar?.setNavigationOnClickListener { onBackPressed() }
+        memeComment.apply {
+            this.setDrawable(AppUtils.getDrawable(this.context, Ionicons.Icon.ion_ios_chatboxes_outline, R.color.color_text_secondary, 20))
+        }
     }
 
     /**
@@ -66,12 +71,17 @@ class MemeActivity : BaseActivity() {
                     binding.loading = false
                     response.data?.meme?.subscribeBy(
                             onNext = { binding.meme = it },
-                            onError = { Timber.e("Meme deleted") }
+                            onError = {
+                                Timber.e("Meme deleted")
+                                toast("Error loading meme")
+                                onBackPressed()
+                            }
                     )?.addTo(disposables)
                 }
 
                 Status.ERROR -> {
                     binding.loading = false
+                    onBackPressed()
                 }
             }
         })

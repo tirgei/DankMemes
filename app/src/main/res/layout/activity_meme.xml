@@ -33,7 +33,7 @@
             android:layout_height="match_parent"
             android:layout_above="@id/actions"
             bind:image="@{meme.imageUrl}"
-            bind:placeholder="@{R.drawable.loading}"
+            bind:placeholder="@{@drawable/loading}"
             bind:thumbnail="@{meme.thumbnail}"/>
 
         <androidx.appcompat.widget.Toolbar
@@ -85,7 +85,7 @@
                 android:id="@+id/memeLike"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.2"
+                android:layout_weight="1"
                 android:drawablePadding="5dp"
                 android:padding="10dp"
                 android:textSize="13sp"
@@ -100,7 +100,7 @@
                 android:id="@+id/memeComment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.2"
+                android:layout_weight="1.5"
                 android:drawablePadding="5dp"
                 android:padding="10dp"
                 android:textSize="13sp"
@@ -113,7 +113,7 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.6">
+                android:layout_weight="0.5">
 
                 <ImageButton
                     android:id="@+id/memeFave"
