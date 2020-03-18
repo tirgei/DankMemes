@@ -41,8 +41,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.e(TAG, "From: " + remoteMessage!!.from!!)
-
         // Check if message contains a notification payload.
         if (remoteMessage.notification != null) {
             Log.e(TAG, "Notification: " + remoteMessage.notification!!.toString())

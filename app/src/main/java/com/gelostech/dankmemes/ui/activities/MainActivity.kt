@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
+import com.gelostech.dankmemes.DankMemes
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.ui.base.BaseActivity
@@ -62,6 +63,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     private lateinit var PROFILE: String
     private lateinit var NOTIFICATIONS: String
     private lateinit var PLAY_STORE_LINK: String
+
+    override fun onStart() {
+        super.onStart()
+        DankMemes.updateNotificationToken(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
