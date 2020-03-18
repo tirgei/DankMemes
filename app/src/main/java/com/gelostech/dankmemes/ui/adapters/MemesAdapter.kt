@@ -84,6 +84,10 @@ class MemesAdapter(private val callback: MemesCallback): PagedListAdapter<Observ
         fun bind(meme: Meme) {
             Timber.e("Binding ${meme.id}")
 
+            if (binding.meme != null && binding.meme!!.id == meme.id) {
+                meme.imageUrl = null
+            }
+
             binding.meme = meme
             binding.callback = callback
             binding.timeFormatter = TimeFormatter()

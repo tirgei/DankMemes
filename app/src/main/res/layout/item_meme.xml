@@ -106,6 +106,7 @@
             tools:text="Do y'all agree with this?"
             bind:visibility="@{meme.caption != null &amp;&amp; meme.caption != `` &amp;&amp; meme.caption != ` `}"
             android:text="@{meme.caption}"
+            android:visibility="gone"
             android:textColor="@color/color_text_primary"/>
 
         <com.makeramen.roundedimageview.RoundedImageView
