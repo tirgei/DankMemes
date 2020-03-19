@@ -10,6 +10,7 @@ import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.ui.viewmodels.NotificationsViewModel
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.SessionManager
+import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -51,4 +52,8 @@ val googleSignClientModule = module {
                 .requestEmail()
                 .build()
     }
+}
+
+val adBuilderModule = module {
+    single { AdLoader.Builder(androidApplication(), androidApplication().getString(R.string.admob_native_test_ad)) }
 }
