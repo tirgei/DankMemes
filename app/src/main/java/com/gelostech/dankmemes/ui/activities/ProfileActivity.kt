@@ -18,7 +18,6 @@ import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import com.gelostech.dankmemes.databinding.ActivityProfileBinding
 import com.gelostech.dankmemes.ui.adapters.ProfileMemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseActivity
-import com.gelostech.dankmemes.ui.callbacks.MemesCallback
 import com.gelostech.dankmemes.ui.callbacks.ProfileMemesCallback
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
@@ -46,7 +45,7 @@ class ProfileActivity : BaseActivity() {
 
         initViews()
         initUserObserver()
-        initEmptyStateObserver()
+        initStatusObserver()
         initResponseObserver()
 
         usersViewModel.fetchObservableUser(userId)
@@ -123,11 +122,21 @@ class ProfileActivity : BaseActivity() {
     /**
      * Initialize function to observer Empty State LiveData
      */
-    private fun initEmptyStateObserver() {
-        memesViewModel.showEmptyStateLiveData.observe(this, Observer {
+    private fun initStatusObserver() {
+        memesViewModel.showStatusLiveData.observe(this, Observer {
             when (it) {
-                true -> emptyState.showView()
-                else -> emptyState.hideView()
+                Status.LOADING -> {
+                    emptyState.hideView()
+                    loading.showView()
+                }
+                Status.ERROR -> {
+                    loading.hideView()
+                    emptyState.showView()
+                }
+                else -> {
+                    loading.hideView()
+                    emptyState.hideView()
+                }
             }
         })
     }

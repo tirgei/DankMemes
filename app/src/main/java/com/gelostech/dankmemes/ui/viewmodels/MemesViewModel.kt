@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.gelostech.dankmemes.data.Result
+import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.data.datasource.FavesDataSource
 import com.gelostech.dankmemes.data.datasource.MemesDataSource
 import com.gelostech.dankmemes.data.models.Fave
@@ -18,9 +19,10 @@ import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.responses.MemesResponse
 import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableUser
+import com.google.android.gms.ads.AdLoader
 import kotlinx.coroutines.launch
 
-class MemesViewModel constructor(private val repository: MemesRepository): ViewModel() {
+class MemesViewModel constructor(private val repository: MemesRepository, private val adBuilder: AdLoader.Builder): ViewModel() {
     private val _genericResponseLiveData = MutableLiveData<GenericResponse>()
     val genericResponseLiveData: MutableLiveData<GenericResponse>
         get() = _genericResponseLiveData
@@ -29,13 +31,9 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
     val memeResponseLiveData: MutableLiveData<MemesResponse>
         get() = _memeResponseLiveData
 
-    private val _showEmptyStateLiveData = MutableLiveData<Boolean>()
-    val showEmptyStateLiveData: MutableLiveData<Boolean>
-        get() = _showEmptyStateLiveData
-
-    init {
-        _showEmptyStateLiveData.value = false
-    }
+    private val _showStatusLiveData = MutableLiveData<Status>()
+    val showStatusLiveData: MutableLiveData<Status>
+        get() = _showStatusLiveData
 
     /**
      * Function to post new Meme
@@ -69,8 +67,8 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 .setPrefetchDistance(5)
                 .build()
 
-        val memeFactory = MemesDataSource.Factory(repository, viewModelScope) {
-            _showEmptyStateLiveData.value = it
+        val memeFactory = MemesDataSource.Factory(repository, viewModelScope, adBuilder) {
+            _showStatusLiveData.postValue(it)
         }
         return LivePagedListBuilder<String, ItemViewModel>(memeFactory, pagingConfig).build()
     }
@@ -85,7 +83,7 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 .build()
 
         val faveFactory = FavesDataSource.Factory(repository, viewModelScope) {
-            _showEmptyStateLiveData.value = it
+            _showStatusLiveData.postValue(it)
         }
         return LivePagedListBuilder<String, Fave>(faveFactory, pagingConfig).build()
     }
@@ -99,8 +97,8 @@ class MemesViewModel constructor(private val repository: MemesRepository): ViewM
                 .setPrefetchDistance(5)
                 .build()
 
-        val memeFactory = MemesDataSource.Factory(repository, viewModelScope, user) {
-            _showEmptyStateLiveData.value = it
+        val memeFactory = MemesDataSource.Factory(repository, viewModelScope, adBuilder, user) {
+            _showStatusLiveData.postValue(it)
         }
         return LivePagedListBuilder<String, ItemViewModel>(memeFactory, pagingConfig).build()
     }

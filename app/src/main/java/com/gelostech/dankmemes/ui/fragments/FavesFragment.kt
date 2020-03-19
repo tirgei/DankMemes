@@ -24,9 +24,7 @@ import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.fragment_faves.*
 import org.jetbrains.anko.alert
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class FavesFragment : BaseFragment() {
     private lateinit var favesAdapter: FavesAdapter
@@ -45,7 +43,7 @@ class FavesFragment : BaseFragment() {
 
         initViews()
         initFavesObserver()
-        initEmptyStateObserver()
+        initStatusObserver()
         initResponseObserver()
     }
 
@@ -77,16 +75,20 @@ class FavesFragment : BaseFragment() {
     /**
      * Initialize function to observer Empty State LiveData
      */
-    private fun initEmptyStateObserver() {
-        memesViewModel.showEmptyStateLiveData.observe(this, Observer {
+    private fun initStatusObserver() {
+        memesViewModel.showStatusLiveData.observe(this, Observer {
             when (it) {
-                true -> {
-                    favesRv.hideView()
+                Status.LOADING -> {
+                    emptyState.hideView()
+                    loading.showView()
+                }
+                Status.ERROR -> {
+                    loading.hideView()
                     emptyState.showView()
                 }
                 else -> {
+                    loading.hideView()
                     emptyState.hideView()
-                    favesRv.showView()
                 }
             }
         })

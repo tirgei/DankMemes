@@ -22,6 +22,7 @@ import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
+import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableMeme
 import com.gelostech.dankmemes.databinding.FragmentHomeBinding
 import com.gelostech.dankmemes.ui.activities.CommentActivity
@@ -57,7 +58,7 @@ class HomeFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
 
-        homeShimmer.startShimmerAnimation()
+        initStatusObserver()
         initMemesObserver()
         initResponseObserver()
     }
@@ -90,13 +91,28 @@ class HomeFragment : BaseFragment() {
     }
 
     /**
+     * Initialize function to observer Empty State LiveData
+     */
+    private fun initStatusObserver() {
+        memesViewModel.showStatusLiveData.observe(this, Observer {
+            when (it) {
+                Status.LOADING -> {
+                    homeShimmer.startShimmerAnimation()
+                }
+                else -> {
+                    homeShimmer.stopShimmerAnimation()
+                    homeShimmer.hideView()
+                }
+            }
+        })
+    }
+
+    /**
      * Initialize observer for Memes LiveData
      */
     private fun initMemesObserver() {
         memesViewModel.fetchMemes().observe(this, Observer {
-            homeShimmer?.stopShimmerAnimation()
-            homeShimmer?.visibility = View.GONE
-            memesAdapter.submitList(it as PagedList<ObservableMeme>)
+            memesAdapter.submitList(it as PagedList<ItemViewModel>)
         })
     }
 
