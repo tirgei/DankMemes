@@ -36,7 +36,7 @@ val repositoriesModule = module {
 
 val viewModelsModule = module {
     viewModel { UsersViewModel(get()) }
-    viewModel { MemesViewModel(get()) }
+    viewModel { MemesViewModel(get(), get()) }
     viewModel { NotificationsViewModel(get()) }
     viewModel { CommentsViewModel(get()) }
 }
