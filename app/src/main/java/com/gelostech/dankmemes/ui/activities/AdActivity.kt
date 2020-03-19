@@ -11,11 +11,12 @@ import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.formats.UnifiedNativeAd
 import kotlinx.android.synthetic.main.activity_ad.*
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class AdActivity : BaseActivity() {
     private lateinit var itemAdapter: AdAdapter
-    private val items = mutableListOf<Any>()
+    private val adBuilder: AdLoader.Builder by inject()
     private lateinit var adLoader: AdLoader
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,25 +42,25 @@ class AdActivity : BaseActivity() {
     }
 
     private fun loadStuff() {
-        for (i in 1..100) {
+        val items = mutableListOf<Item>()
+        for (i in 0..25) {
             val item = Item("Title $i", "Description: $i - $i")
             items.add(item)
         }
 
-        loadAds()
+        loadAds(items)
     }
 
-    private fun loadAds() {
+    private fun loadAds(items: List<Any>) {
         val ads = mutableListOf<UnifiedNativeAd>()
 
-        val builder = AdLoader.Builder(this, getString(R.string.admob_native_test_ad))
-        adLoader = builder.forUnifiedNativeAd { unifiedNativeAd ->
+        adLoader = adBuilder.forUnifiedNativeAd { unifiedNativeAd ->
             // A native ad loaded successfully, check if the ad loader has finished loading
             // and if so, insert the ads into the list.
             ads.add(unifiedNativeAd)
             Timber.e("Ad loaded")
             if (!adLoader.isLoading) {
-                insertAdsInMenuItems(ads)
+                insertAdsInMenuItems(items.toMutableList(), ads)
             }
         }.withAdListener(
                 object : AdListener() {
@@ -67,7 +68,7 @@ class AdActivity : BaseActivity() {
                         // A native ad failed to load, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
                         if (!adLoader.isLoading) {
-                            insertAdsInMenuItems(ads)
+                            insertAdsInMenuItems(items.toMutableList(), ads)
                         }
                         Timber.e("Error loading ad: %s", errorCode)
                     }
@@ -75,10 +76,10 @@ class AdActivity : BaseActivity() {
 
 
         // Load the Native Express ad.
-        adLoader.loadAds(AdRequest.Builder().build(), 20)
+        adLoader.loadAds(AdRequest.Builder().build(), 5)
     }
 
-    private fun insertAdsInMenuItems(mNativeAds: List<UnifiedNativeAd>) {
+    private fun insertAdsInMenuItems(items: MutableList<Any>, mNativeAds: List<UnifiedNativeAd>) {
         if (mNativeAds.isEmpty()) {
             return
         }
@@ -86,7 +87,7 @@ class AdActivity : BaseActivity() {
         Timber.e("Inserting ${mNativeAds.size} ads...")
 
         val offset = items.size / mNativeAds.size + 1
-        var index = 0
+        var index = 5
         for (ad in mNativeAds) {
             items.add(index, ad)
             index += offset

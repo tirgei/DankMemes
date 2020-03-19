@@ -63,7 +63,8 @@ class MemesAdapter(private val callback: MemesCallback): PagedListAdapter<ItemVi
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is AdHolder -> {
-                holder.bind(getItem(position) as UnifiedNativeAd)
+                val adWrapper = getItem(position) as NativeAdWrapper
+                holder.bind(adWrapper.ad)
             }
 
             is MemeHolder -> {

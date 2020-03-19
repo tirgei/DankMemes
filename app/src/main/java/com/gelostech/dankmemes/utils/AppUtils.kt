@@ -266,4 +266,14 @@ object AppUtils {
         view.startAnimation(anim)
     }
 
+    fun randomIdGenerator(): String {
+        val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+
+        return (1..16)
+                .map { kotlin.random.Random.nextInt(0, charPool.size) }
+                .map(charPool::get)
+                .joinToString("")
+
+    }
+
 }

@@ -121,7 +121,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
         bottomNavigation.setupWithViewPager(mainViewPager)
         addMeme.setOnClickListener {
-            startActivity(Intent(this, PostActivity::class.java))
+            startActivity(Intent(this, AdActivity::class.java))
             overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
         }
     }

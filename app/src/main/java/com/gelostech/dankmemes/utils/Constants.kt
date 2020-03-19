@@ -28,6 +28,7 @@ object Constants {
 
     // Firebase
     const val MEMES_COUNT = 25L
+    const val AD_COUNT = 3
     const val MEMES = "memes"
     const val FAVORITES = "favorites"
     const val USER_FAVES = "user-favorites"
