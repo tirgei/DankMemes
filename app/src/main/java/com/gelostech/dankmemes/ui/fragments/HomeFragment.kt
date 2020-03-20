@@ -12,20 +12,17 @@ import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.paging.PagedList
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.data.events.PostMemeEvent
-import com.gelostech.dankmemes.data.events.ScrollingEvent
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.wrappers.ItemViewModel
-import com.gelostech.dankmemes.data.wrappers.ObservableMeme
 import com.gelostech.dankmemes.databinding.FragmentHomeBinding
 import com.gelostech.dankmemes.ui.activities.CommentActivity
 import com.gelostech.dankmemes.ui.activities.ProfileActivity
@@ -33,7 +30,6 @@ import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
 import com.gelostech.dankmemes.ui.adapters.MemesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.callbacks.MemesCallback
-import com.gelostech.dankmemes.ui.callbacks.ScrollingMemesListener
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.utils.*
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -133,6 +129,7 @@ class HomeFragment : BaseFragment() {
                     when (it.item) {
                         GenericResponse.ITEM_RESPONSE.DELETE_MEME -> toast("Meme deleted \uD83D\uDEAE️")
                         GenericResponse.ITEM_RESPONSE.REPORT_MEME -> toast("Meme reported \uD83D\uDC4A")
+                        GenericResponse.ITEM_RESPONSE.FAVE_MEME -> EventBus.getDefault().post(PostMemeEvent(PostMemeEvent.TYPE.FAVORITE))
                         else -> Timber.e("Success \uD83D\uDE03")
                     }
                 }
@@ -313,7 +310,7 @@ class HomeFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         if (sessionManager.hasNewContent()) {
-            EventBus.getDefault().post(PostMemeEvent())
+            EventBus.getDefault().post(PostMemeEvent(PostMemeEvent.TYPE.NEW_POST))
             memesAdapter.currentList?.dataSource?.invalidate()
             sessionManager.hasNewContent(false)
         }

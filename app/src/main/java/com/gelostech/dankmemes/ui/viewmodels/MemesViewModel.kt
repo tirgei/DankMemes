@@ -152,7 +152,7 @@ class MemesViewModel constructor(private val repository: MemesRepository, privat
 
             when (val result = repository.faveMeme(memeId, userId)) {
                 is Result.Success -> {
-                    _genericResponseLiveData.value = GenericResponse.success(result.data)
+                    _genericResponseLiveData.value = GenericResponse.success(result.data, GenericResponse.ITEM_RESPONSE.FAVE_MEME)
                 }
 
                 is Result.Error -> {

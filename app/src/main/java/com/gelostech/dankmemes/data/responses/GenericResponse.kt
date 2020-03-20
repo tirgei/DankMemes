@@ -25,6 +25,6 @@ data class GenericResponse (
         POST_COMMENT,
         DELETE_COMMENT,
         UPDATE_AVATAR,
-        UPDATE_PROFILE
+        FAVE_MEME
     }
 }

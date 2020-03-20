@@ -202,7 +202,9 @@ class ProfileFragment : BaseFragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onPostMemeEvent(event: PostMemeEvent) {
-        memesAdapter.currentList?.dataSource?.invalidate()
+        if (event.type == PostMemeEvent.TYPE.NEW_POST) {
+            memesAdapter.currentList?.dataSource?.invalidate()
+        }
     }
 
     override fun onStop() {

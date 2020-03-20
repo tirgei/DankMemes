@@ -82,11 +82,11 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
             query = memesQuery.startAfter(meme)
         }
 
-        val myUserId = FirebaseAuth.getInstance().currentUser?.uid!!
+        val myUserId: String? = FirebaseAuth.getInstance().currentUser?.uid
         return query.get().await()
                 .filter {
                     val meme = it.toObject(Meme::class.java)
-                    if (myUserId != meme.memePosterID) {
+                    if (!myUserId.isNullOrEmpty() && myUserId != meme.memePosterID) {
                         !meme.muted
                     } else {
                         true

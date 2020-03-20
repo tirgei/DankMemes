@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
+import com.gelostech.dankmemes.data.events.PostMemeEvent
 import com.gelostech.dankmemes.ui.activities.ViewMemeActivity
 import com.gelostech.dankmemes.ui.adapters.FavesAdapter
 import com.gelostech.dankmemes.ui.base.BaseFragment
@@ -23,12 +24,20 @@ import com.gelostech.dankmemes.utils.*
 import com.makeramen.roundedimageview.RoundedDrawable
 import com.makeramen.roundedimageview.RoundedImageView
 import kotlinx.android.synthetic.main.fragment_faves.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.alert
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavesFragment : BaseFragment() {
     private lateinit var favesAdapter: FavesAdapter
     private val memesViewModel: MemesViewModel by viewModel()
+
+    override fun onStart() {
+        super.onStart()
+        if (!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -142,6 +151,18 @@ class FavesFragment : BaseFragment() {
             }
             negativeButton("Cancel") {}
         }.show()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onPostMemeEvent(event: PostMemeEvent) {
+        if (event.type == PostMemeEvent.TYPE.FAVORITE) {
+            favesAdapter.currentList?.dataSource?.invalidate()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this)
     }
 
 }
