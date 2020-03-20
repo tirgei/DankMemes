@@ -97,11 +97,21 @@ class HomeFragment : BaseFragment() {
         memesViewModel.showStatusLiveData.observe(this, Observer {
             when (it) {
                 Status.LOADING -> {
+                    emptyState.hideView()
                     homeShimmer.startShimmerAnimation()
                 }
-                else -> {
+                Status.SUCCESS -> {
                     homeShimmer.stopShimmerAnimation()
-                    homeShimmer.hideView()
+
+                    if (Connectivity.isConnected(activity!!)) {
+                        hideViews(homeShimmer, emptyState)
+                        homeRefresh.showView()
+                    } else {
+                        showEmptyState()
+                    }
+                }
+                else -> {
+                    showEmptyState()
                 }
             }
         })
@@ -287,6 +297,15 @@ class HomeFragment : BaseFragment() {
 
             negativeButton("Cancel"){}
         }.show()
+    }
+
+    /**
+     * Show empty state
+     */
+    private fun showEmptyState() {
+        homeShimmer.stopShimmerAnimation()
+        hideViews(homeRefresh, homeShimmer)
+        emptyState.showView()
     }
 
     /**

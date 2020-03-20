@@ -127,6 +127,20 @@ fun View.hideView() {
 }
 
 /**
+ * Show multiple views
+ */
+fun showViews(vararg views: View) {
+    views.forEach { view -> view.showView() }
+}
+
+/**
+ * Hide multiple views
+ */
+fun hideViews(vararg views: View) {
+    views.forEach { view -> view.hideView() }
+}
+
+/**
  * Set Drawable to the left of EditText
  * @param icon - Drawable to set
  */

@@ -70,17 +70,7 @@ class MemesDataSource constructor(private val repository: MemesRepository,
         }
     }
 
-    override fun loadBefore(params: LoadParams<String>, callback: LoadCallback<ItemViewModel>) {
-//        scope.launch {
-//            val memes = if (user == null) {
-//                repository.fetchMemes(loadBefore = params.key)
-//            } else {
-//                repository.fetchMemesByUser(userId = user.userId!!, loadBefore = params.key)
-//            }
-//
-//            callback.onResult(memes)
-//        }
-    }
+    override fun loadBefore(params: LoadParams<String>, callback: LoadCallback<ItemViewModel>) {}
 
     override fun getKey(item: ItemViewModel): String = item.id
 
@@ -93,7 +83,7 @@ class MemesDataSource constructor(private val repository: MemesRepository,
             ads.add(unifiedNativeAd)
             Timber.e("Ad loaded")
             if (!adLoader.isLoading) {
-                insertAdsInMenuItems(items.toMutableList(), ads, callback)
+                insertAdsInMemeItems(items.toMutableList(), ads, callback)
             }
         }.withAdListener(
                 object : AdListener() {
@@ -101,9 +91,11 @@ class MemesDataSource constructor(private val repository: MemesRepository,
                         // A native ad failed to load, check if the ad loader has finished loading
                         // and if so, insert the ads into the list.
                         if (!adLoader.isLoading) {
-                            insertAdsInMenuItems(items.toMutableList(), ads, callback)
+                            Timber.e("Done loading ads")
+                            insertAdsInMemeItems(items.toMutableList(), ads, callback)
+                        } else {
+                            Timber.e("Still loading ads...")
                         }
-                        Timber.e("Error loading ad: %s", errorCode)
                     }
                 }).build()
 
@@ -112,15 +104,16 @@ class MemesDataSource constructor(private val repository: MemesRepository,
         adLoader.loadAds(AdRequest.Builder().build(), Constants.AD_COUNT)
     }
 
-    private fun insertAdsInMenuItems(items: MutableList<ItemViewModel>, mNativeAds: List<UnifiedNativeAd>, callback: LoadCallback<ItemViewModel>) {
+    private fun insertAdsInMemeItems(items: MutableList<ItemViewModel>, mNativeAds: List<UnifiedNativeAd>, callback: LoadCallback<ItemViewModel>) {
         if (mNativeAds.isEmpty()) {
+            callback.onResult(items)
             return
         }
 
         val offset = items.size / mNativeAds.size + 1
-        var index = 5
+        var index = 8
         for (ad in mNativeAds) {
-            items.add(index, NativeAdWrapper(AppUtils.randomIdGenerator(), ad))
+            if (index <= items.lastIndex) items.add(index, NativeAdWrapper(AppUtils.randomIdGenerator(), ad))
             index += offset
         }
 
