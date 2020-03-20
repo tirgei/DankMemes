@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.lifecycle.Observer
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
@@ -188,7 +189,8 @@ class PostActivity : BaseActivity() {
      *  Image has been selected, show the image in ImageView and hide the select image button
      */
     private fun showSelectedImage() {
-        postAddImage.hideView()
+        Timber.e("Hiding button to select image")
+        postAddImage.visibility = View.GONE
         postSelectImage.showView()
     }
 
@@ -200,7 +202,7 @@ class PostActivity : BaseActivity() {
         imageUri = null
 
         postSelectImage.hideView()
-        postAddImage.showView()
+        showViews(postAddImage)
         postCaption.setText("")
     }
 

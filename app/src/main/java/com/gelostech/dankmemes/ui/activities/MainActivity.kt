@@ -15,6 +15,7 @@ import androidx.viewpager.widget.ViewPager
 import com.gelostech.dankmemes.DankMemes
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
+import com.gelostech.dankmemes.data.events.ScrollingEvent
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.ui.callbacks.ScrollingMemesListener
 import com.gelostech.dankmemes.ui.fragments.HomeFragment
@@ -37,6 +38,9 @@ import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.drawer_layout.*
 import kotlinx.android.synthetic.main.layout_activity_main.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
@@ -67,6 +71,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     override fun onStart() {
         super.onStart()
         DankMemes.updateNotificationToken(this)
+        if (!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,7 +126,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
         bottomNavigation.setupWithViewPager(mainViewPager)
         addMeme.setOnClickListener {
-            startActivity(Intent(this, AdActivity::class.java))
+            startActivity(Intent(this, PostActivity::class.java))
             overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
         }
     }
@@ -329,23 +334,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
     override fun onPause() {
         super.onPause()
-        homeFragment.removeScrollingListener()
     }
 
     override fun onResume() {
         super.onResume()
         drawerName.text = sessionManager.getUsername()
-        homeFragment.setScrollingListener(scrollingListener)
-    }
-
-    private val scrollingListener = object : ScrollingMemesListener {
-        override fun hideFab() {
-            addMeme.hide()
-        }
-
-        override fun showFab() {
-            addMeme.show()
-        }
     }
 
     override fun onBackPressed() {
@@ -368,6 +361,19 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     override fun onDestroy() {
         noInternetDialog.onDestroy()
         super.onDestroy()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onScrollingEvent(event: ScrollingEvent) {
+        when (event.showActionButton) {
+            true -> addMeme.show()
+            else -> addMeme.hide()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this)
     }
 
     // Unused methods

@@ -72,6 +72,7 @@ class ProfileFragment : BaseFragment() {
             layoutManager = gridLayoutManager
             addItemDecoration(RecyclerFormatter.GridItemDecoration(activity!!, R.dimen.grid_layout_margin))
             adapter = memesAdapter
+            AppUtils.handleHomeScrolling(this)
         }
 
         profileRefresh.setOnRefreshListener {

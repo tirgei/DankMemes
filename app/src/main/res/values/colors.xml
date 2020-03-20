@@ -37,6 +37,7 @@
     <color name="color_background_variant">#F5F5F5</color>
     <color name="color_surface">@android:color/white</color>
     <color name="color_error">#b00020</color>
+    <color name="color_gray">#e6e6e6</color>-->
 
     <color name="color_on_primary">@android:color/black</color>
     <color name="color_on_secondary">@android:color/white</color>

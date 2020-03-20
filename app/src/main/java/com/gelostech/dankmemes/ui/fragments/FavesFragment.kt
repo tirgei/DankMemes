@@ -55,6 +55,7 @@ class FavesFragment : BaseFragment() {
             layoutManager = GridLayoutManager(activity!!, 3)
             addItemDecoration(RecyclerFormatter.GridItemDecoration(activity!!, R.dimen.grid_layout_margin))
             adapter = favesAdapter
+            AppUtils.handleHomeScrolling(this)
         }
 
         favesRefresh.setOnRefreshListener {

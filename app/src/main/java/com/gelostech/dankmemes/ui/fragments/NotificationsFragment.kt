@@ -52,6 +52,7 @@ class NotificationsFragment : BaseFragment() {
             layoutManager = LinearLayoutManager(activity)
             addItemDecoration(RecyclerFormatter.SimpleDividerItemDecoration(activity!!))
             adapter = notificationsAdapter
+            AppUtils.handleHomeScrolling(this)
         }
 
         notifRefresh.setOnRefreshListener {

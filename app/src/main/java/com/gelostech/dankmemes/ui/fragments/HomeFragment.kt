@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
+import com.gelostech.dankmemes.data.events.ScrollingEvent
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.models.User
@@ -35,6 +36,7 @@ import com.gelostech.dankmemes.ui.callbacks.ScrollingMemesListener
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.utils.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -42,7 +44,6 @@ import timber.log.Timber
 class HomeFragment : BaseFragment() {
     private lateinit var memesAdapter: MemesAdapter
     private lateinit var bs: BottomSheet.Builder
-    private var scrollingListener: ScrollingMemesListener? = null
     private val memesViewModel: MemesViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -73,16 +74,8 @@ class HomeFragment : BaseFragment() {
             itemAnimator = null
             addItemDecoration(RecyclerFormatter.DoubleDividerItemDecoration(activity!!))
             adapter = memesAdapter
+            AppUtils.handleHomeScrolling(this)
         }
-
-        homeRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                if (dy > 0) scrollingListener?.hideFab()
-                else if (dy < 0) scrollingListener?.showFab()
-            }
-        })
 
         homeRefresh.setOnRefreshListener {
             memesAdapter.currentList?.dataSource?.invalidate()
@@ -98,6 +91,7 @@ class HomeFragment : BaseFragment() {
             when (it) {
                 Status.LOADING -> {
                     emptyState.hideView()
+                    homeShimmer.showView()
                     homeShimmer.startShimmerAnimation()
                 }
                 Status.SUCCESS -> {
@@ -313,20 +307,6 @@ class HomeFragment : BaseFragment() {
      */
     fun getRecyclerView(): RecyclerView {
         return homeRv
-    }
-
-    /**
-     * Function to set scrolling listener
-     */
-    fun setScrollingListener(listener: ScrollingMemesListener) {
-        this.scrollingListener = listener
-    }
-
-    /**
-     * Function to remove scrolling listener
-     */
-    fun removeScrollingListener() {
-        this.scrollingListener = null
     }
 }
 

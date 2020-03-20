@@ -44,7 +44,7 @@ class MemesDataSource constructor(private val repository: MemesRepository,
             if (user == null) {
                 val memes = repository.fetchMemes()
 
-                if (memes.isEmpty()) status(Status.ERROR) else status (Status.SUCCESS)
+                if (memes.isEmpty()) status(Status.ERROR)
                 loadAds(memes, callback)
             } else {
                 val memes = repository.fetchMemesByUser(user.id)
@@ -106,6 +106,7 @@ class MemesDataSource constructor(private val repository: MemesRepository,
 
     private fun insertAdsInMemeItems(items: MutableList<ItemViewModel>, mNativeAds: List<UnifiedNativeAd>, callback: LoadCallback<ItemViewModel>) {
         if (mNativeAds.isEmpty()) {
+            if (items.isNotEmpty()) status(Status.SUCCESS)
             callback.onResult(items)
             return
         }
@@ -117,6 +118,7 @@ class MemesDataSource constructor(private val repository: MemesRepository,
             index += offset
         }
 
+        if (items.isNotEmpty()) status(Status.SUCCESS)
         callback.onResult(items)
     }
 

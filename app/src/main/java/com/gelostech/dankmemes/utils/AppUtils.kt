@@ -24,8 +24,10 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.EditText
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.gelostech.dankmemes.R
+import com.gelostech.dankmemes.data.events.ScrollingEvent
 import com.gelostech.dankmemes.ui.callbacks.StorageUploadListener
 import com.google.firebase.storage.StorageReference
 import com.karumi.dexter.Dexter
@@ -36,6 +38,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
+import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.toast
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
@@ -266,6 +269,9 @@ object AppUtils {
         view.startAnimation(anim)
     }
 
+    /**
+     * Generate random ID
+     */
     fun randomIdGenerator(): String {
         val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
@@ -274,6 +280,20 @@ object AppUtils {
                 .map(charPool::get)
                 .joinToString("")
 
+    }
+
+    /**
+     * Function to show/hide home action button on scrolling
+     */
+    fun handleHomeScrolling(recyler: RecyclerView) {
+        recyler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (dy > 0) EventBus.getDefault().post(ScrollingEvent(false))
+                else if (dy < 0) EventBus.getDefault().post(ScrollingEvent(true))
+            }
+        })
     }
 
 }
