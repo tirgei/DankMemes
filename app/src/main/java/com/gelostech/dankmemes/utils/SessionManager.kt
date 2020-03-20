@@ -110,6 +110,20 @@ class SessionManager (context: Context) {
     }
 
     /**
+     * Check if user has posted new content
+     */
+    fun hasNewContent(): Boolean {
+        return prefs[Constants.HAS_NEW_CONTENT, false]
+    }
+
+    /**
+     * Set if user has new content
+     */
+    fun hasNewContent(freshContent: Boolean) {
+        prefs[Constants.HAS_NEW_CONTENT] = freshContent
+    }
+
+    /**
      * Function to clear prefs
      */
     fun clearSession() {

@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
+import com.gelostech.dankmemes.data.events.PostMemeEvent
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.User
 import com.gelostech.dankmemes.data.responses.GenericResponse
@@ -27,6 +28,9 @@ import com.gelostech.dankmemes.utils.*
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.loading
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.alert
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -35,6 +39,11 @@ class ProfileFragment : BaseFragment() {
     private lateinit var memesAdapter: ProfileMemesAdapter
     private val memesViewModel: MemesViewModel by viewModel()
     private val usersViewModel: UsersViewModel by viewModel()
+
+    override fun onStart() {
+        super.onStart()
+        if (!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -189,6 +198,16 @@ class ProfileFragment : BaseFragment() {
     private fun errorFetchingProfile() {
         loading.hideView()
 //        profileEmptyState.showView()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onPostMemeEvent(event: PostMemeEvent) {
+        memesAdapter.currentList?.dataSource?.invalidate()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this)
     }
 
 }

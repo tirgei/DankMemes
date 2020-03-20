@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cocosw.bottomsheet.BottomSheet
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
+import com.gelostech.dankmemes.data.events.PostMemeEvent
 import com.gelostech.dankmemes.data.events.ScrollingEvent
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
@@ -307,6 +308,15 @@ class HomeFragment : BaseFragment() {
      */
     fun getRecyclerView(): RecyclerView {
         return homeRv
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (sessionManager.hasNewContent()) {
+            EventBus.getDefault().post(PostMemeEvent())
+            memesAdapter.currentList?.dataSource?.invalidate()
+            sessionManager.hasNewContent(false)
+        }
     }
 }
 

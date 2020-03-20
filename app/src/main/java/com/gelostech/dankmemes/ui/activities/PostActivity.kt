@@ -11,6 +11,7 @@ import android.view.View
 import androidx.lifecycle.Observer
 import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
+import com.gelostech.dankmemes.data.events.PostMemeEvent
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
@@ -19,6 +20,7 @@ import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_post.*
+import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
@@ -90,6 +92,7 @@ class PostActivity : BaseActivity() {
                 Status.SUCCESS -> {
                     hideLoading()
                     showSelectImage()
+                    sessionManager.hasNewContent(true)
                     toast("Meme posted \uD83E\uDD2A\uD83E\uDD2A")
                 }
 

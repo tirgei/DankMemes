@@ -21,6 +21,7 @@ object Constants {
     const val LOGGED_IN = "logged_in"
     const val ADMIN_STATUS = "admin_status"
     const val DARK_MODE = "dark_mode"
+    const val HAS_NEW_CONTENT = "has_new_content"
 
     const val PIC_URL = "pic_url"
     const val CAPTION = "caption"

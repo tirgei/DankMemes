@@ -17,7 +17,6 @@ import com.gelostech.dankmemes.R
 import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.data.events.ScrollingEvent
 import com.gelostech.dankmemes.ui.base.BaseActivity
-import com.gelostech.dankmemes.ui.callbacks.ScrollingMemesListener
 import com.gelostech.dankmemes.ui.fragments.HomeFragment
 import com.gelostech.dankmemes.ui.fragments.FavesFragment
 import com.gelostech.dankmemes.ui.fragments.NotificationsFragment
@@ -67,6 +66,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     private lateinit var PROFILE: String
     private lateinit var NOTIFICATIONS: String
     private lateinit var PLAY_STORE_LINK: String
+    private var lastSelectedMenu = 0 // Bottom navigation menu
 
     override fun onStart() {
         super.onStart()
@@ -125,6 +125,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         mainViewPager.offscreenPageLimit = 4
 
         bottomNavigation.setupWithViewPager(mainViewPager)
+
         addMeme.setOnClickListener {
             startActivity(Intent(this, PostActivity::class.java))
             overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
@@ -310,6 +311,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
             3 -> toolbarTitle.text = NOTIFICATIONS
             4 -> toolbarTitle.text = PROFILE
         }
+
+        lastSelectedMenu = position
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -344,6 +347,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     override fun onBackPressed() {
         if (slidingDrawer.isMenuOpened) {
             slidingDrawer.closeMenu(true)
+
+        } else if (bottomNavigation.currentItem != 0) {
+            bottomNavigation.currentItem = 0
 
         } else {
             if (doubleBackToExit) {
