@@ -55,5 +55,5 @@ val googleSignClientModule = module {
 }
 
 val adBuilderModule = module {
-    single { AdLoader.Builder(androidApplication(), androidApplication().getString(R.string.admob_native_test_ad)) }
+    single { AdLoader.Builder(androidApplication(), androidApplication().getString(R.string.admob_native_ad_id)) }
 }
