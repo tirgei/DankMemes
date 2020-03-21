@@ -4,21 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.EditProfileActivity"
-    android:background="@color/white">
+    tools:context=".ui.activities.EditProfileActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/editProfileToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?android:actionBarStyle"
+        android:background="@color/color_primary_variant"
         android:layout_alignParentTop="true"
-        android:background="@android:color/transparent"
-        app:titleTextColor="@color/textGray"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
-        android:elevation="@dimen/no_elevation"/>
+        android:elevation="1.2dp"
+        tools:targetApi="lollipop">
 
-    <ScrollView
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/color_text_primary"
+            android:textSize="18.2sp"
+            android:text="@string/toolbar_edit_profile"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -34,7 +44,8 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="60dp"
                 android:layout_gravity="center_horizontal">
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -50,64 +61,56 @@
                     android:layout_alignBottom="@id/editProfileImage"
                     android:layout_alignEnd="@id/editProfileImage"
                     android:background="@drawable/circle_button"
-                    android:contentDescription="@string/button"/>
+                    android:contentDescription="@string/content_image_button"/>
 
             </RelativeLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/username"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="@dimen/album_desc"
-                android:layout_marginStart="10dp"/>
+                android:text="@string/label_username"
+                style="@style/ProfileTextView"/>
 
             <EditText
                 android:id="@+id/editProfileName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:background="@color/white"
-                android:textSize="@dimen/album_title"
                 android:inputType="text"
-                android:hint="@string/username"/>
+                android:hint="@string/hint_username"
+                style="@style/ProfileEditText"
+                android:importantForAutofill="no" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/bio"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="@dimen/album_desc"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"/>
+                android:text="@string/label_bio"
+                style="@style/ProfileTextView"
+                android:layout_marginTop="30dp"/>
 
             <EditText
                 android:id="@+id/editProfileBio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:background="@color/white"
-                android:textSize="@dimen/album_title"
+                style="@style/ProfileEditText"
                 android:inputType="textMultiLine"
-                android:hint="@string/bio"/>
+                android:hint="@string/label_bio"
+                android:importantForAutofill="no" />
 
-            <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+            <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
                 android:id="@+id/editProfileButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="30dp"
                 android:background="@drawable/button_solid"
-                android:text="@string/update_profile"
+                android:text="@string/button_update_profile"
                 android:textColor="@color/white"
-                app:spinning_bar_color="@color/white"
+                app:spinning_bar_color="@android:color/white"
                 app:spinning_bar_width="4dp"
                 app:spinning_bar_padding="2dp"
                 android:layout_gravity="center_horizontal"/>
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>

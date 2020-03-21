@@ -1,53 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.NotificationsFragment"
-    android:background="@color/white">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.fragments.NotificationsFragment">
 
-    <RelativeLayout
-        android:id="@+id/notifsEmptyState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
-
-        <ImageView
-            android:id="@+id/emptyImage"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/feed"
-            android:contentDescription="@string/image"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:textColor="@color/secondaryText"
-            android:layout_below="@id/emptyImage"
-            android:text="No notifications received yet"/>
-
-    </RelativeLayout>
-
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/notifRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        android:layout_height="match_parent">
 
-        <com.aspsine.irecyclerview.IRecyclerView
-            android:id="@+id/notifRv"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/item_notification"
-            android:overScrollMode="never"
-            app:refreshEnabled="false"
-            app:loadMoreEnabled="true"
-            app:loadMoreFooterLayout="@layout/loading"/>
+            android:layout_height="match_parent">
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/notifRv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:visibility="gone"
+                tools:listitem="@layout/item_notification" />
 
-</RelativeLayout>
+            <include
+                android:id="@+id/emptyState"
+                layout="@layout/layout_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:icon="@{@drawable/ic_empty_memes}"
+                app:message="@{@string/label_no_notifications}" />
+
+        </FrameLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</layout>

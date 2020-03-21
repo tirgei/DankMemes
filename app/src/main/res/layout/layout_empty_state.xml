@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.gelostech.dankmemes.R"/>
+
+        <variable
+            name="message"
+            type="String" />
+
+        <variable
+            name="icon"
+            type="android.graphics.drawable.Drawable" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/profileEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:paddingBottom="80dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/profileEmptyStateImage"
+            android:layout_width="170dp"
+            android:layout_height="170dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/content_image"
+            android:scaleType="fitXY"
+            android:src="@{icon}"
+            tools:src="@drawable/ic_empty_memes"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="@color/color_text_secondary"
+            android:text="@{message}"
+            tools:text="@string/label_no_memes"/>
+
+    </LinearLayout>
+
+</layout>

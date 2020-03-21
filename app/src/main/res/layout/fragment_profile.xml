@@ -1,116 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.aspsine.irecyclerview.IRecyclerView
-        android:id="@+id/profileRv"
+    <data>
+        <import type="com.gelostech.dankmemes.R"/>
+    </data>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/profileRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="never"
-        tools:listitem="@layout/item_meme"
-        app:refreshEnabled="false"
-        app:loadMoreEnabled="true"
-        app:loadMoreFooterLayout="@layout/loading"/>
+        tools:context=".ui.fragments.ProfileFragment">
 
-    <com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader
-        android:id="@+id/profileHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <RelativeLayout
-                android:id="@+id/profileTop"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="20dp"
-                android:clipToPadding="false"
-                android:paddingBottom="10dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true">
+                android:layout_height="wrap_content">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profileImage"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginStart="10dp"
-                    tools:src="@drawable/person"/>
+                <ProgressBar
+                    android:id="@+id/loading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone" />
 
-                <LinearLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/profileRv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/profileImage"
-                    android:layout_marginStart="10dp"
-                    android:layout_centerVertical="true"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/profileName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/textGray"
-                        tools:text="Vincent Tirgei"
-                        android:textSize="18sp"
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:id="@+id/profileBio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/secondaryText"
-                        android:textSize="14sp"
-                        tools:text="Here's some random brief summary about me :)"/>
-
-                </LinearLayout>
+                    android:clipToPadding="false"
+                    android:minHeight="10dp"
+                    android:overScrollMode="never"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    tools:listitem="@layout/item_profile_meme" />
 
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/profilePostsTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_below="@id/profileTop"
-                android:text="@string/my_posts"
-                android:textColor="@color/textGray"
-                android:textSize="15sp"
-                android:textStyle="bold"/>
+            <include
+                android:id="@+id/emptyState"
+                layout="@layout/layout_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="gone"
+                app:message="@{@string/label_no_memes}"
+                app:icon="@{@drawable/ic_empty_memes}"/>
 
-        </RelativeLayout>
+        </LinearLayout>
 
-    </com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <RelativeLayout
-        android:id="@+id/profileEmptyState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+</layout>
 
-        <ImageView
-            android:id="@+id/profileEmptyStateImage"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/feed"
-            android:contentDescription="@string/image"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/profileEmptyStateImage"
-            android:layout_centerHorizontal="true"
-            android:text="You haven't posted any memes yet"/>
-
-    </RelativeLayout>
-
-</RelativeLayout>

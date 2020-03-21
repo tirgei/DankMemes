@@ -3,14 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_add_meme"
-        app:showAsAction="ifRoom"
-        android:title="Post meme"/>
-
-    <item
         android:id="@+id/menu_edit_profile"
         app:showAsAction="ifRoom"
-        android:title="Edit Profile"
+        android:title="@string/menu_edit_profile"
         android:visible="false"/>
 
 </menu>

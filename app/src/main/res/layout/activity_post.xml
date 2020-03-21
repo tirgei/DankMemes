@@ -1,56 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.PostActivity"
-    android:background="@color/white">
+    tools:context=".ui.activities.PostActivity"
+    android:background="@color/color_primary">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/postToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?android:actionBarStyle"
+        android:background="@color/color_primary_variant"
         android:layout_alignParentTop="true"
-        android:background="@color/white"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
-        app:titleTextColor="@color/textGray"
-        android:elevation="@dimen/no_elevation"/>
+        android:elevation="1.2dp"
+        tools:targetApi="lollipop">
 
-    <EditText
-        android:id="@+id/postCaption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:padding="20dp"
-        android:layout_below="@id/postToolbar"
-        android:textSize="15sp"
-        android:inputType="textMultiLine"
-        android:hint="Write something..."/>
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/color_text_primary"
+            android:textSize="18.2sp"
+            android:text="@string/toolbar_post_meme"/>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/postCaption">
+        android:layout_below="@id/postToolbar">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/postCaption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:textSize="15sp"
+                    android:inputType="textMultiLine"
+                    android:hint="@string/hint_caption"
+                    android:textColor="@color/color_text_primary"
+                    android:textColorHint="@color/color_text_secondary"
+                    android:background="@color/color_primary"
+                    android:importantForAutofill="no" />
+
+                <ImageView
+                    android:id="@+id/postSelectImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/content_image"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
 
         <ImageButton
             android:id="@+id/postAddImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
             android:layout_centerInParent="true"
-            android:contentDescription="@string/select_meme"
-            android:background="@android:color/transparent"/>
-
-        <ImageView
-            android:id="@+id/postSelectImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:contentDescription="@string/image"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/content_select_meme"
             android:scaleType="fitCenter"
-            android:background="@android:color/transparent"/>
+            app:srcCompat="@drawable/ic_image_add" />
 
     </RelativeLayout>
 

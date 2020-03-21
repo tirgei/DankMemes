@@ -4,8 +4,8 @@
 
     <size
         android:width="5dp"
-        android:height="5dp" />
+        android:height="2dp" />
 
-    <solid android:color="@color/feedDivider" />
+    <solid android:color="@color/color_feed_divider" />
 
 </shape>

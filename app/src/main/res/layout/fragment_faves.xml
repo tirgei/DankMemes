@@ -1,46 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.FavesFragment">
+    tools:context=".ui.fragments.FavesFragment">
 
-    <com.aspsine.irecyclerview.IRecyclerView
-        android:id="@+id/favesRv"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/favesRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:padding="5dp"
-        android:clipToPadding="false"
-        tools:listitem="@layout/item_fave"
-        app:refreshEnabled="false"
-        app:loadMoreEnabled="true"
-        app:loadMoreFooterLayout="@layout/loading"/>
+        android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/collectionsEmptyState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/collectionsEmptyStateImage"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/feed"
-            android:contentDescription="@string/image"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:textColor="@color/secondaryText"
-            android:layout_below="@id/collectionsEmptyStateImage"
-            android:text="You haven't favorited any memes yet"/>
+                <ProgressBar
+                    android:id="@+id/loading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone" />
 
-    </RelativeLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/favesRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:overScrollMode="never"
+                    android:padding="2dp"
+                    android:clipToPadding="false"
+                    tools:listitem="@layout/item_fave"/>
 
-</RelativeLayout>
+            </RelativeLayout>
+
+            <include
+                android:id="@+id/emptyState"
+                layout="@layout/layout_empty_state"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="match_parent"
+                app:message="@{@string/label_no_faves}"
+                app:icon="@{@drawable/ic_empty_memes}"/>
+
+        </FrameLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</layout>

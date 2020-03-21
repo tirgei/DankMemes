@@ -5,6 +5,6 @@
     <item
         android:id="@+id/menu_post"
         app:showAsAction="ifRoom"
-        android:title="Post meme"/>
+        android:title="@string/menu_post_meme"/>
 
 </menu>

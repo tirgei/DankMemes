@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/bs_share" android:title="Share" android:icon="@drawable/ic_share"/>
-    <item android:id="@+id/bs_save" android:title="Save" android:icon="@drawable/ic_save"/>
-    <item android:id="@+id/bs_report" android:title="Report" android:icon="@drawable/ic_report"/>
-    <item android:id="@+id/bs_delete" android:title="Delete" android:icon="@drawable/ic_delete"/>
+    <item android:id="@+id/bs_share" android:title="@string/menu_share" android:icon="@drawable/ic_share"/>
+    <item android:id="@+id/bs_save" android:title="@string/menu_save" android:icon="@drawable/ic_save"/>
+    <item android:id="@+id/bs_report" android:title="@string/menu_report" android:icon="@drawable/ic_report"/>
+    <item android:id="@+id/bs_delete" android:title="@string/menu_delete" android:icon="@drawable/ic_delete"/>
 </menu>

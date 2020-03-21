@@ -1,25 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#009688</color>
-    <color name="colorAccent">#009688</color>
-    <color name="colorPrimaryLight">#FFE0B2</color>
-    <color name="dividerColor">#BDBDBD</color>
-    <color name="windowBackground">#000000</color>
-    <color name="gold">#b2497d</color>
-    <color name="white">#FFFFFF</color>
-    <color name="inactiveColor">#8c8c8c</color>
-    <color name="feedDivider">#CCe0e0e0</color>
-    <color name="pink">#ec407a</color>
-    <color name="black">#000000</color>
-    <color name="textGray">#616161</color>
-    <color name="primaryText">#212121</color>
-    <color name="secondaryText">#D9757575</color>
-    <color name="timeColor">#A6616161</color>
-    <color name="placeholder_bg">#dddddd</color>
-    <color name="lightGray">#e6e6e6</color>
+<!--    <color name="colorPrimary">#FFFFFF</color>-->
+<!--    <color name="colorPrimaryDark">#009688</color>-->
+<!--    <color name="colorAccent">#009688</color>-->
+<!--    <color name="colorPrimaryLight">#FFE0B2</color>-->
+<!--    <color name="dividerColor">#BDBDBD</color>-->
+<!--    <color name="windowBackground">#000000</color>-->
+<!--    <color name="gold">#b2497d</color>-->
+<!--    <color name="white">#FFFFFF</color>-->
+<!--    <color name="inactiveColor">#8c8c8c</color>-->
+<!--    <color name="feedDivider">#CCe0e0e0</color>-->
+<!--    <color name="pink">#ec407a</color>-->
+<!--    <color name="black">#000000</color>-->
+<!--    <color name="textGray">#616161</color>-->
+<!--    <color name="primaryText">#212121</color>-->
+<!--    <color name="secondaryText">#D9757575</color>-->
+<!--    <color name="timeColor">#A6616161</color>-->
+<!--    <color name="placeholder_bg">#dddddd</color>-->
+<!--    <color name="lightGray">#e6e6e6</color>-->
 
-    <color name="darkWindowBackground">#33343B</color>
-    <color name="lightWindowBackground">#F4F4F6</color>
+<!--    <color name="secondaryGray">#A0A9A6</color>-->
+
+<!--    <color name="bottom_bar">@color/colorPrimary</color>-->
+
+<!--    <color name="darkWindowBackground">#33343B</color>-->
+<!--    <color name="lightWindowBackground">#F4F4F6</color>-->
+
+    <!-- Material Theme -->
+
+    <color name="color_primary">@android:color/white</color>
+    <color name="color_primary_variant">@android:color/white</color>
+    <color name="color_secondary">#009688</color>
+    <color name="color_secondary_variant">#80cbc4</color>
+
+    <color name="color_background">@color/color_primary</color>
+    <color name="color_background_variant">#F5F5F5</color>
+    <color name="color_surface">@android:color/white</color>
+    <color name="color_error">#b00020</color>
+    <color name="color_gray">#e6e6e6</color>-->
+
+    <color name="color_on_primary">@android:color/black</color>
+    <color name="color_on_secondary">@android:color/white</color>
+    <color name="color_on_background">@android:color/white</color>
+    <color name="color_on_surface">@android:color/black</color>
+    <color name="color_on_error">#ffffff</color>
+
+    <!-- Other colors -->
+    <color name="black">@android:color/black</color>
+    <color name="white">@android:color/white</color>
+    <color name="transparent">@android:color/transparent</color>
+    <color name="color_feed_divider">#CCe0e0e0</color>
+    <color name="color_text_primary">#353858</color>
+    <color name="color_text_secondary">#9497AB</color>
+<!--    <color name="color_icon_primary">#9497AB</color>-->
+<!--    <color name="color_icon_secondary">#D9757575</color>-->
+    <color name="color_favorite">#ec407a</color>
+
 
 </resources>

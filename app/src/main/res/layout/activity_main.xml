@@ -1,54 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".activities.MainActivity"
-    android:background="@color/white"
-    android:id="@+id/mainRoot">
+    tools:context=".ui.activities.MainActivity"
+    android:id="@+id/mainRoot"
+    android:background="@color/color_primary">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/mainToolbar"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="?android:actionBarStyle"
-        android:layout_alignParentTop="true"
-        android:background="@color/white"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_scrollFlags="scroll|enterAlways|snap"
-        app:titleTextColor="@color/textGray"
-        android:elevation="0.5dp">
+        app:elevation="0dp"
+        android:translationZ="1.2dp"
+        tools:targetApi="lollipop">
 
-        <!--<TextView-->
-            <!--android:id="@+id/mainToolbarTitle"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:textColor="@color/textGray"-->
-            <!--android:textSize="19sp"-->
-            <!--style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:gravity="center"-->
-            <!--android:paddingTop="5dp"-->
-            <!--tools:text="Dank Memes"/>-->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/mainToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:actionBarStyle"
+            android:background="@color/color_primary_variant"
+            app:layout_scrollFlags="scroll|enterAlways|snap">
 
-    </android.support.v7.widget.Toolbar>
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textColor="@color/color_text_primary"
+                android:textSize="18.2sp"
+                android:textAllCaps="false"/>
 
-    <com.gelostech.dankmemes.utils.NonSwipeableViewPager
-        android:id="@+id/mainViewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/mainToolbar"
-        android:layout_above="@id/bottomNav"
-        android:overScrollMode="never"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        </androidx.appcompat.widget.Toolbar>
 
-    <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
-        android:id="@+id/bottomNav"
-        android:elevation="@dimen/no_elevation"
-        app:elevation="@dimen/no_elevation"
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include layout="@layout/layout_activity_main" />
+
+    <com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
+        android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"/>
+        android:layout_gravity="bottom"
+        android:background="@color/color_primary"
+        app:labelVisibilityMode="unlabeled"
+        app:itemIconTint="@color/bottom_navigation_selector"
+        app:menu="@menu/menu_bottom_navigation"
+        app:elevation="5dp"
+        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"/>
 
-</RelativeLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addMeme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="12dp"
+        app:srcCompat="@drawable/ic_add_black_24dp"
+        app:elevation="16dp"
+        app:backgroundTint="@color/color_secondary"
+        app:tint="@android:color/white"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

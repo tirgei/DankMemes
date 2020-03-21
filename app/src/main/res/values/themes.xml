@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="DankTheme" parent="Base.MaterialThemeBuilder"/>
+
+    <style name="Base.MaterialThemeBuilder" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!--Material color attributes -->
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryVariant">@color/color_primary_variant</item>
+        <item name="colorSecondary">@color/color_secondary</item>
+        <item name="colorSecondaryVariant">@color/color_secondary_variant</item>
+
+        <item name="android:colorBackground">@color/color_background</item>
+        <item name="colorSurface">@color/color_surface</item>
+        <item name="colorError">@color/color_error</item>
+
+        <item name="colorOnPrimary">@color/color_on_primary</item>
+        <item name="colorOnSecondary">@color/color_on_secondary</item>
+        <item name="colorOnBackground">@color/color_on_background</item>
+        <item name="colorOnSurface">@color/color_on_surface</item>
+        <item name="colorOnError">@color/color_on_error</item>
+
+        <item name="android:fontFamily">@font/nunito_regular</item>
+
+        <!-- Status Bar -->
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/color_primary_variant</item>
+
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="colorControlNormal">@color/color_text_primary</item>
+        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog</item>
+
+    </style>
+
+    <!-- Drawer Icon color -->
+    <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/color_text_primary</item>
+    </style>
+
+    <!-- BottomSheet style -->
+    <style name="BottomSheet.StyleDialog" parent="BottomSheet.Dialog">
+        <item name="android:textColorPrimary">@color/color_text_primary</item>
+
+    </style>
+
+    <!-- Drawer Layout TextViews style -->
+    <style name="DrawerTextView">
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:textSize">15.5sp</item>
+        <item name="android:drawablePadding">7dp</item>
+        <item name="android:textColor">@color/color_primary</item>
+    </style>
+
+    <!-- Profile TextViews style -->
+    <style name="ProfileTextView">
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/color_text_secondary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Profile EditText style -->
+    <style name="ProfileEditText" parent="InputEditText">
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+    </style>
+
+    <!-- Auth EditText style -->
+    <style name="AuthEditText" parent="InputEditText">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:drawablePadding">10dp</item>
+    </style>
+
+    <style name="InputEditText">
+        <item name="android:includeFontPadding">true</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:textColorHint">@color/color_text_secondary</item>
+        <item name="android:background">@drawable/input_background</item>
+    </style>
+
+    <!-- Theme for Splash Activity -->
+    <style name="SplashTheme" parent="Base.MaterialThemeBuilder">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
+</resources>

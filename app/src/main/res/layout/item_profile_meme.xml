@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="com.gelostech.dankmemes.R"/>
+
+        <variable
+            name="meme"
+            type="com.gelostech.dankmemes.data.models.Meme" />
+
+        <variable
+            name="callback"
+            type="com.gelostech.dankmemes.ui.callbacks.ProfileMemesCallback" />
+    </data>
+
+    <com.gelostech.dankmemes.utils.SquareLayout
+        android:id="@+id/parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/faveImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            bind:image="@{meme.imageUrl}"
+            bind:placeholder="@{R.drawable.loading}"/>
+
+    </com.gelostech.dankmemes.utils.SquareLayout>
+</layout>
