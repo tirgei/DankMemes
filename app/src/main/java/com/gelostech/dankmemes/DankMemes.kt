@@ -76,7 +76,7 @@ class DankMemes : MultiDexApplication() {
         fun updateNotificationToken(context: Context) {
             val sessionManager = SessionManager(context)
 
-            if (sessionManager.isLoggedIn()) {
+            if (sessionManager.isLoggedIn() && !sessionManager.isFirstLaunch()) {
                 FirebaseInstanceId.getInstance().instanceId
                         .addOnCompleteListener(OnCompleteListener { task ->
                             if (!task.isSuccessful) {

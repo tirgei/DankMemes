@@ -13,6 +13,11 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (sessionManager.isFirstLaunch()) {
+            launch(LoginActivity::class.java)
+            return
+        }
+
         when (sessionManager.isLoggedIn()) {
             true -> launch(MainActivity::class.java)
             else -> launch(LoginActivity::class.java)

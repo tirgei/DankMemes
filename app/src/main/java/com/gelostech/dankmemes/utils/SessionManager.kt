@@ -22,6 +22,7 @@ class SessionManager (context: Context) {
         prefs[Constants.USER_ID] = user.userId
         prefs[Constants.USER_BIO] = user.userBio
         prefs[Constants.LOGGED_IN] = true
+        prefs[Constants.IS_FIRST_LAUNCH] = false
         prefs[Constants.ADMIN_STATUS] = user.admin
     }
 
@@ -30,6 +31,13 @@ class SessionManager (context: Context) {
      */
     fun isLoggedIn(): Boolean {
         return prefs[Constants.LOGGED_IN, false]
+    }
+
+    /**
+     * Check if is first launch
+     */
+    fun isFirstLaunch(): Boolean {
+        return prefs[Constants.IS_FIRST_LAUNCH, true]
     }
 
     /**
