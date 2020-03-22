@@ -70,6 +70,7 @@
     <string name="toolbar_edit_profile">Edit profile</string>
     <string name="toolbar_comments">Comments</string>
     <string name="toolbar_post_meme">Post Meme</string>
+    <string name="toolbar_add_memes">Add Memes</string>
     <string name="toolbar_profile">Profile</string>
 
     <!-- Intent labels-->
