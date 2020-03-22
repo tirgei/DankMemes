@@ -16,6 +16,7 @@ import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
 import com.gelostech.dankmemes.utils.AppUtils
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.setDrawable
+import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -28,6 +29,7 @@ import timber.log.Timber
 class MemeActivity : BaseActivity() {
     private lateinit var binding: ActivityMemeBinding
     private lateinit var memeId: String
+    private lateinit var meme: Meme
     private val memesViewModel: MemesViewModel by inject()
     private val disposables = CompositeDisposable()
 
@@ -53,8 +55,17 @@ class MemeActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         memeToolbar.navigationIcon = AppUtils.getDrawable(this, Ionicons.Icon.ion_android_arrow_back, R.color.white, 18)
         memeToolbar?.setNavigationOnClickListener { onBackPressed() }
-        memeComment.apply {
-            this.setDrawable(AppUtils.getDrawable(this.context, Ionicons.Icon.ion_ios_chatboxes_outline, R.color.color_text_secondary, 20))
+
+        memeComment.setDrawable(AppUtils.getDrawable(this, Ionicons.Icon.ion_ios_chatboxes_outline, R.color.color_text_secondary, 20))
+        memeComment.setDrawable(AppUtils.getDrawable(this, FontAwesome.Icon.faw_thumbs_up, R.color.color_text_secondary, 20))
+
+        avatar.setOnClickListener {
+            if (::meme.isInitialized && meme.memePosterID!! != getUid()) {
+                val i = Intent(this, ProfileActivity::class.java)
+                i.putExtra(Constants.USER_ID, meme.memePosterID)
+                startActivity(i)
+                AppUtils.slideRight(this)
+            }
         }
     }
 
@@ -69,7 +80,10 @@ class MemeActivity : BaseActivity() {
                 Status.SUCCESS -> {
                     binding.loading = false
                     response.data?.meme?.subscribeBy(
-                            onNext = { binding.meme = it },
+                            onNext = {
+                                binding.meme = it
+                                meme = it
+                            },
                             onError = {
                                 Timber.e("Meme deleted")
                                 toast("Error loading meme")
@@ -113,7 +127,7 @@ class MemeActivity : BaseActivity() {
         }
 
         override fun onProfileClicked(view: View, user: User) {
-            // Not used here
+            // Not used
         }
     }
 

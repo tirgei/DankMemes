@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <import type="com.gelostech.dankmemes.R"/>
@@ -27,24 +28,61 @@
         android:background="@android:color/black"
         android:animateLayoutChanges="true">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/memeToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            style="@style/Theme.AppCompat.Light.DarkActionBar"
+            android:background="@android:color/transparent"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            android:layout_alignParentTop="true"
+            android:elevation="0dp"
+            tools:targetApi="lollipop">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    bind:layout_constraintTop_toTopOf="parent"
+                    bind:layout_constraintBottom_toBottomOf="parent"
+                    bind:layout_constraintStart_toStartOf="parent"
+                    android:src="@drawable/person"
+                    bind:image="@{meme.memePosterAvatar}"
+                    bind:placeholder="@{@drawable/person}"/>
+
+                <TextView
+                    android:id="@+id/toolbarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    bind:layout_constraintTop_toTopOf="@id/avatar"
+                    bind:layout_constraintStart_toEndOf="@id/avatar"
+                    bind:layout_constraintBottom_toBottomOf="@id/avatar"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:textSize="18.2sp"
+                    android:text="@{meme.memePoster}"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
         <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/viewMemeImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/memeToolbar"
             android:layout_above="@id/actions"
             bind:image="@{meme.imageUrl}"
             bind:placeholder="@{@drawable/loading}"
             bind:thumbnail="@{meme.thumbnail}"/>
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/memeToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Theme.AppCompat.Light.DarkActionBar"
-            android:background="@android:color/transparent"
-            android:layout_alignParentTop="true"
-            android:elevation="0dp"
-            tools:targetApi="lollipop"/>
 
         <RelativeLayout
             android:id="@+id/memeCaption"
@@ -94,7 +132,7 @@
                 bind:likeStatus="@{meme.likes}"
                 android:text="@{(meme.likesCount > 0 ? meme.likesCount + ` ` : ``) + (meme.likesCount > 1 ? `Likes` : `Like`)}"
                 android:onClick="@{(v) -> callback.onMemeClicked(v, meme)}"
-                android:textColor="@color/white"/>
+                android:textColor="@color/color_text_secondary"/>
 
             <TextView
                 android:id="@+id/memeComment"
