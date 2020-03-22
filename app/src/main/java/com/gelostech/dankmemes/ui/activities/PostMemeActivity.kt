@@ -219,7 +219,7 @@ class PostMemeActivity : BaseActivity() {
             }.show()
         } else {
             super.onBackPressed()
-            overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
+            AppUtils.slideLeft(this)
         }
     }
 

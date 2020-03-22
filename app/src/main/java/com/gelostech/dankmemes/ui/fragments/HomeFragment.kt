@@ -190,7 +190,7 @@ class HomeFragment : BaseFragment() {
             val i = Intent(activity, ProfileActivity::class.java)
             i.putExtra(Constants.USER_ID, userId)
             startActivity(i)
-            activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+            AppUtils.slideRight(activity!!)
         }
     }
 
@@ -254,7 +254,7 @@ class HomeFragment : BaseFragment() {
         val i = Intent(activity, CommentActivity::class.java)
         i.putExtra(Constants.MEME_ID, memeId)
         startActivity(i)
-        activity?.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+        AppUtils.slideRight(activity!!)
     }
 
     /**

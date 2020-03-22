@@ -66,7 +66,7 @@ open class BaseFragment : Fragment() {
             longToast("Welcome ${user.userName} \uD83D\uDE03")
 
             startActivity(Intent(activity!!, MainActivity::class.java))
-            activity!!.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+            AppUtils.slideRight(activity!!)
             activity!!.finish()
         }
     }

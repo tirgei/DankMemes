@@ -202,7 +202,7 @@ class EditProfileActivity : BaseActivity() {
             toast("Please wait...")
         } else {
             super.onBackPressed()
-            overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
+            AppUtils.slideLeft(this)
         }
     }
 }

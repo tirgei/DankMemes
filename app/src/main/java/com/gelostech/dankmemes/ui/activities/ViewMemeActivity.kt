@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_view_meme.*
 import android.view.WindowManager
 import android.os.Build
 import androidx.core.content.ContextCompat
+import com.gelostech.dankmemes.utils.AppUtils
 
 
 class ViewMemeActivity : BaseActivity() {
@@ -44,6 +45,6 @@ class ViewMemeActivity : BaseActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        AppUtils.slideLeft(this)
     }
 }

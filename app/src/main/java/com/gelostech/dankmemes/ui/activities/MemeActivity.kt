@@ -95,7 +95,7 @@ class MemeActivity : BaseActivity() {
                     val i = Intent(this@MemeActivity, CommentActivity::class.java)
                     i.putExtra(Constants.MEME_ID, memeId)
                     startActivity(i)
-                    overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+                    AppUtils.slideRight(this@MemeActivity)
                 }
 
                 R.id.memeFave -> {

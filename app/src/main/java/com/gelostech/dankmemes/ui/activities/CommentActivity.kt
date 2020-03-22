@@ -198,7 +198,7 @@ class CommentActivity : BaseActivity() {
             val i = Intent(this, ProfileActivity::class.java)
             i.putExtra(Constants.USER_ID, comment.userId)
             startActivity(i)
-            overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+            AppUtils.slideRight(this)
         }
     }
 
@@ -218,7 +218,7 @@ class CommentActivity : BaseActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
+        AppUtils.slideLeft(this)
     }
 
     private fun playNotificationSound() {
