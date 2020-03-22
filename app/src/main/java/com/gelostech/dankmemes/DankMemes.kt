@@ -87,8 +87,10 @@ class DankMemes : MultiDexApplication() {
                             // Get new Instance ID token
                             val token = task.result?.token
                             token?.let {
-                                val dbRef = FirebaseFirestore.getInstance()
-                                dbRef.collection(Constants.USERS).document(sessionManager.getUserId()).update(Constants.USER_TOKEN, it)
+                                if (sessionManager.getUserId().isNotEmpty()) {
+                                    val dbRef = FirebaseFirestore.getInstance()
+                                    dbRef.collection(Constants.USERS).document(sessionManager.getUserId()).update(Constants.USER_TOKEN, it)
+                                }
                             }
                         })
             }
