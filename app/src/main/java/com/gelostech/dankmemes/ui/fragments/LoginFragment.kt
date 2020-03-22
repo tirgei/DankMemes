@@ -136,6 +136,7 @@ class LoginFragment : BaseFragment() {
                         newUser.userName = googleUser.displayName
                         newUser.userEmail = googleUser.email
                         newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())
+                        newUser.dateUpdated = TimeFormatter().getNormalYear(System.currentTimeMillis())
                         newUser.userToken = FirebaseInstanceId.getInstance().token
                         newUser.userId = googleUser.uid
                         newUser.userBio = activity?.getString(R.string.label_new_user)

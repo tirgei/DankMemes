@@ -85,6 +85,29 @@
             style="@style/DrawerTextView"
             android:text="@string/label_more_apps"/>
 
+        <LinearLayout
+            android:id="@+id/adminActions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/drawerPostMemes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/DrawerTextView"
+                android:text="@string/label_post_memes"/>
+
+            <TextView
+                android:id="@+id/drawerReports"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/DrawerTextView"
+                android:text="@string/label_reports"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

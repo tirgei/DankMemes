@@ -2,7 +2,6 @@ package com.gelostech.dankmemes.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,9 +19,7 @@ import com.gelostech.dankmemes.ui.activities.MemeActivity
 import com.gelostech.dankmemes.ui.viewmodels.NotificationsViewModel
 import com.gelostech.dankmemes.utils.*
 import kotlinx.android.synthetic.main.fragment_notifications.*
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class NotificationsFragment : BaseFragment() {
     private lateinit var notificationsAdapter: NotificationsAdapter
@@ -92,14 +89,14 @@ class NotificationsFragment : BaseFragment() {
                     val i = Intent(activity, ProfileActivity::class.java)
                     i.putExtra(Constants.USER_ID, notification.userId)
                     startActivity(i)
-                    AppUtils.animateEnterRight(activity!!)
+                    AppUtils.slideRight(activity!!)
                 }
 
                 else -> {
                     val i = Intent(activity, MemeActivity::class.java)
                     i.putExtra(Constants.MEME_ID, notification.memeId)
                     startActivity(i)
-                    AppUtils.animateEnterRight(activity!!)
+                    AppUtils.slideRight(activity!!)
                 }
             }
         }

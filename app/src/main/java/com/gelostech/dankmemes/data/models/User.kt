@@ -11,7 +11,7 @@ data class User(
         var dateCreated: String? = null,
         var dateUpdated: String? = null,
         var userBio: String? = null,
-        var admin: Int? = null,
+        var admin: Int? = 0,
         var posts: Int? = 0,
         var muted: Boolean = false,
         var followers: MutableMap<String, Boolean> = mutableMapOf(),

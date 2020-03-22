@@ -27,7 +27,7 @@ import org.jetbrains.anko.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
-class PostActivity : BaseActivity() {
+class PostMemeActivity : BaseActivity() {
     private var imageUri: Uri? = null
     private var imageSelected = false
     private var uploadMeme: MenuItem? = null

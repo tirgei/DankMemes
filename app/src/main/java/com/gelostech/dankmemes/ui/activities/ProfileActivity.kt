@@ -168,7 +168,7 @@ class ProfileActivity : BaseActivity() {
             val i = Intent(this@ProfileActivity, MemeActivity::class.java)
             i.putExtra(Constants.MEME_ID, memeId)
             startActivity(i)
-            AppUtils.animateEnterRight(this@ProfileActivity)
+            AppUtils.slideRight(this@ProfileActivity)
         }
 
         override fun onMemeLongClicked(meme: Meme) {
@@ -202,7 +202,7 @@ class ProfileActivity : BaseActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        AppUtils.animateEnterLeft(this)
+        AppUtils.slideLeft(this)
     }
 
 }

@@ -173,7 +173,7 @@ class ProfileFragment : BaseFragment() {
             val i = Intent(activity, MemeActivity::class.java)
             i.putExtra(Constants.MEME_ID, memeId)
             startActivity(i)
-            AppUtils.animateEnterRight(activity!!)
+            AppUtils.slideRight(activity!!)
         }
 
         override fun onMemeLongClicked(meme: Meme) {

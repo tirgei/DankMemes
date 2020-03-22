@@ -197,11 +197,11 @@ object AppUtils {
         context.startActivity(Intent.createChooser(share, "Share Meme via..."))
     }
 
-    fun animateEnterRight(activity: Activity) {
+    fun slideRight(activity: Activity) {
         activity.overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
     }
 
-    fun animateEnterLeft(activity: Activity) {
+    fun slideLeft(activity: Activity) {
         activity.overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
     }
 

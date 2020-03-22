@@ -22,11 +22,8 @@ import com.gelostech.dankmemes.ui.fragments.FavesFragment
 import com.gelostech.dankmemes.ui.fragments.NotificationsFragment
 import com.gelostech.dankmemes.ui.fragments.ProfileFragment
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
+import com.gelostech.dankmemes.utils.*
 import com.gelostech.dankmemes.utils.AppUtils.getDrawable
-import com.gelostech.dankmemes.utils.Constants
-import com.gelostech.dankmemes.utils.NotificationUtils
-import com.gelostech.dankmemes.utils.runDelayed
-import com.gelostech.dankmemes.utils.setDrawable
 import com.gelostech.pageradapter.PagerAdapter
 import com.google.firebase.messaging.FirebaseMessaging
 import com.jakewharton.processphoenix.ProcessPhoenix
@@ -127,8 +124,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         bottomNavigation.setupWithViewPager(mainViewPager)
 
         addMeme.setOnClickListener {
-            startActivity(Intent(this, PostActivity::class.java))
-            overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+            startActivity(Intent(this, PostMemeActivity::class.java))
+            AppUtils.slideRight(this)
         }
     }
 
@@ -142,6 +139,10 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
         mainRoot.setOnClickListener {
             if (slidingDrawer.isMenuOpened) slidingDrawer.closeMenu(true)
+        }
+
+        if (sessionManager.getAdminStatus() == Constants.SUPER_ADMIN) {
+            adminActions.showView()
         }
 
         setupDrawerIcons()
@@ -165,13 +166,15 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         drawerPolicy.setDrawable(getDrawable(this, Ionicons.Icon.ion_ios_list, R.color.color_primary, 18))
         drawerLogout.setDrawable(getDrawable(this, Ionicons.Icon.ion_log_out, R.color.color_primary, 18))
         drawerMoreApps.setDrawable(getDrawable(this, FontAwesome.Icon.faw_google_play, R.color.color_primary, 18))
+        drawerPostMemes.setDrawable(getDrawable(this, Ionicons.Icon.ion_ios_plus, R.color.color_primary, 18))
+        drawerReports.setDrawable(getDrawable(this, Ionicons.Icon.ion_android_warning, R.color.color_primary, 18))
     }
 
     private fun drawerClickListeners() {
         drawerRate.setOnClickListener {
             slidingDrawer.closeMenu(true)
 
-            Handler().postDelayed({
+            runDelayed(300) {
                 val uri = Uri.parse(PLAY_STORE_LINK)
                 val goToMarket = Intent(Intent.ACTION_VIEW, uri)
 
@@ -181,53 +184,47 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
                 } catch (e: ActivityNotFoundException) {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_LINK)))
                 }
-            }, 300)
+            }
         }
 
         drawerShare.setOnClickListener {
             slidingDrawer.closeMenu(true)
 
-            Handler().postDelayed({
+            runDelayed(300) {
                 val intent = Intent(Intent.ACTION_SEND)
                 intent.type = "text/plain"
                 intent.putExtra(Intent.EXTRA_SUBJECT, APP_NAME)
                 val message = getString(R.string.label_invite_body) + "\n\n" + PLAY_STORE_LINK
                 intent.putExtra(Intent.EXTRA_TEXT, message)
                 startActivity(Intent.createChooser(intent, getString(R.string.intent_invite_pals)))
-            }, 300)
+            }
         }
 
         drawerFeedback.setOnClickListener {
             slidingDrawer.closeMenu(true)
 
-            Handler().postDelayed({
+            runDelayed(300) {
                 val emailIntent = Intent(Intent.ACTION_SENDTO)
                 emailIntent.data = Uri.parse(getString(R.string.intent_dev_email))
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, APP_NAME)
                 startActivity(Intent.createChooser(emailIntent, getString(R.string.intent_send_feedback)))
-            }, 300)
+            }
         }
 
         drawerTerms.setOnClickListener {
             slidingDrawer.closeMenu(true)
-
-            Handler().postDelayed({
-                openLink(getString(R.string.link_terms))
-            }, 300)
+            runDelayed(300){ openLink(getString(R.string.link_terms)) }
         }
 
         drawerPolicy.setOnClickListener {
             slidingDrawer.closeMenu(true)
-
-            Handler().postDelayed({
-                openLink(getString(R.string.link_privacy))
-            }, 300)
+            runDelayed(300){ openLink(getString(R.string.link_privacy)) }
         }
 
         drawerMoreApps.setOnClickListener {
             slidingDrawer.closeMenu(true)
 
-            Handler().postDelayed({
+            runDelayed(300) {
                 val uri = Uri.parse(getString(R.string.label_dev_id))
                 val devAccount = Intent(Intent.ACTION_VIEW, uri)
 
@@ -237,19 +234,32 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
                 } catch (e: ActivityNotFoundException) {
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.label_dev_id))))
                 }
-            }, 300)
+            }
+        }
+
+        drawerPostMemes.setOnClickListener {
+            slidingDrawer.closeMenu(true)
+            runDelayed(300){
+                startActivity(Intent(this, AddMemesActivity::class.java))
+                AppUtils.slideRight(this)
+            }
+        }
+
+        drawerReports.setOnClickListener {
+            slidingDrawer.closeMenu(true)
+            runDelayed(300){  }
         }
 
         drawerLogout.setOnClickListener {
             slidingDrawer.closeMenu(true)
 
-            Handler().postDelayed({
+            runDelayed(300) {
                 alert("Are you sure you want to log out?") {
                     title = "Log out"
                     positiveButton("Log Out") { usersViewModel.logout() }
                     negativeButton("Cancel") {}
                 }.show()
-            }, 300)
+            }
         }
 
         themeSwitch.setOnClickListener {
@@ -289,7 +299,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
                         sessionManager.clearSession()
 
                         startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                        overridePendingTransition(R.anim.enter_a, R.anim.exit_b)
+                        AppUtils.slideLeft(this)
                         finish()
                     }
                 }
@@ -328,15 +338,11 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         when(item?.itemId) {
             R.id.menu_edit_profile -> {
                 startActivity(Intent(this, EditProfileActivity::class.java))
-                overridePendingTransition(R.anim.enter_b, R.anim.exit_a)
+                AppUtils.slideRight(this)
             }
         }
 
         return true
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 
     override fun onResume() {

@@ -2,7 +2,6 @@ package com.gelostech.dankmemes.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -121,7 +120,7 @@ class MemeActivity : BaseActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         finish()
-        AppUtils.animateEnterLeft(this)
+        AppUtils.slideLeft(this)
     }
 
     override fun onDestroy() {

@@ -30,6 +30,8 @@
     <string name="label_feedback">Send Feedback</string>
     <string name="label_privacy_policy">Privacy Policy</string>
     <string name="label_more_apps">More Apps</string>
+    <string name="label_reports">Reports</string>
+    <string name="label_post_memes">Post Memes</string>
     <string name="label_logout">Log Out</string>
     <string name="label_no_faves">No favorites found</string>
     <string name="label_no_comments">No comments found</string>
