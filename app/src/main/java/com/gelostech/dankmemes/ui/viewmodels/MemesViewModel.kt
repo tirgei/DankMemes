@@ -17,6 +17,7 @@ import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.repositories.MemesRepository
 import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.responses.MemesResponse
+import com.gelostech.dankmemes.data.responses.RssMemesResponse
 import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import com.google.android.gms.ads.AdLoader
@@ -34,6 +35,11 @@ class MemesViewModel constructor(private val repository: MemesRepository, privat
     private val _showStatusLiveData = MutableLiveData<Status>()
     val showStatusLiveData: MutableLiveData<Status>
         get() = _showStatusLiveData
+
+    private val _rssMemesLiveData = MutableLiveData<RssMemesResponse>()
+    val rssMemesLiveData: MutableLiveData<RssMemesResponse>
+        get() = _rssMemesLiveData
+
 
     /**
      * Function to post new Meme
@@ -223,6 +229,28 @@ class MemesViewModel constructor(private val repository: MemesRepository, privat
 
                 is Result.Error -> {
                     _genericResponseLiveData.value = GenericResponse.error(result.error)
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to fetch memes from RSS
+     * @param source - Source to fetch
+     */
+    fun fetchRssMemes(source: String) {
+        viewModelScope.launch {
+            _rssMemesLiveData.value = RssMemesResponse.loading()
+
+            repository.fetchRssMemes(source) {
+                when (it) {
+                    is Result.Success -> {
+                        _rssMemesLiveData.value = RssMemesResponse.success(it.data)
+                    }
+
+                    is Result.Error -> {
+                        _rssMemesLiveData.value = RssMemesResponse.error(it.error)
+                    }
                 }
             }
         }

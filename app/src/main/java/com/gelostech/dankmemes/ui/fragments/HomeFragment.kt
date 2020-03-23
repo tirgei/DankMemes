@@ -48,7 +48,6 @@ class HomeFragment : BaseFragment() {
         // Inflate the layout for this fragment
         val binding = DataBindingUtil.inflate<FragmentHomeBinding>(inflater, R.layout.fragment_home, container, false)
         binding.lifecycleOwner = this
-        binding.viewModel = memesViewModel
         return binding.root
     }
 

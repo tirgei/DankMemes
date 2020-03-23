@@ -60,8 +60,9 @@ class DankMemes : MultiDexApplication() {
                     viewModelsModule,
                     sessionManagerModule,
                     googleSignClientModule,
-                    adBuilderModule)
-            )
+                    adBuilderModule,
+                    retrofitModule
+            ))
         }
 
         // Set RxJava handler

@@ -59,4 +59,8 @@ object Constants {
     // Admin type
     const val ADMIN = 1
     const val SUPER_ADMIN = 2
+
+    // Memes source
+    const val NINE_GAG_BASE_URL = "https://9gag-rss.com/api/rss/"
+    const val MEMES_SOURCE = "get?code=9GAGFunnyNoGif&format=2"
 }

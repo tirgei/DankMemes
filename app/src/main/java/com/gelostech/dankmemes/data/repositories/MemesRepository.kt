@@ -1,10 +1,13 @@
 package com.gelostech.dankmemes.data.repositories
 
 import android.net.Uri
+import com.gelostech.dankmemes.data.ApiService
 import com.gelostech.dankmemes.data.Result
+import com.gelostech.dankmemes.data.responses.RssResponse
 import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
 import com.gelostech.dankmemes.data.models.Report
+import com.gelostech.dankmemes.data.models.RssMeme
 import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableMeme
 import com.gelostech.dankmemes.ui.callbacks.StorageUploadListener
@@ -18,10 +21,14 @@ import io.reactivex.Observable
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import timber.log.Timber
 
 class MemesRepository constructor(private val firestoreDatabase: FirebaseFirestore,
-                                  private val storageReference: StorageReference) {
+                                  private val storageReference: StorageReference,
+                                  private val apiService: ApiService) {
 
     private val db = firestoreDatabase.collection(Constants.MEMES)
     private val memesQuery = db.orderBy(Constants.TIME, Query.Direction.DESCENDING).limit(Constants.MEMES_COUNT)
@@ -63,6 +70,28 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
                 }
             }
         })
+    }
+
+    /**
+     * Function to add meme to DB
+     */
+    suspend fun addMeme(imageUrl: String, meme: Meme, callback: (Result<Boolean>) -> Unit) {
+        val id = db.document().id
+        val errorMessage = "Error posting meme. Please try again"
+
+        try {
+            meme.apply {
+                this.id = id
+                this.imageUrl = imageUrl
+            }
+
+            db.document(id).set(meme).await()
+            callback(Result.Success(true))
+
+        } catch (e: Exception) {
+            Timber.e("Error posting meme: ${e.localizedMessage}")
+            callback(Result.Error(errorMessage))
+        }
     }
 
     /**
@@ -316,6 +345,27 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
             Timber.e("$error: ${e.localizedMessage}")
             Result.Error(error)
         }
+    }
+
+    /**
+     * Fetch memes from 9Gag
+     */
+    suspend fun fetchRssMemes(source: String, callback: (Result<List<RssMeme>>) -> Unit) {
+        val errorMessage = "Error fetching memes"
+        apiService.fetchMemes().enqueue(object : Callback<RssResponse> {
+            override fun onFailure(call: Call<RssResponse>, t: Throwable) {
+                Timber.e("Error fetching memes: ${t.localizedMessage}")
+                callback(Result.Error(errorMessage))
+            }
+
+            override fun onResponse(call: Call<RssResponse>, response: Response<RssResponse>) {
+                if (response.isSuccessful && response.body()?.channel?.memes?.isNotEmpty()!!) {
+                    callback(Result.Success(response.body()!!.channel.memes))
+                } else {
+                    callback(Result.Error(errorMessage))
+                }
+            }
+        })
     }
 
 }
