@@ -27,7 +27,7 @@ jobs:
           command: mkdir -p app/src/prod/ ; echo $ENCODED_GOOGLE_SERVICES | base64 --decode >> app/src/prod/google-services.json
       - run:
           name: Decode API keys
-          command: echo $ENCODED_API_KEYS | base64 --decode >> app/src/main/res/values/keys.xml
+          command: echo $ENCODED_API_KEYS | base64 -di >> app/src/main/res/values/keys.xml
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
