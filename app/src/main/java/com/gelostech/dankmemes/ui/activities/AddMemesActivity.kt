@@ -40,28 +40,11 @@ class AddMemesActivity : BaseActivity() {
     }
 
     private fun initMemesObserver() {
-        memesViewModel.rssMemesLiveData.observe(this, Observer {
-            when (it.status) {
-                Status.LOADING -> {
-                    loading.showView()
-                    emptyState.hideView()
-                }
 
-                Status.SUCCESS -> {
-                    loading.hideView()
-                    Timber.e("Fetched: ${it.data?.size}")
-                }
-
-                Status.ERROR -> {
-                    loading.hideView()
-                    emptyState.showView()
-                }
-            }
-        })
     }
 
-    private fun fetchMemes(source: String = "FunnyNoGif") {
-        memesViewModel.fetchRssMemes(source)
+    private fun fetchMemes() {
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

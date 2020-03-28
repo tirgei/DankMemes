@@ -1,8 +1,6 @@
 package com.gelostech.dankmemes.di
 
 import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.data.ApiClient
-import com.gelostech.dankmemes.data.ApiService
 import com.gelostech.dankmemes.data.repositories.CommentsRepository
 import com.gelostech.dankmemes.data.repositories.MemesRepository
 import com.gelostech.dankmemes.data.repositories.NotificationsRepository
@@ -31,7 +29,7 @@ val firebaseModule = module {
 
 val repositoriesModule = module {
     single { UsersRepository(get(), get(), get()) }
-    single { MemesRepository(get(), get(), get()) }
+    single { MemesRepository(get(), get()) }
     single { NotificationsRepository(get()) }
     single { CommentsRepository(get()) }
 }
@@ -58,8 +56,4 @@ val googleSignClientModule = module {
 
 val adBuilderModule = module {
     single { AdLoader.Builder(androidApplication(), androidApplication().getString(R.string.admob_native_ad_id)) }
-}
-
-val retrofitModule = module {
-    single { ApiClient().getApiClient().create(ApiService::class.java) }
 }

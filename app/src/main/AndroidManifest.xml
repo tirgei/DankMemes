@@ -21,13 +21,13 @@
         android:theme="@style/DankTheme"
         tools:ignore="AllowBackup"
         tools:replace="android:theme">
-        <activity android:name=".ui.activities.AddMemesActivity"></activity>
         <activity
             android:name=".ui.activities.SplashActivity"
             android:configChanges="orientation"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,14 +37,10 @@
         <activity android:name=".ui.activities.AdActivity" />
         <activity
             android:name=".ui.activities.MainActivity"
-            android:configChanges="orientation"
-            android:launchMode="singleInstance"
-            android:screenOrientation="portrait" />
+            android:launchMode="singleInstance"/>
         <activity
             android:name=".ui.activities.PostMemeActivity"
-            android:configChanges="orientation"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:label="@string/app_name">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND" />
@@ -55,35 +51,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activities.ProfileActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:name=".ui.activities.ProfileActivity" />
         <activity
-            android:name=".ui.activities.MemeActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:name=".ui.activities.MemeActivity"/>
         <activity
             android:name=".ui.activities.CommentActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.activities.ViewMemeActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:name=".ui.activities.ViewMemeActivity" />
+
+        <activity android:name=".ui.activities.AddMemesActivity"/>
         <activity
             android:name=".ui.base.BaseActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".ui.activities.LoginActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.activities.EditProfileActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"

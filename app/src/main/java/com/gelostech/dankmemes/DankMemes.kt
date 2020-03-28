@@ -60,8 +60,7 @@ class DankMemes : MultiDexApplication() {
                     viewModelsModule,
                     sessionManagerModule,
                     googleSignClientModule,
-                    adBuilderModule,
-                    retrofitModule
+                    adBuilderModule
             ))
         }
 
