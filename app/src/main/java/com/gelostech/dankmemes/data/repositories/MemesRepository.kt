@@ -70,6 +70,31 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
     }
 
     /**
+     * Function to post a pending Meme
+     * @param meme - Meme model
+     */
+    suspend fun postPendingMeme(oldId: String, meme: Meme): Result<String> {
+        val id = db.document().id
+        val errorMessage = "Error posting meme. Please try again"
+
+        return try {
+            meme.apply {
+                this.id = id
+            }
+
+            db.document(id).set(meme).await()
+            when (val result = deletePendingMeme(oldId)) {
+                is Result.Success -> Timber.e("Meme posted & deleted :)")
+                is Result.Error -> Timber.e("Meme posted but not deleted :(")
+            }
+            Result.Success(oldId)
+        } catch (e: Exception) {
+            Timber.e("Error posting pending meme: ${e.localizedMessage}")
+            Result.Error(errorMessage)
+        }
+    }
+
+    /**
      * Fetch all memes
      */
     suspend fun fetchMemes(loadBefore: String? = null, loadAfter: String? = null): List<ObservableMeme> {
@@ -182,6 +207,20 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
     suspend fun deleteMeme(memeId: String): Result<Boolean> {
         return try {
             db.document(memeId).delete().await()
+            Result.Success(true)
+        } catch (e: Exception) {
+            Timber.e("Error deleting meme: ${e.localizedMessage}")
+            Result.Error("Error deleting meme")
+        }
+    }
+
+    /**
+     * Function to delete pending meme
+     * @param memeId - ID of the meme to delete
+     */
+    suspend fun deletePendingMeme(memeId: String): Result<Boolean> {
+        return try {
+            pendingMemesDb.document(memeId).delete().await()
             Result.Success(true)
         } catch (e: Exception) {
             Timber.e("Error deleting meme: ${e.localizedMessage}")

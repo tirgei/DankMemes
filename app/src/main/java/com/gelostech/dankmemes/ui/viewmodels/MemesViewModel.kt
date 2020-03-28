@@ -24,7 +24,7 @@ import com.gelostech.dankmemes.data.wrappers.ObservableUser
 import com.google.android.gms.ads.AdLoader
 import kotlinx.coroutines.launch
 
-class MemesViewModel constructor(private val repository: MemesRepository, private val adBuilder: AdLoader.Builder): ViewModel() {
+class MemesViewModel constructor(private val repository: MemesRepository, private val adBuilder: AdLoader.Builder) : ViewModel() {
     private val _genericResponseLiveData = MutableLiveData<GenericResponse>()
     val genericResponseLiveData: MutableLiveData<GenericResponse>
         get() = _genericResponseLiveData
@@ -48,7 +48,7 @@ class MemesViewModel constructor(private val repository: MemesRepository, privat
             _genericResponseLiveData.value = GenericResponse.loading()
 
             repository.postMeme(imageUri, meme) {
-                when(it) {
+                when (it) {
                     is Result.Success -> {
                         _genericResponseLiveData.postValue(GenericResponse.success(it.data))
                     }
@@ -56,6 +56,29 @@ class MemesViewModel constructor(private val repository: MemesRepository, privat
                     is Result.Error -> {
                         _genericResponseLiveData.postValue(GenericResponse.error(it.error))
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to post pending Meme
+     * @param oldId - ID of the pending meme
+     * @param meme - Meme model
+     */
+    fun postPendingMeme(oldId: String, meme: Meme) {
+        viewModelScope.launch {
+            _genericResponseLiveData.value = GenericResponse.loading()
+
+            when (val result = repository.postPendingMeme(oldId, meme)) {
+                is Result.Success -> {
+                    _genericResponseLiveData.postValue(GenericResponse.success(true,
+                            item = GenericResponse.ITEM_RESPONSE.POST_MEME,
+                            value = result.data))
+                }
+
+                is Result.Error -> {
+                    _genericResponseLiveData.postValue(GenericResponse.error(result.error))
                 }
             }
         }
@@ -189,6 +212,28 @@ class MemesViewModel constructor(private val repository: MemesRepository, privat
             _genericResponseLiveData.value = GenericResponse.loading()
 
             when (val result = repository.deleteMeme(memeId)) {
+                is Result.Success -> {
+                    _genericResponseLiveData.value = GenericResponse.success(result.data,
+                            item = GenericResponse.ITEM_RESPONSE.DELETE_MEME,
+                            value = memeId)
+                }
+
+                is Result.Error -> {
+                    _genericResponseLiveData.value = GenericResponse.error(result.error)
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to delete pending meme
+     * @param memeId - ID of the meme to delete
+     */
+    fun deletePendingMeme(memeId: String) {
+        viewModelScope.launch {
+            _genericResponseLiveData.value = GenericResponse.loading()
+
+            when (val result = repository.deletePendingMeme(memeId)) {
                 is Result.Success -> {
                     _genericResponseLiveData.value = GenericResponse.success(result.data,
                             item = GenericResponse.ITEM_RESPONSE.DELETE_MEME,
