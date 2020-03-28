@@ -26,6 +26,9 @@ jobs:
           name: Decode prod google-services json file
           command: mkdir -p app/src/prod/ ; echo $ENCODED_GOOGLE_SERVICES | base64 --decode >> app/src/prod/google-services.json
       - run:
+          name: Decode dev API keys
+          command: mkdir -p app/src/dev/res/values/ ; echo $ENCODED_DEV_API_KEYS | base64 -di >> app/src/dev/res/values/keys.xml
+      - run:
           name: Decode API keys
           command: echo $ENCODED_API_KEYS | base64 -di >> app/src/main/res/values/keys.xml
       - run:
