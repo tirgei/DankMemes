@@ -4,6 +4,7 @@ import android.net.Uri
 import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
+import com.gelostech.dankmemes.data.models.PendingMeme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableMeme
@@ -25,6 +26,9 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
 
     private val db = firestoreDatabase.collection(Constants.MEMES)
     private val memesQuery = db.orderBy(Constants.TIME, Query.Direction.DESCENDING).limit(Constants.MEMES_COUNT)
+
+    private val pendingMemesDb = firestoreDatabase.collection(Constants.PENDING_MEMES)
+    private val pendingMemesQuery = pendingMemesDb.orderBy(Constants.TIME, Query.Direction.ASCENDING).limit(Constants.MEMES_COUNT)
 
     /**
      * Function to post a new Meme
@@ -63,28 +67,6 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
                 }
             }
         })
-    }
-
-    /**
-     * Function to add meme to DB
-     */
-    suspend fun addMeme(imageUrl: String, meme: Meme, callback: (Result<Boolean>) -> Unit) {
-        val id = db.document().id
-        val errorMessage = "Error posting meme. Please try again"
-
-        try {
-            meme.apply {
-                this.id = id
-                this.imageUrl = imageUrl
-            }
-
-            db.document(id).set(meme).await()
-            callback(Result.Success(true))
-
-        } catch (e: Exception) {
-            Timber.e("Error posting meme: ${e.localizedMessage}")
-            callback(Result.Error(errorMessage))
-        }
     }
 
     /**
@@ -338,6 +320,26 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
             Timber.e("$error: ${e.localizedMessage}")
             Result.Error(error)
         }
+    }
+
+    /**
+     * Function to fetch pending memes
+     */
+    suspend fun fetchPendingMemes(loadBefore: String? = null, loadAfter: String? = null): List<PendingMeme> {
+        Timber.e("Fetching memes...")
+        var query = pendingMemesQuery
+
+        loadBefore?.let {
+            val notif = pendingMemesDb.document(it).get().await()
+            query = pendingMemesQuery.endBefore(notif)
+        }
+
+        loadAfter?.let {
+            val notif = pendingMemesDb.document(it).get().await()
+            query = pendingMemesQuery.startAfter(notif)
+        }
+
+        return query.get().await().map { it.toObject(PendingMeme::class.java) }
     }
 
 }

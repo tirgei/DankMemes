@@ -6,7 +6,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.activities.AddMemesActivity"
+        tools:context=".ui.activities.PendingMemesActivity"
         android:background="@color/color_primary">
 
         <androidx.appcompat.widget.Toolbar
@@ -27,7 +27,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/color_text_primary"
                 android:textSize="18.2sp"
-                android:text="@string/toolbar_add_memes"/>
+                android:text="@string/toolbar_pending_memes"/>
 
         </androidx.appcompat.widget.Toolbar>
 

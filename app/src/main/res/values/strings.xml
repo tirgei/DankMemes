@@ -50,6 +50,7 @@
     <string name="button_login">Login</string>
     <string name="button_update_profile">Update Profile</string>
     <string name="button_follow">Follow</string>
+    <string name="button_post">Post</string>
 
     <!-- EditText hints-->
     <string name="hint_email">Email</string>
@@ -71,7 +72,7 @@
     <string name="toolbar_edit_profile">Edit profile</string>
     <string name="toolbar_comments">Comments</string>
     <string name="toolbar_post_meme">Post Meme</string>
-    <string name="toolbar_add_memes">Add Memes</string>
+    <string name="toolbar_pending_memes">Pending Memes</string>
     <string name="toolbar_profile">Profile</string>
 
     <!-- Intent labels-->

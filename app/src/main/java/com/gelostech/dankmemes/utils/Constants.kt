@@ -36,6 +36,7 @@ object Constants {
     const val USER_FAVES = "user-favorites"
     const val NOTIFICATIONS = "notifications"
     const val USER_NOTIFS = "user-notifications"
+    const val PENDING_MEMES = "pending-memes"
     const val TIME = "time"
     const val LIKES_COUNT = "likesCount"
     const val COMMENTS_COUNT = "commentsCount"
@@ -53,14 +54,9 @@ object Constants {
     const val USER_TOKEN = "userToken"
     const val COMMENTS = "comments"
     const val MEME_COMMENTS = "meme-comments"
-    const val MEME_MUTED = "meme-false"
     const val DATE_UPDATED = "dateUpdated"
 
     // Admin type
     const val ADMIN = 1
     const val SUPER_ADMIN = 2
-
-    // Memes source
-    const val NINE_GAG_BASE_URL = "https://9gag-rss.com/api/rss/"
-    const val MEMES_SOURCE = "get?code=9GAGFunnyNoGif&format=2"
 }

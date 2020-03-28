@@ -240,7 +240,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         drawerPostMemes.setOnClickListener {
             slidingDrawer.closeMenu(true)
             runDelayed(300){
-                startActivity(Intent(this, AddMemesActivity::class.java))
+                startActivity(Intent(this, PendingMemesActivity::class.java))
                 AppUtils.slideRight(this)
             }
         }

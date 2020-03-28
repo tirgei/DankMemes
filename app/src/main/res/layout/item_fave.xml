@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <import type="com.gelostech.dankmemes.R"/>
@@ -26,7 +26,7 @@
             android:layout_height="match_parent"
             android:scaleType="center"
             bind:image="@{meme.imageUrl}"
-            bind:placeholder="@{R.drawable.loading}"
+            bind:placeholder="@{@drawable/loading}"
             bind:fave="@{meme}"
             bind:callback="@{callback}"/>
 

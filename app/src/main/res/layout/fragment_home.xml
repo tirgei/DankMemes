@@ -23,11 +23,11 @@
                 android:orientation="vertical"
                 android:background="@drawable/edittext_light_gray">
 
-                <include layout="@layout/item_meme_placeholder" />
+                <include layout="@layout/item_meme_shimmer" />
 
-                <include layout="@layout/item_meme_placeholder" />
+                <include layout="@layout/item_meme_shimmer" />
 
-                <include layout="@layout/item_meme_placeholder" />
+                <include layout="@layout/item_meme_shimmer" />
 
             </LinearLayout>
 

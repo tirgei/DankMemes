@@ -11,8 +11,10 @@ import com.gelostech.dankmemes.data.Result
 import com.gelostech.dankmemes.data.Status
 import com.gelostech.dankmemes.data.datasource.FavesDataSource
 import com.gelostech.dankmemes.data.datasource.MemesDataSource
+import com.gelostech.dankmemes.data.datasource.PendingMemesDataSource
 import com.gelostech.dankmemes.data.models.Fave
 import com.gelostech.dankmemes.data.models.Meme
+import com.gelostech.dankmemes.data.models.PendingMeme
 import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.data.repositories.MemesRepository
 import com.gelostech.dankmemes.data.responses.GenericResponse
@@ -121,6 +123,21 @@ class MemesViewModel constructor(private val repository: MemesRepository, privat
                 }
             }
         }
+    }
+
+    /**
+     * Function to fetch pending memes
+     */
+    fun fetchPendingMemes(): LiveData<PagedList<PendingMeme>> {
+        val pagingConfig = PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPrefetchDistance(5)
+                .build()
+
+        val memeFactory = PendingMemesDataSource.Factory(repository, viewModelScope) {
+            _showStatusLiveData.postValue(it)
+        }
+        return LivePagedListBuilder<String, PendingMeme>(memeFactory, pagingConfig).build()
     }
 
     /**
