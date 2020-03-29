@@ -28,7 +28,9 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
     private val memesQuery = db.orderBy(Constants.TIME, Query.Direction.DESCENDING).limit(Constants.MEMES_COUNT)
 
     private val pendingMemesDb = firestoreDatabase.collection(Constants.PENDING_MEMES)
-    private val pendingMemesQuery = pendingMemesDb.orderBy(Constants.TIME, Query.Direction.ASCENDING).limit(Constants.MEMES_COUNT)
+    private val pendingMemesQuery = pendingMemesDb
+            .orderBy(Constants.TIME, Query.Direction.ASCENDING)
+            .whereEqualTo(Constants.REVIEWED, false).limit(Constants.MEMES_COUNT)
 
     /**
      * Function to post a new Meme
@@ -83,7 +85,7 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
             }
 
             db.document(id).set(meme).await()
-            when (val result = deletePendingMeme(oldId)) {
+            when (val result = updatePendingMeme(oldId)) {
                 is Result.Success -> Timber.e("Meme posted & deleted :)")
                 is Result.Error -> Timber.e("Meme posted but not deleted :(")
             }
@@ -218,9 +220,10 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
      * Function to delete pending meme
      * @param memeId - ID of the meme to delete
      */
-    suspend fun deletePendingMeme(memeId: String): Result<Boolean> {
+    suspend fun updatePendingMeme(memeId: String): Result<Boolean> {
         return try {
-            pendingMemesDb.document(memeId).delete().await()
+            val memeReference = pendingMemesDb.document(memeId)
+            memeReference.update(Constants.REVIEWED, true).await()
             Result.Success(true)
         } catch (e: Exception) {
             Timber.e("Error deleting meme: ${e.localizedMessage}")

@@ -233,7 +233,7 @@ class MemesViewModel constructor(private val repository: MemesRepository, privat
         viewModelScope.launch {
             _genericResponseLiveData.value = GenericResponse.loading()
 
-            when (val result = repository.deletePendingMeme(memeId)) {
+            when (val result = repository.updatePendingMeme(memeId)) {
                 is Result.Success -> {
                     _genericResponseLiveData.value = GenericResponse.success(result.data,
                             item = GenericResponse.ITEM_RESPONSE.DELETE_MEME,

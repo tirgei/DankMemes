@@ -55,6 +55,7 @@ object Constants {
     const val COMMENTS = "comments"
     const val MEME_COMMENTS = "meme-comments"
     const val DATE_UPDATED = "dateUpdated"
+    const val REVIEWED = "reviewed"
 
     // Admin type
     const val ADMIN = 1
