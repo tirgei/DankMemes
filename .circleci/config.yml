@@ -46,3 +46,17 @@ jobs:
           destination: reports
       - store_test_results:
           path: app/build/test-results
+          destination: test-results/
+
+  generate_dev_apk:
+    filters:
+      branches:
+        only:
+          - develop
+    steps:
+      - run:
+        name: Generate dev apk
+        command: ./gradlew clean assembleDevDebug --no-daemon --stacktrace
+      - store_artifacts:
+          path: app/build/outputs/apk/
+          destination: apks/
