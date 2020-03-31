@@ -52,7 +52,7 @@ jobs:
     filters:
       branches:
         only:
-          - develop
+          - development
     steps:
       - run:
         name: Generate dev apk
