@@ -137,7 +137,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:background="@android:color/transparent"
-            android:visibility="invisible"
+            android:visibility="visible"
             android:contentDescription="@string/content_image_button"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

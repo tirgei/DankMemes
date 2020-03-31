@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -26,7 +27,6 @@ import com.gelostech.dankmemes.utils.*
 import com.gelostech.dankmemes.utils.AppUtils.getDrawable
 import com.gelostech.pageradapter.PagerAdapter
 import com.google.firebase.messaging.FirebaseMessaging
-import com.jakewharton.processphoenix.ProcessPhoenix
 import com.mikepenz.fontawesome_typeface_library.FontAwesome
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.yarolegovich.slidingrootnav.SlidingRootNav
@@ -48,7 +48,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
     private var doubleBackToExit = false
     private var editProfile: MenuItem? = null
-    private var isDarkTheme = false
     private lateinit var slidingDrawer: SlidingRootNav
     private lateinit var favesFragment: FavesFragment
     private lateinit var profileFragment: ProfileFragment
@@ -88,10 +87,6 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         PROFILE = getString(R.string.fragment_profile)
         NOTIFICATIONS = getString(R.string.fragment_notifications)
         PLAY_STORE_LINK = getString(R.string.label_play_store_link) + this.packageName
-
-        // Check Dark Theme
-        isDarkTheme = sessionManager.themeMode() == AppCompatDelegate.MODE_NIGHT_YES
-        Timber.e("Dark Mode: $isDarkTheme")
 
         setupToolbar()
         setupViewPager()
@@ -151,7 +146,7 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         drawerName.text = sessionManager.getUsername()
         drawerEmail.text = sessionManager.getEmail()
 
-        val themeIcon = when (isDarkTheme) {
+        val themeIcon = when (sessionManager.isDarkMode()) {
             true -> getDrawable(this, Ionicons.Icon.ion_ios_sunny, R.color.color_primary, 25)
             false -> getDrawable(this, Ionicons.Icon.ion_ios_moon, R.color.color_primary, 22)
         }
@@ -171,107 +166,82 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
     }
 
     private fun drawerClickListeners() {
-        drawerRate.setOnClickListener {
-            slidingDrawer.closeMenu(true)
+        drawerAction(drawerRate) {
+            val uri = Uri.parse(PLAY_STORE_LINK)
+            val goToMarket = Intent(Intent.ACTION_VIEW, uri)
 
-            runDelayed(300) {
-                val uri = Uri.parse(PLAY_STORE_LINK)
-                val goToMarket = Intent(Intent.ACTION_VIEW, uri)
-
-                goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-                try {
-                    startActivity(goToMarket)
-                } catch (e: ActivityNotFoundException) {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_LINK)))
-                }
+            goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+            try {
+                startActivity(goToMarket)
+            } catch (e: ActivityNotFoundException) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_STORE_LINK)))
             }
         }
 
-        drawerShare.setOnClickListener {
-            slidingDrawer.closeMenu(true)
+        drawerAction(drawerShare) {
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_SUBJECT, APP_NAME)
+            val message = getString(R.string.label_invite_body) + "\n\n" + PLAY_STORE_LINK
+            intent.putExtra(Intent.EXTRA_TEXT, message)
+            startActivity(Intent.createChooser(intent, getString(R.string.intent_invite_pals)))
+        }
 
-            runDelayed(300) {
-                val intent = Intent(Intent.ACTION_SEND)
-                intent.type = "text/plain"
-                intent.putExtra(Intent.EXTRA_SUBJECT, APP_NAME)
-                val message = getString(R.string.label_invite_body) + "\n\n" + PLAY_STORE_LINK
-                intent.putExtra(Intent.EXTRA_TEXT, message)
-                startActivity(Intent.createChooser(intent, getString(R.string.intent_invite_pals)))
+        drawerAction(drawerFeedback) {
+            val emailIntent = Intent(Intent.ACTION_SENDTO)
+            emailIntent.data = Uri.parse(getString(R.string.intent_dev_email))
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, APP_NAME)
+            startActivity(Intent.createChooser(emailIntent, getString(R.string.intent_send_feedback)))
+        }
+
+        drawerAction(drawerTerms) { openLink(getString(R.string.link_terms)) }
+
+        drawerAction(drawerPolicy) { openLink(getString(R.string.link_privacy)) }
+
+        drawerAction(drawerMoreApps) {
+            val uri = Uri.parse(getString(R.string.label_dev_id))
+            val devAccount = Intent(Intent.ACTION_VIEW, uri)
+
+            devAccount.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+            try {
+                startActivity(devAccount)
+            } catch (e: ActivityNotFoundException) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.label_dev_id))))
             }
         }
 
-        drawerFeedback.setOnClickListener {
-            slidingDrawer.closeMenu(true)
-
-            runDelayed(300) {
-                val emailIntent = Intent(Intent.ACTION_SENDTO)
-                emailIntent.data = Uri.parse(getString(R.string.intent_dev_email))
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, APP_NAME)
-                startActivity(Intent.createChooser(emailIntent, getString(R.string.intent_send_feedback)))
-            }
+        drawerAction(drawerPostMemes) {
+            startActivity(Intent(this, PendingMemesActivity::class.java))
+            AppUtils.slideRight(this)
         }
 
-        drawerTerms.setOnClickListener {
-            slidingDrawer.closeMenu(true)
-            runDelayed(300){ openLink(getString(R.string.link_terms)) }
+        drawerAction(drawerReports) {
+            Timber.e("Coming soon...")
         }
 
-        drawerPolicy.setOnClickListener {
-            slidingDrawer.closeMenu(true)
-            runDelayed(300){ openLink(getString(R.string.link_privacy)) }
+        drawerAction(drawerLogout) {
+            alert("Are you sure you want to log out?") {
+                title = "Log out"
+                positiveButton("Log Out") { usersViewModel.logout() }
+                negativeButton("Cancel") {}
+            }.show()
         }
 
-        drawerMoreApps.setOnClickListener {
-            slidingDrawer.closeMenu(true)
-
-            runDelayed(300) {
-                val uri = Uri.parse(getString(R.string.label_dev_id))
-                val devAccount = Intent(Intent.ACTION_VIEW, uri)
-
-                devAccount.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-                try {
-                    startActivity(devAccount)
-                } catch (e: ActivityNotFoundException) {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.label_dev_id))))
-                }
-            }
-        }
-
-        drawerPostMemes.setOnClickListener {
-            slidingDrawer.closeMenu(true)
-            runDelayed(300){
-                startActivity(Intent(this, PendingMemesActivity::class.java))
-                AppUtils.slideRight(this)
-            }
-        }
-
-        drawerReports.setOnClickListener {
-            slidingDrawer.closeMenu(true)
-            runDelayed(300){  }
-        }
-
-        drawerLogout.setOnClickListener {
-            slidingDrawer.closeMenu(true)
-
-            runDelayed(300) {
-                alert("Are you sure you want to log out?") {
-                    title = "Log out"
-                    positiveButton("Log Out") { usersViewModel.logout() }
-                    negativeButton("Cancel") {}
-                }.show()
-            }
-        }
-
-        themeSwitch.setOnClickListener {
-            if (isDarkTheme) {
+        drawerAction(themeSwitch) {
+            if (sessionManager.isDarkMode()) {
                 sessionManager.setDarkMode(AppCompatDelegate.MODE_NIGHT_NO)
             } else {
                 sessionManager.setDarkMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
 
-            runDelayed(500) {
-                ProcessPhoenix.triggerRebirth(this, Intent(this, LoginActivity::class.java))
-            }
+            DankMemes.updateTheme(this)
+        }
+    }
+
+    private fun drawerAction(view: View, action: () -> Unit) {
+        view.setOnClickListener {
+            slidingDrawer.closeMenu(true)
+            runDelayed(300, action)
         }
     }
 

@@ -111,6 +111,13 @@ class SessionManager (context: Context) {
     }
 
     /**
+     * Get theme status
+     */
+    fun isDarkMode(): Boolean {
+        return themeMode() == AppCompatDelegate.MODE_NIGHT_YES
+    }
+
+    /**
      * Get dark mode
      */
     fun themeMode(): Int {

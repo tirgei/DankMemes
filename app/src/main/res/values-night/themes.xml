@@ -7,4 +7,9 @@
         <item name="android:statusBarColor" tools:targetApi="lollipop">@color/color_primary_variant</item>
     </style>
 
+    <!-- Theme for Splash Activity -->
+    <style name="SplashTheme" parent="Base.MaterialThemeBuilder">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
 </resources>

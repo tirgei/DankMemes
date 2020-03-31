@@ -25,8 +25,8 @@ class DankMemes : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        // Set theme
-        AppCompatDelegate.setDefaultNightMode(SessionManager(this).themeMode())
+        // Initialize theme
+        updateTheme(this)
 
         // Initialize app
         if (FirebaseApp.getApps(this).isNullOrEmpty())
@@ -94,6 +94,13 @@ class DankMemes : MultiDexApplication() {
                             }
                         })
             }
+        }
+
+        /**
+         * Update current theme
+         */
+        fun updateTheme(context: Context) {
+            AppCompatDelegate.setDefaultNightMode(SessionManager(context).themeMode())
         }
     }
 }
