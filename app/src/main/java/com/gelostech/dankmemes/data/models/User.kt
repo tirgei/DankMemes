@@ -1,5 +1,6 @@
 package com.gelostech.dankmemes.data.models
 
+import com.gelostech.dankmemes.utils.Constants
 import java.io.Serializable
 
 data class User(
@@ -16,4 +17,7 @@ data class User(
         var muted: Boolean = false,
         var followers: MutableMap<String, Boolean> = mutableMapOf(),
         var following: MutableMap<String, Boolean> = mutableMapOf()
-): Serializable {}
+): Serializable {
+    val hasAdminStatus: Boolean
+        get() = admin == Constants.ADMIN || admin == Constants.SUPER_ADMIN
+}

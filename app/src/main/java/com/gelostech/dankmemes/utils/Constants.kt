@@ -4,6 +4,7 @@ object Constants {
 
     // Global topic to receive app wide push notifications
     const val TOPIC_GLOBAL = "memes"
+    const val TOPIC_ADMIN = "admin"
 
     // Broadcast receiver intent filters
     const val REGISTRATION_COMPLETE = "registrationComplete"

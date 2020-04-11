@@ -60,7 +60,10 @@ open class BaseFragment : Fragment() {
 
         hideLoading()
         sessionManager.saveUser(user)
-        FirebaseMessaging.getInstance().subscribeToTopic(Constants.TOPIC_GLOBAL)
+
+        // Subscribe to Firebase
+        subscribe(Constants.TOPIC_GLOBAL)
+        if (user.hasAdminStatus) subscribe(Constants.TOPIC_ADMIN)
 
         runDelayed(400) {
             longToast("Welcome ${user.userName} \uD83D\uDE03")
@@ -69,6 +72,13 @@ open class BaseFragment : Fragment() {
             AppUtils.slideRight(activity!!)
             activity!!.finish()
         }
+    }
+
+    /**
+     * Subscribe to Firebase topic
+     */
+    private fun subscribe(topic: String) {
+        FirebaseMessaging.getInstance().subscribeToTopic(topic)
     }
 
 }
