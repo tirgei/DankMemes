@@ -9,6 +9,7 @@ import com.gelostech.dankmemes.data.models.Report
 import com.gelostech.dankmemes.databinding.ItemReportBinding
 import com.gelostech.dankmemes.ui.callbacks.ReportsCallback
 import com.gelostech.dankmemes.utils.AppUtils
+import com.gelostech.dankmemes.utils.TimeFormatter
 import com.gelostech.dankmemes.utils.inflate
 import com.gelostech.dankmemes.utils.setDrawable
 import com.mikepenz.ionicons_typeface_library.Ionicons
@@ -44,6 +45,7 @@ class ReportsAdapter(private val callback: ReportsCallback): PagedListAdapter<Re
         fun bind(report: Report) {
             binding.report = report
             binding.callback = callback
+            binding.formatter = TimeFormatter()
 
             binding.time.setDrawable(AppUtils.getDrawable(binding.root.context, Ionicons.Icon.ion_clock, R.color.color_text_secondary, 12))
         }
