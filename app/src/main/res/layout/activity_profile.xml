@@ -55,7 +55,7 @@
                     android:layout_weight="1"
                     android:visibility="gone"
                     app:icon="@{@drawable/ic_empty_memes}"
-                    app:message="@{@string/label_no_memes}" />
+                    app:message="@{@string/empty_memes}" />
 
             </LinearLayout>
 

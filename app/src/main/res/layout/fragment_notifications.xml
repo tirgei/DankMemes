@@ -28,7 +28,7 @@
                 android:layout_height="match_parent"
                 android:visibility="gone"
                 app:icon="@{@drawable/ic_empty_memes}"
-                app:message="@{@string/label_no_notifications}" />
+                app:message="@{@string/empty_notifications}" />
 
         </FrameLayout>
 

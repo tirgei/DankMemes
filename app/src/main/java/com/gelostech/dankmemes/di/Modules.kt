@@ -1,14 +1,8 @@
 package com.gelostech.dankmemes.di
 
 import com.gelostech.dankmemes.R
-import com.gelostech.dankmemes.data.repositories.CommentsRepository
-import com.gelostech.dankmemes.data.repositories.MemesRepository
-import com.gelostech.dankmemes.data.repositories.NotificationsRepository
-import com.gelostech.dankmemes.data.repositories.UsersRepository
-import com.gelostech.dankmemes.ui.viewmodels.CommentsViewModel
-import com.gelostech.dankmemes.ui.viewmodels.MemesViewModel
-import com.gelostech.dankmemes.ui.viewmodels.NotificationsViewModel
-import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
+import com.gelostech.dankmemes.data.repositories.*
+import com.gelostech.dankmemes.ui.viewmodels.*
 import com.gelostech.dankmemes.utils.SessionManager
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -31,6 +25,7 @@ val repositoriesModule = module {
     single { UsersRepository(get(), get(), get()) }
     single { MemesRepository(get(), get()) }
     single { NotificationsRepository(get()) }
+    single { ReportsRepository(get()) }
     single { CommentsRepository(get()) }
 }
 
@@ -38,6 +33,7 @@ val viewModelsModule = module {
     viewModel { UsersViewModel(get()) }
     viewModel { MemesViewModel(get(), get()) }
     viewModel { NotificationsViewModel(get()) }
+    viewModel { ReportsViewModel(get()) }
     viewModel { CommentsViewModel(get()) }
 }
 

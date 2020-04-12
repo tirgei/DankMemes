@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:visibility="gone"
             android:layout_height="match_parent"
-            app:message="@{@string/label_no_memes}"
+            app:message="@{@string/empty_memes}"
             app:icon="@{@drawable/ic_empty_memes}"/>
 
     </FrameLayout>

@@ -49,7 +49,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:visibility="gone"
-                app:message="@{@string/label_no_memes}"
+                app:message="@{@string/empty_memes}"
                 app:icon="@{@drawable/ic_empty_memes}"/>
 
         </LinearLayout>

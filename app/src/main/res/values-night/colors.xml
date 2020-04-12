@@ -3,10 +3,10 @@
 
     <!-- Material Theme -->
 
-    <color name="color_primary">#292626</color>
-    <color name="color_primary_variant">#B9050202</color>
-    <color name="color_secondary">#03dac6</color>
-    <color name="color_secondary_variant">#018786</color>
+    <color name="color_primary">#111111</color>
+    <color name="color_primary_variant">#111111</color>
+    <color name="color_secondary">#009688</color>
+    <color name="color_secondary_variant">#009688</color>
 
     <color name="color_background">#000000</color>
     <color name="color_surface">#121212</color>
@@ -21,9 +21,9 @@
     <!-- Other colors -->
     <color name="black">@android:color/black</color>
     <color name="white">@android:color/white</color>
-    <color name="color_feed_divider">#CCe0e0e0</color>
+    <color name="color_feed_divider">#9497AB</color>
     <color name="color_text_primary">@android:color/white</color>
-    <color name="color_text_secondary">#A09D9D</color>
+    <color name="color_text_secondary">#9497AB</color>
     <color name="color_favorite">#ec407a</color>
 
 </resources>

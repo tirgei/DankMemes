@@ -39,7 +39,7 @@
             android:textSize="18sp"
             android:textColor="@color/color_text_secondary"
             android:text="@{message}"
-            tools:text="@string/label_no_memes"/>
+            tools:text="@string/empty_memes"/>
 
     </LinearLayout>
 

@@ -34,10 +34,6 @@
     <string name="label_reports">Reports</string>
     <string name="label_post_memes">Post Memes</string>
     <string name="label_logout">Log Out</string>
-    <string name="label_no_faves">No favorites found</string>
-    <string name="label_no_comments">No comments found</string>
-    <string name="label_no_notifications">No notifications found</string>
-    <string name="label_no_memes">No memes found</string>
     <string name="label_new_user">Hello there. I\'m here for the memes too :)</string>
     <string name="label_play_store_link">https://play.google.com/store/apps/details?id=</string>
     <string name="label_invite_body">Ssup fam! Check out these fresh memes!!</string>
@@ -51,6 +47,7 @@
     <string name="button_update_profile">Update Profile</string>
     <string name="button_follow">Follow</string>
     <string name="button_post">Post</string>
+    <string name="button_mute_user">Mute User</string>
 
     <!-- EditText hints-->
     <string name="hint_email">Email</string>
@@ -61,7 +58,11 @@
     <string name="hint_caption">Write caption…</string>
 
     <!-- Empty State labels-->
-    <string name="empty_comments">No Comments</string>
+    <string name="empty_faves">No favorites found</string>
+    <string name="empty_comments">No comments found</string>
+    <string name="empty_notifications">No notifications found</string>
+    <string name="empty_memes">No memes found</string>
+    <string name="empty_reports">No reports found</string>
 
     <!-- Content Description-->
     <string name="content_image">image</string>
@@ -74,6 +75,7 @@
     <string name="toolbar_post_meme">Post Meme</string>
     <string name="toolbar_pending_memes">Pending Memes</string>
     <string name="toolbar_profile">Profile</string>
+    <string name="toolbar_reports">Reports</string>
 
     <!-- Intent labels-->
     <string name="intent_invite_pals">Invite pals…</string>

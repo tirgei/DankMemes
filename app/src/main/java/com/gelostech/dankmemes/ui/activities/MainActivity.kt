@@ -216,7 +216,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         }
 
         drawerAction(drawerReports) {
-            Timber.e("Coming soon...")
+            startActivity(Intent(this, ReportsActivity::class.java))
+            AppUtils.slideRight(this)
         }
 
         drawerAction(drawerLogout) {

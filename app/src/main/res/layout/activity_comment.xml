@@ -61,7 +61,7 @@
             android:layout_below="@id/commentToolbar"
             android:visibility="gone"
             app:icon="@{@drawable/ic_empty_memes}"
-            app:message="@{@string/label_no_comments}" />
+            app:message="@{@string/empty_comments}" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/addCommentLayout"

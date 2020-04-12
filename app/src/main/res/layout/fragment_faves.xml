@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:visibility="gone"
                 android:layout_height="match_parent"
-                app:message="@{@string/label_no_faves}"
+                app:message="@{@string/empty_faves}"
                 app:icon="@{@drawable/ic_empty_memes}"/>
 
         </FrameLayout>

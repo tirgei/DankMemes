@@ -21,6 +21,7 @@
         android:theme="@style/DankTheme"
         tools:ignore="AllowBackup"
         tools:replace="android:theme">
+        <activity android:name=".ui.activities.ReportsActivity"></activity>
         <activity
             android:name=".ui.activities.SplashActivity"
             android:configChanges="orientation"
@@ -37,7 +38,7 @@
         <activity android:name=".ui.activities.AdActivity" />
         <activity
             android:name=".ui.activities.MainActivity"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".ui.activities.PostMemeActivity"
             android:label="@string/app_name">
@@ -50,17 +51,13 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.activities.ProfileActivity" />
-        <activity
-            android:name=".ui.activities.MemeActivity"/>
+        <activity android:name=".ui.activities.ProfileActivity" />
+        <activity android:name=".ui.activities.MemeActivity" />
         <activity
             android:name=".ui.activities.CommentActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".ui.activities.ViewMemeActivity" />
-
-        <activity android:name=".ui.activities.PendingMemesActivity"/>
+        <activity android:name=".ui.activities.ViewMemeActivity" />
+        <activity android:name=".ui.activities.PendingMemesActivity" />
         <activity
             android:name=".ui.base.BaseActivity"
             android:configChanges="orientation"
