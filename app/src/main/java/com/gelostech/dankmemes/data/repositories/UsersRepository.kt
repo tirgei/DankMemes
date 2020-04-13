@@ -273,6 +273,31 @@ class UsersRepository constructor(private val firestoreDatabase: FirebaseFiresto
     }
 
     /**
+     * Function to mute user - Users posts won't appear on timeline
+     * @param userId - ID of the user
+     */
+    suspend fun muteUser(userId: String): Result<String> {
+        val errorMessage = "Error muting user"
+
+        return try {
+            when (val userResult = fetchUserById(userId)) {
+                is Result.Error -> Result.Error(userResult.error)
+
+                is Result.Success -> {
+                    Timber.e("Muting: ${userResult.data}")
+                    val userReference = db.document(userId)
+                    userReference.update(Constants.MUTED, true).await()
+                    Result.Success(userResult.data.userName.toString())
+                }
+            }
+
+        } catch (e: Exception) {
+            Timber.e("$errorMessage: ${e.localizedMessage}")
+            Result.Error(errorMessage)
+        }
+    }
+
+    /**
      * Function to logout User
      */
     fun logout(): Result<Boolean> {

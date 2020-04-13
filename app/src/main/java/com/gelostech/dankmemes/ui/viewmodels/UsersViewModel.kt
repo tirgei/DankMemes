@@ -235,6 +235,21 @@ class UsersViewModel constructor(private val repository: UsersRepository): ViewM
     }
 
     /**
+     * Function to mute user
+     */
+    fun muteUser(userId: String) {
+        viewModelScope.launch {
+            _genericResponseLiveData.value = GenericResponse.loading()
+
+            when (val result = repository.muteUser(userId)) {
+                is Result.Success -> _genericResponseLiveData.value = GenericResponse.success(true, value = result.data)
+
+                is Result.Error -> _genericResponseLiveData.value = GenericResponse.error(result.error)
+            }
+        }
+    }
+
+    /**
      * Function to logout User
      */
     fun logout() {

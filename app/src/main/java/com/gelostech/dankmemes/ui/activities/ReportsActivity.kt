@@ -14,13 +14,17 @@ import com.gelostech.dankmemes.ui.adapters.ReportsAdapter
 import com.gelostech.dankmemes.ui.base.BaseActivity
 import com.gelostech.dankmemes.ui.callbacks.ReportsCallback
 import com.gelostech.dankmemes.ui.viewmodels.ReportsViewModel
+import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.*
 import kotlinx.android.synthetic.main.activity_reports.*
+import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 
 class ReportsActivity : BaseActivity() {
     private lateinit var reportsAdapter: ReportsAdapter
     private val reportsViewModel: ReportsViewModel by inject()
+    private val usersViewModel: UsersViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +34,7 @@ class ReportsActivity : BaseActivity() {
         initViews()
         initStatusObserver()
         initReportsObserver()
+        initResponseObserver()
     }
 
     private fun initViews() {
@@ -79,9 +84,27 @@ class ReportsActivity : BaseActivity() {
         })
     }
 
+    private fun initResponseObserver() {
+        usersViewModel.genericResponseLiveData.observe(this, Observer {
+            when(it.status) {
+                Status.LOADING -> showLoading("Muting user...")
+
+                Status.SUCCESS -> {
+                    hideLoading()
+                    longToast("${it.value} muted successfully")
+                }
+
+                Status.ERROR -> {
+                    hideLoading()
+                    toast(it.error.toString())
+                }
+            }
+        })
+    }
+
     private val callback = object : ReportsCallback {
         override fun onReportClicked(report: Report) {
-
+            usersViewModel.muteUser(report.memePosterId!!)
         }
     }
 
