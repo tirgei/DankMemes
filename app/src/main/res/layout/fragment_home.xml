@@ -1,63 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:shimmer="http://schemas.android.com/apk/res-auto">
+    xmlns:shimmer="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/homeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         tools:context=".ui.fragments.HomeFragment">
 
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/homeShimmer"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            shimmer:duration="800">
+            android:layout_height="match_parent">
 
-            <LinearLayout
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/homeShimmer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/edittext_light_gray">
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                shimmer:duration="800">
 
-                <include layout="@layout/item_meme_shimmer" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_light_gray"
+                    android:orientation="vertical">
 
-                <include layout="@layout/item_meme_shimmer" />
+                    <include layout="@layout/item_meme_shimmer" />
 
-                <include layout="@layout/item_meme_shimmer" />
+                    <include layout="@layout/item_meme_shimmer" />
 
-            </LinearLayout>
+                    <include layout="@layout/item_meme_shimmer" />
 
-        </com.facebook.shimmer.ShimmerFrameLayout>
+                </LinearLayout>
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/homeRefresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            </com.facebook.shimmer.ShimmerFrameLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/homeRv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:overScrollMode="never"
                 tools:listitem="@layout/item_meme"
-                android:overScrollMode="never"/>
+                android:visibility="gone"/>
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            <include
+                android:id="@+id/emptyState"
+                layout="@layout/layout_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                app:icon="@{@drawable/ic_empty_memes}"
+                app:message="@{@string/empty_memes}" />
 
-        <include
-            android:id="@+id/emptyState"
-            layout="@layout/layout_empty_state"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="match_parent"
-            app:message="@{@string/empty_memes}"
-            app:icon="@{@drawable/ic_empty_memes}"/>
+        </FrameLayout>
 
-    </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </layout>
 

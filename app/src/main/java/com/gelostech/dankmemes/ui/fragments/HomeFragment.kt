@@ -95,7 +95,7 @@ class HomeFragment : BaseFragment() {
 
                     if (Connectivity.isConnected(activity!!)) {
                         hideViews(homeShimmer, emptyState)
-                        homeRefresh.showView()
+                        homeRv.showView()
                     } else {
                         showEmptyState()
                     }
@@ -295,7 +295,7 @@ class HomeFragment : BaseFragment() {
      */
     private fun showEmptyState() {
         homeShimmer.stopShimmerAnimation()
-        hideViews(homeRefresh, homeShimmer)
+        hideViews(homeRv, homeShimmer)
         emptyState.showView()
     }
 
