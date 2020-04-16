@@ -4,8 +4,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ee6311fe19e54fc39c786977f25e10c1)](https://www.codacy.com/manual/tirgei/DankMemes?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tirgei/DankMemes&amp;utm_campaign=Badge_Grade)
 
 This is a social media app for sharing memes (funny pictures). The app is mainly written in Kotlin and uses the Gradle build system. It uses
-[Firebase](https://firebase.google.com) for the backend with [Firebase Functions](https://firebase.google.com/docs/functions) providing additional
-server side functions.
+[Firebase](https://firebase.google.com) for the backend with [Firebase Functions](https://firebase.google.com/docs/functions) providing additional server side functions.
 
 You can download the app from the Play Store here: [Dank Memes](https://play.google.com/store/apps/details?id=com.gelostech.dankmemes)
 
