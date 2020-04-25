@@ -74,15 +74,19 @@ For native ads, the following are required
 ### Screenshots
 
 | **Login** | **Registration** | **Home page** |
+| ----- | ----- | ----- |
 | <img src="screenshots/one.jpg" width="200"> | <img src="screenshots/two.jpg" width="200"> | <img src="screenshots/three.jpg" width="200"> |
-| | | 
+| | | |
 | **Navigation** | **Favorites** | **Notification** |
+| ----- | ----- | ----- |
 | <img src="screenshots/four.jpg" width="200"> | <img src="screenshots/five.jpg" width="200"> | <img src="screenshots/six.jpg" width="200"> |
-| | |
+| | | |
 | **My Profile** | **Comments** | **Post Meme** |
+| ----- | ----- | ----- |
 | <img src="screenshots/seven.jpg" width="200"> | <img src="screenshots/eight.jpg" width="200"> | <img src="screenshots/nine.jpg" width="200"> |
-| | |
+| | | |
 | **Edit Profile** | 
+| ----- |
 | <img src="screenshots/ten.jpg" width="200"> |
 
 ### License
