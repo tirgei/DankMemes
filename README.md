@@ -72,17 +72,17 @@ For native ads, the following are required
 
 
 ### Screenshots
-<img src="screenshots/one.png" width="200" >   <img src="screenshots/two.png" width="200" >   <img src="screenshots/three.png" width="200" >
+<img src="screenshots/one.jpg" width="200" >   <img src="screenshots/two.jpg" width="200" >   <img src="screenshots/three.jpg" width="200" >
 
-<img src="screenshots/four.png" width="200" >   <img src="screenshots/five.png" width="200" >   <img src="screenshots/six.png" width="200" >
+<img src="screenshots/four.jpg" width="200" >   <img src="screenshots/five.jpg" width="200" >   <img src="screenshots/six.jpg" width="200" >
 
-<img src="screenshots/seven.png" width="200" >   <img src="screenshots/eight.png" width="200" >   <img src="screenshots/nine.png" width="200" >
+<img src="screenshots/seven.jpg" width="200" >   <img src="screenshots/eight.jpg" width="200" >   <img src="screenshots/nine.jpg" width="200" >
 
-<img src="screenshots/ten.png" width="200" > 
+<img src="screenshots/ten.jpg" width="200" > 
 
 ### License
 ```
-Copyright 2019 Vincent Tirgei
+Copyright 2020 Vincent Tirgei
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
