@@ -76,6 +76,10 @@ For native ads, the following are required
 
 <img src="screenshots/four.png" width="200" >   <img src="screenshots/five.png" width="200" >   <img src="screenshots/six.png" width="200" >
 
+<img src="screenshots/seven.png" width="200" >   <img src="screenshots/eight.png" width="200" >   <img src="screenshots/nine.png" width="200" >
+
+<img src="screenshots/ten.png" width="200" > 
+
 ### License
 ```
 Copyright 2019 Vincent Tirgei
