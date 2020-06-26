@@ -46,8 +46,6 @@ You can then import the project to your Android Studio then head to your [Fireba
 
 - Add a new Android project under `Project Settings` menu
 
-<img src="screenshots/3.png" width="600" >
-
 - Fill in the project details then download the `google-services.json` file and place it in `app/` directory
 
 <img src="screenshots/4.png" width="600" >
