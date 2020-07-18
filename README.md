@@ -4,7 +4,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ee6311fe19e54fc39c786977f25e10c1)](https://www.codacy.com/manual/tirgei/DankMemes?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tirgei/DankMemes&amp;utm_campaign=Badge_Grade)
 
 This is a social media app for sharing memes (funny pictures). The app is mainly written in Kotlin and uses the Gradle build system. It uses
-[Firebase](https://firebase.google.com) for the backend with [Firebase Functions](https://firebase.google.com/docs/functions) providing additional server side functions.
+[Firebase](https://firebase.google.com) for the backend with [Firebase Functions](https://firebase.google.com/docs/functions) providing additional server side functions. You can view the Functions code in the [Dank-Memes-Functions](https://github.com/tirgei/Dank-Memes-Functions) repo with the guide on deploying it.
 
 You can download the app from the Play Store here: [Dank Memes](https://play.google.com/store/apps/details?id=com.gelostech.dankmemes)
 
@@ -56,14 +56,11 @@ You can then import the project to your Android Studio then head to your [Fireba
 <string name="google_signin_key">YOUR_GOOGLE_SIGN_IN_KEY</string>
 ```
 
-For native ads, the following are required
+For native ads, the following are required (You can use test IDs from the Admob [docs](https://developers.google.com/admob/android/native/advanced))
 ```
 // Admob
 <string name="admob_app_id">YOUR_ADMOB_APP_ID</string>
-<string name="admob_native_test_ad">YOUR_ADMOB_TEST_AD_ID</string>
-
-// Mopub
-<string name="mopub_native_ad">YOUR_MOPUB_AD_ID</string>
+<string name="admob_native_ad_id">YOUR_ADMOB_TEST_AD_ID</string>
 ```
 
 - Sync your gradle. After successful sync, you can run the app to test it out.
