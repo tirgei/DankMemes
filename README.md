@@ -50,7 +50,9 @@ You can then import the project to your Android Studio then head to your [Fireba
 
 <img src="screenshots/4.png" width="600" >
 
-- Create a `keys.xml` file in the `app/src/main/res/values/` directory where we will place our API keys. The following are required:
+- Create a `keys.xml` file in the `app/src/main/res/values/` directory where we will place our API keys. 
+First we'll add the Google Sign In Key to enable users to sign in with Google. This can be obtained from the Authentication page of your Firebase Project. 
+Under the Sign-In method tab you should see the `Google` option and on expanding it copy the `Web client ID` under the `Web SDK configuration` option:
 ```
 // Google Sign in key
 <string name="google_signin_key">YOUR_GOOGLE_SIGN_IN_KEY</string>
@@ -61,6 +63,15 @@ For native ads, the following are required (You can use test IDs from the Admob 
 // Admob
 <string name="admob_app_id">YOUR_ADMOB_APP_ID</string>
 <string name="admob_native_ad_id">YOUR_ADMOB_TEST_AD_ID</string>
+```
+
+The Test IDs are:
+admob_app_id       - `ca-app-pub-3940256099942544~3347511713`
+admob_native_ad_id - `ca-app-pub-3940256099942544/2247696110`
+
+If you are having issues configuring ads or you simply want the ad free version, checkout the `ad-free-version` branch:
+```console
+foo@bar:~$ git checkout ad-free-version
 ```
 
 - Sync your gradle. After successful sync, you can run the app to test it out.
