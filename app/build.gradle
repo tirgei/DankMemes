@@ -160,13 +160,6 @@ dependencies {
     // Crash
     implementation 'cat.ereza:customactivityoncrash:2.2.0'
 
-    // Ads libs
-    // For native video. This will automatically also include native static
-    implementation('com.mopub:mopub-sdk-native-video:5.1.0@aar') {
-        transitive = true
-    }
-    implementation 'com.google.android.gms:play-services-ads:18.1.1'
-
     // Misc
     implementation 'com.github.kizitonwose.time:time-android:1.0.3'
     implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
