@@ -8,6 +8,7 @@ buildscript {
 
     repositories {
         google()
+        jcenter()
         mavenCentral()
     }
     dependencies {
@@ -25,6 +26,7 @@ apply plugin: 'kotlin'
 
 allprojects {
     repositories {
+        jcenter()
         mavenCentral()
         maven { url "https://jitpack.io" }
         google()
