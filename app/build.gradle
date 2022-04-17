@@ -38,10 +38,10 @@ android {
         applicationId "com.gelostech.dankmemes"
 
         minSdkVersion 17
-        targetSdkVersion 29
+        targetSdkVersion 31
 
-        versionCode 22
-        versionName "5.0.0"
+        versionCode 23
+        versionName "5.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true

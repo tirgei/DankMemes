@@ -33,7 +33,7 @@ class MemesDataSource constructor(private val repository: MemesRepository,
             if (user == null) {
                 val memes = repository.fetchMemes()
 
-                if (memes.isEmpty()) status(Status.ERROR)
+                status(if (memes.isEmpty()) Status.ERROR else Status.SUCCESS)
                 callback.onResult(memes)
             } else {
                 val memes = repository.fetchMemesByUser(user.id)
