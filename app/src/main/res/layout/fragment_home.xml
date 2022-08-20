@@ -38,14 +38,6 @@
 
             </com.facebook.shimmer.ShimmerFrameLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/homeRv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:overScrollMode="never"
-                tools:listitem="@layout/item_meme"
-                android:visibility="gone"/>
-
             <include
                 android:id="@+id/emptyState"
                 layout="@layout/layout_empty_state"
@@ -54,6 +46,14 @@
                 android:visibility="gone"
                 app:icon="@{@drawable/ic_empty_memes}"
                 app:message="@{@string/empty_memes}" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/homeRv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                tools:listitem="@layout/item_meme"
+                android:visibility="gone"/>
 
         </FrameLayout>
 

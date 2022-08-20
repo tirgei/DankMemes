@@ -101,7 +101,7 @@ class MemesRepository constructor(private val firestoreDatabase: FirebaseFiresto
      */
     suspend fun fetchMemes(loadBefore: String? = null, loadAfter: String? = null): List<ObservableMeme> {
         Timber.e("Fetching memes...")
-        var query: Query = memesQuery
+        var query: Query = memesQuery.whereEqualTo(Constants.MUTED, false)
 
         loadBefore?.let {
             val meme = db.document(it).get().await()
