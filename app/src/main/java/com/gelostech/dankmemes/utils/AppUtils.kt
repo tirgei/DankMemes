@@ -106,6 +106,28 @@ object AppUtils {
                 }).check()
     }
 
+    fun requestNotificationPermissions(context: Context, callback: (granted: Boolean) -> Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Dexter.withActivity(context as Activity)
+                .withPermission(Manifest.permission.POST_NOTIFICATIONS)
+                .withListener(object : PermissionListener {
+                    override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                        callback(true)
+                    }
+
+                    override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                        callback(false)
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest, token: PermissionToken) {
+                        token.continuePermissionRequest()
+                    }
+                }).check()
+        } else {
+            callback(true)
+        }
+    }
+
     fun loadBitmapFromUrl(context: Context, url: String): Bitmap {
         return Glide.with(context)
                 .asBitmap()

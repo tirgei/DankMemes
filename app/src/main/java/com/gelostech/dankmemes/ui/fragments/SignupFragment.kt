@@ -17,7 +17,8 @@ import com.gelostech.dankmemes.ui.base.BaseFragment
 import com.gelostech.dankmemes.ui.viewmodels.UsersViewModel
 import com.gelostech.dankmemes.utils.*
 import com.gelostech.dankmemes.utils.AppUtils.getDrawable
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.messaging.FirebaseMessaging
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -138,19 +139,7 @@ class SignupFragment : BaseFragment() {
                 }
 
                 Status.SUCCESS -> {
-                    val user = it.user!!
-                    val newUser = User()
-                    newUser.userName = signupUsername.text.toString().trim()
-                    newUser.userEmail = user.email
-                    newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())
-                    newUser.dateUpdated = TimeFormatter().getNormalYear(System.currentTimeMillis())
-                    newUser.userToken = FirebaseInstanceId.getInstance().token
-                    newUser.userId = user.uid
-                    newUser.userBio = activity?.getString(R.string.label_new_user)
-                    newUser.admin = 0
-
-                    usersViewModel.createUserAccount(newUser, imageUri!!)
-                    user.sendEmailVerification()
+                    it.user?.let { user -> createUserProfile(user) } ?: errorSigningUp("Unable to create account")
                 }
 
                 Status.ERROR -> {
@@ -213,6 +202,27 @@ class SignupFragment : BaseFragment() {
             }
         }
 
+    }
+
+    private fun createUserProfile(user: FirebaseUser) {
+        val newUser = User()
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                newUser.userToken = task.result
+            }
+
+            newUser.userName = signupUsername.text.toString().trim()
+            newUser.userEmail = user.email
+            newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())
+            newUser.dateUpdated = TimeFormatter().getNormalYear(System.currentTimeMillis())
+            newUser.userId = user.uid
+            newUser.userBio = activity?.getString(R.string.label_new_user)
+            newUser.admin = 0
+
+            usersViewModel.createUserAccount(newUser, imageUri!!)
+            user.sendEmailVerification()
+        }
     }
 
     private fun startCropActivity(imageUri: Uri) {

@@ -7,12 +7,11 @@ import cat.ereza.customactivityoncrash.config.CaocConfig
 import com.gelostech.dankmemes.di.*
 import com.gelostech.dankmemes.utils.Constants
 import com.gelostech.dankmemes.utils.SessionManager
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import io.reactivex.plugins.RxJavaPlugins
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -29,7 +28,7 @@ class DankMemes : MultiDexApplication() {
         updateTheme(this)
 
         // Initialize app
-        if (FirebaseApp.getApps(this).isNullOrEmpty())
+        if (FirebaseApp.getApps(this).isEmpty())
             FirebaseApp.initializeApp(this)
 
         // Set Timber
@@ -76,22 +75,18 @@ class DankMemes : MultiDexApplication() {
             val sessionManager = SessionManager(context)
 
             if (sessionManager.isLoggedIn() && !sessionManager.isFirstLaunch()) {
-                FirebaseInstanceId.getInstance().instanceId
-                        .addOnCompleteListener(OnCompleteListener { task ->
-                            if (!task.isSuccessful) {
-                                Timber.e("Error initiating new token")
-                                return@OnCompleteListener
-                            }
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Timber.e("Error initiating new token")
+                        return@addOnCompleteListener
+                    }
 
-                            // Get new Instance ID token
-                            val token = task.result?.token
-                            token?.let {
-                                if (sessionManager.getUserId().isNotEmpty()) {
-                                    val dbRef = FirebaseFirestore.getInstance()
-                                    dbRef.collection(Constants.USERS).document(sessionManager.getUserId()).update(Constants.USER_TOKEN, it)
-                                }
-                            }
-                        })
+                    // Get new Instance ID token
+                    if (sessionManager.getUserId().isNotEmpty()) {
+                        val dbRef = FirebaseFirestore.getInstance()
+                        dbRef.collection(Constants.USERS).document(sessionManager.getUserId()).update(Constants.USER_TOKEN, task.result)
+                    }
+                }
             }
         }
 

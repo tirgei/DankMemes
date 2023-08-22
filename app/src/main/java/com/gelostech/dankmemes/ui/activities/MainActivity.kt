@@ -94,6 +94,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
         initNoInternet()
         initLogoutObserver()
+        AppUtils.requestNotificationPermissions(this) {
+            Timber.i("Notification permissions granted: $it")
+        }
     }
 
     //Setup the main toolbar
