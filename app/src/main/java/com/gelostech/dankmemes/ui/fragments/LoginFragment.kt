@@ -244,7 +244,7 @@ class LoginFragment : BaseFragment() {
                 val account = task.getResult(ApiException::class.java)!!
                 usersViewModel.loginWithGoogle(account)
             } catch (e: ApiException) {
-                Timber.e("Google sign in failed")
+                Timber.e("Google sign in failed: ${e.localizedMessage}")
                 errorLoggingIn("Error signing in. Try again")
             }
         }
