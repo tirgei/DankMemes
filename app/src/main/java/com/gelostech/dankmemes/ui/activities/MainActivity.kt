@@ -94,6 +94,9 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
 
         initNoInternet()
         initLogoutObserver()
+        AppUtils.requestNotificationPermissions(this) {
+            Timber.i("Notification permissions granted: $it")
+        }
     }
 
     //Setup the main toolbar
@@ -305,8 +308,8 @@ class MainActivity : BaseActivity(), ViewPager.OnPageChangeListener {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
             R.id.menu_edit_profile -> {
                 startActivity(Intent(this, EditProfileActivity::class.java))
                 AppUtils.slideRight(this)

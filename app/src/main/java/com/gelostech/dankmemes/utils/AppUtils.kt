@@ -2,6 +2,8 @@ package com.gelostech.dankmemes.utils
 
 import android.Manifest
 import android.app.Activity
+import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -14,6 +16,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.StrictMode
+import android.provider.MediaStore
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextUtils
@@ -45,6 +48,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.util.*
 
 
@@ -67,7 +71,7 @@ object AppUtils {
      */
     fun requestStoragePermission(context: Context, granted: (Boolean) -> Unit) {
         Dexter.withActivity(context as Activity)
-                .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withPermission(Manifest.permission.READ_MEDIA_IMAGES)
                 .withListener(object : PermissionListener {
                     override fun onPermissionGranted(response: PermissionGrantedResponse) {
                         granted(true)
@@ -81,6 +85,47 @@ object AppUtils {
                         token.continuePermissionRequest()
                     }
                 }).check()
+    }
+
+    fun requestMediaPermission(context: Context, granted: (Boolean) -> Unit) {
+        val storagePermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Manifest.permission.READ_MEDIA_IMAGES else Manifest.permission.READ_EXTERNAL_STORAGE
+        Dexter.withActivity(context as Activity)
+                .withPermission(storagePermission)
+                .withListener(object : PermissionListener {
+                    override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                        granted(true)
+                    }
+
+                    override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                        granted(false)
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest, token: PermissionToken) {
+                        token.continuePermissionRequest()
+                    }
+                }).check()
+    }
+
+    fun requestNotificationPermissions(context: Context, callback: (granted: Boolean) -> Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Dexter.withActivity(context as Activity)
+                .withPermission(Manifest.permission.POST_NOTIFICATIONS)
+                .withListener(object : PermissionListener {
+                    override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                        callback(true)
+                    }
+
+                    override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                        callback(false)
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest, token: PermissionToken) {
+                        token.continuePermissionRequest()
+                    }
+                }).check()
+        } else {
+            callback(true)
+        }
     }
 
     fun loadBitmapFromUrl(context: Context, url: String): Bitmap {
@@ -141,29 +186,39 @@ object AppUtils {
     }
 
     fun saveImage(context: Context, bitmap: Bitmap) {
-
-        val file = File(Environment.getExternalStorageDirectory().toString() + File.separator + "Dank Memes")
-        if(!file.exists()) file.mkdirs()
-
+        val folder = context.getString(R.string.app_name)
         val fileName = "Meme-" + System.currentTimeMillis() + ".jpg"
 
-        val newImage = File(file, fileName)
-        if(newImage.exists()) file.delete()
         try {
-            val out = FileOutputStream(newImage)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
-            out.flush()
-            out.close()
-
-            if (Build.VERSION.SDK_INT >= 19) {
-                MediaScannerConnection.scanFile(context, arrayOf(newImage.absolutePath), null, null)
+            val fos: OutputStream? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val resolver: ContentResolver = context.contentResolver
+                val contentValues = ContentValues()
+                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/$folder")
+                val imageUri =
+                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                resolver.openOutputStream(imageUri!!)
             } else {
-                context.sendBroadcast( Intent("android.intent.action.MEDIA_MOUNTED", Uri.fromFile(newImage)))
+                val imagesDir: String = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DCIM
+                ).toString() + File.separator + folder
+                val file = File(imagesDir)
+                if (!file.exists()) {
+                    file.mkdir()
+                }
+                val image = File(imagesDir, "$fileName.png")
+                FileOutputStream(image)
+            }
+            fos?.let {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+                it.flush()
+                it.close()
             }
             context.toast("Meme saved")
 
         } catch (e: Exception){
-            Log.d(javaClass.simpleName, e.localizedMessage)
+            Timber.e("Error saving image: ${e.localizedMessage}")
         }
 
     }
@@ -174,7 +229,7 @@ object AppUtils {
 
         val bytes = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val f = File("${Environment.getExternalStorageDirectory()}/${File.separator}/temporary_file.jpg")
+        val f = File("${Environment.getExternalStorageDirectory()}/${File.separator}/meme.jpg")
 
         try {
             f.createNewFile()
@@ -193,7 +248,7 @@ object AppUtils {
            }
         }
 
-        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"))
+        share.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/meme.jpg"))
         context.startActivity(Intent.createChooser(share, "Share Meme via..."))
     }
 

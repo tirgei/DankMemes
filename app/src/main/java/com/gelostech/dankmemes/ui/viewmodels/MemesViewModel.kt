@@ -21,10 +21,9 @@ import com.gelostech.dankmemes.data.responses.GenericResponse
 import com.gelostech.dankmemes.data.responses.MemesResponse
 import com.gelostech.dankmemes.data.wrappers.ItemViewModel
 import com.gelostech.dankmemes.data.wrappers.ObservableUser
-import com.google.android.gms.ads.AdLoader
 import kotlinx.coroutines.launch
 
-class MemesViewModel constructor(private val repository: MemesRepository, private val adBuilder: AdLoader.Builder) : ViewModel() {
+class MemesViewModel constructor(private val repository: MemesRepository) : ViewModel() {
     private val _genericResponseLiveData = MutableLiveData<GenericResponse>()
     val genericResponseLiveData: MutableLiveData<GenericResponse>
         get() = _genericResponseLiveData
@@ -93,7 +92,7 @@ class MemesViewModel constructor(private val repository: MemesRepository, privat
                 .setPrefetchDistance(5)
                 .build()
 
-        val memeFactory = MemesDataSource.Factory(repository, viewModelScope, adBuilder) {
+        val memeFactory = MemesDataSource.Factory(repository, viewModelScope) {
             _showStatusLiveData.postValue(it)
         }
         return LivePagedListBuilder<String, ItemViewModel>(memeFactory, pagingConfig).build()
@@ -123,7 +122,7 @@ class MemesViewModel constructor(private val repository: MemesRepository, privat
                 .setPrefetchDistance(5)
                 .build()
 
-        val memeFactory = MemesDataSource.Factory(repository, viewModelScope, adBuilder, user) {
+        val memeFactory = MemesDataSource.Factory(repository, viewModelScope, user) {
             _showStatusLiveData.postValue(it)
         }
         return LivePagedListBuilder<String, ItemViewModel>(memeFactory, pagingConfig).build()

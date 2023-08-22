@@ -56,7 +56,7 @@ class PostMemeActivity : BaseActivity() {
         }
 
         postAddImage.setOnClickListener {
-            AppUtils.requestStoragePermission(this) { granted ->
+            AppUtils.requestMediaPermission(this) { granted ->
                 if (granted) {
                     val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                     startActivityForResult(galleryIntent, GALLERY_REQUEST)
@@ -74,8 +74,8 @@ class PostMemeActivity : BaseActivity() {
         val type = intent.type
 
         if (Intent.ACTION_SEND == action && type != null) {
-            imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as Uri
-            startCropActivity(imageUri!!)
+            imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri
+            imageUri?.let { startCropActivity(it) }
         }
     }
 
@@ -145,8 +145,8 @@ class PostMemeActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
             android.R.id.home -> onBackPressed()
             R.id.menu_post -> postMeme()
         }

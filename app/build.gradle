@@ -1,9 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'io.fabric'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 def keystoreProperties = null
 
@@ -17,8 +18,7 @@ if (rootProject.file("keystore.properties").exists()) {
 
 android {
 
-    compileSdkVersion 29
-    buildToolsVersion '29.0.2'
+    compileSdkVersion 33
 
     signingConfigs {
         release {
@@ -36,11 +36,11 @@ android {
 
         applicationId "com.gelostech.dankmemes"
 
-        minSdkVersion 17
-        targetSdkVersion 29
+        minSdkVersion 21
+        targetSdkVersion 33
 
-        versionCode 22
-        versionName "5.0.0"
+        versionCode 25
+        versionName "5.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -131,17 +131,16 @@ dependencies {
     implementation 'com.mikepenz:actionitembadge:3.3.2@aar'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-core:17.2.0'
-    implementation 'com.google.firebase:firebase-storage:19.1.0'
-    implementation 'com.google.firebase:firebase-auth:19.1.0'
-    implementation 'com.google.firebase:firebase-database:19.2.0'
-    implementation 'com.google.firebase:firebase-messaging:20.0.0'
-    implementation 'com.google.firebase:firebase-invites:17.0.0'
-    implementation 'com.google.firebase:firebase-crash:16.2.1'
-    implementation 'com.google.firebase:firebase-firestore:21.2.0'
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.firebase:firebase-perf:19.0.1'
+    implementation platform('com.google.firebase:firebase-bom:31.0.0')
+    implementation 'com.google.firebase:firebase-storage'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-database'
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-perf'
+    implementation 'com.google.android.gms:play-services-auth:20.6.0'
 
     // Views libs
     implementation 'com.hendraanggrian:socialview-core:0.18'
@@ -159,13 +158,6 @@ dependencies {
 
     // Crash
     implementation 'cat.ereza:customactivityoncrash:2.2.0'
-
-    // Ads libs
-    // For native video. This will automatically also include native static
-    implementation('com.mopub:mopub-sdk-native-video:5.1.0@aar') {
-        transitive = true
-    }
-    implementation 'com.google.android.gms:play-services-ads:18.1.1'
 
     // Misc
     implementation 'com.github.kizitonwose.time:time-android:1.0.3'
@@ -198,5 +190,3 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
-
-apply plugin: 'com.google.gms.google-services'

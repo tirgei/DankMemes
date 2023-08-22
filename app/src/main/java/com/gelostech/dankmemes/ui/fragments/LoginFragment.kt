@@ -24,7 +24,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.messaging.FirebaseMessaging
 import com.mikepenz.ionicons_typeface_library.Ionicons
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.alert
@@ -129,21 +130,8 @@ class LoginFragment : BaseFragment() {
                 }
 
                 Status.SUCCESS -> {
-                    if (it.isNewUser!!) {
-                        val googleUser = it.user!!
-                        val newUser = User()
-
-                        newUser.userName = googleUser.displayName
-                        newUser.userEmail = googleUser.email
-                        newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())
-                        newUser.dateUpdated = TimeFormatter().getNormalYear(System.currentTimeMillis())
-                        newUser.userToken = FirebaseInstanceId.getInstance().token
-                        newUser.userId = googleUser.uid
-                        newUser.userBio = activity?.getString(R.string.label_new_user)
-                        newUser.userAvatar = googleUser.photoUrl?.toString()
-
-                        usersViewModel.createGoogleUserAccount(newUser)
-                        googleUser.sendEmailVerification()
+                    if (it.isNewUser == true) {
+                        it.user?.let { createUserProfile(it) } ?: errorLoggingIn("Unable to create account")
                     } else
                         usersViewModel.fetchUser(it.user!!.uid)
                 }
@@ -235,6 +223,28 @@ class LoginFragment : BaseFragment() {
         }.show()
     }
 
+    private fun createUserProfile(googleUser: FirebaseUser) {
+        val newUser = User()
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { result ->
+            if (result.isSuccessful) {
+                newUser.userToken = result.result
+            }
+
+            newUser.userName = googleUser.displayName
+            newUser.userEmail = googleUser.email
+            newUser.dateCreated = TimeFormatter().getNormalYear(System.currentTimeMillis())
+            newUser.dateUpdated = TimeFormatter().getNormalYear(System.currentTimeMillis())
+
+            newUser.userId = googleUser.uid
+            newUser.userBio = activity?.getString(R.string.label_new_user)
+            newUser.userAvatar = googleUser.photoUrl?.toString()
+
+            usersViewModel.createGoogleUserAccount(newUser)
+            googleUser.sendEmailVerification()
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == GOOGLE_SIGN_IN) {
             val  task = GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -244,7 +254,7 @@ class LoginFragment : BaseFragment() {
                 val account = task.getResult(ApiException::class.java)!!
                 usersViewModel.loginWithGoogle(account)
             } catch (e: ApiException) {
-                Timber.e("Google sign in failed")
+                Timber.e("Google sign in failed: ${e.localizedMessage}")
                 errorLoggingIn("Error signing in. Try again")
             }
         }

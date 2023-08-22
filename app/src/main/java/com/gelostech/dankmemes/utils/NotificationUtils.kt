@@ -58,7 +58,7 @@ class NotificationUtils(private val mContext: Context) {
                 mContext,
                 0,
                 intent,
-                PendingIntent.FLAG_CANCEL_CURRENT
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_MUTABLE
         )
 
         val mBuilder = NotificationCompat.Builder(mContext, CHANNEL_ID)

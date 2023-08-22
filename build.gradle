@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.3.41'
+    ext.kotlin_version = '1.7.20'
     ext.anko_version = '0.10.4'
     ext.support_version = "28.0.0"
     ext.arch_version = '2.2.0-alpha01'
@@ -9,18 +9,16 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven {
-            url 'https://maven.fabric.io/public'
-        }
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.1'
+        classpath 'com.android.tools.build:gradle:4.1.3'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'com.google.gms:google-services:4.3.2'
-        classpath 'io.fabric.tools:gradle:1.31.2'
-        classpath 'com.google.firebase:perf-plugin:1.3.1'
+        classpath 'com.google.gms:google-services:4.3.10'
+        classpath 'com.google.firebase:perf-plugin:1.4.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -29,13 +27,10 @@ apply plugin: 'kotlin'
 allprojects {
     repositories {
         jcenter()
+        mavenCentral()
         maven { url "https://jitpack.io" }
-        maven {
-            url "http://dl.bintray.com/sergiocasero/maven"
-        }
         google()
         mavenCentral()
-        maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
         maven { url 'https://maven.google.com' }
 
     }
