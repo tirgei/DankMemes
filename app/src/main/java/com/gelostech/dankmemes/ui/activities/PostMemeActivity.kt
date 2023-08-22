@@ -56,7 +56,7 @@ class PostMemeActivity : BaseActivity() {
         }
 
         postAddImage.setOnClickListener {
-            AppUtils.requestStoragePermission(this) { granted ->
+            AppUtils.requestMediaPermission(this) { granted ->
                 if (granted) {
                     val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                     startActivityForResult(galleryIntent, GALLERY_REQUEST)

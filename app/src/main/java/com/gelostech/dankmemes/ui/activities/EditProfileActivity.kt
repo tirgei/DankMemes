@@ -56,7 +56,7 @@ class EditProfileActivity : BaseActivity() {
         editProfilePickImage.setImageDrawable(AppUtils.getDrawable(this, Ionicons.Icon.ion_camera, R.color.white, 18))
 
         editProfilePickImage.setOnClickListener {
-            AppUtils.requestStoragePermission(this) {granted ->
+            AppUtils.requestMediaPermission(this) {granted ->
                 if (granted) {
                     val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                     startActivityForResult(galleryIntent, AVATAR_REQUEST)

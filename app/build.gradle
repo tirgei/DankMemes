@@ -18,7 +18,7 @@ if (rootProject.file("keystore.properties").exists()) {
 
 android {
 
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     signingConfigs {
         release {
@@ -37,7 +37,7 @@ android {
         applicationId "com.gelostech.dankmemes"
 
         minSdkVersion 17
-        targetSdkVersion 32
+        targetSdkVersion 33
 
         versionCode 24
         versionName "5.0.2"

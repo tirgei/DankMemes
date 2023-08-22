@@ -55,7 +55,7 @@ class SignupFragment : BaseFragment() {
 
         signupAvatar.setOnClickListener {
             if (!isSigningUp) {
-                AppUtils.requestStoragePermission(activity!!) { granted ->
+                AppUtils.requestMediaPermission(activity!!) { granted ->
                     if (granted) {
                         val galleryIntent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                         startActivityForResult(galleryIntent, AVATAR_REQUEST)
